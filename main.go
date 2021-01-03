@@ -45,7 +45,7 @@ func main() {
 	server.Shutdown()
 }
 
-// 调试
+// 打印调试信息
 func debug(format string, v ...interface{}) {
 	if *isDebug {
 		log.Printf(format, v...)
