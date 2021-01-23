@@ -12,7 +12,7 @@ import (
 )
 
 // 获取弹幕
-func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64) {
+func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	if _, ok := acMap.Load(uid); ok {
 		return
 	}
@@ -21,7 +21,7 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64) {
 	newAC, err := aci.(*acLive).ac.SetLiverUID(uid)
 	if err != nil {
 		debug("getDanmu(): call ReInit() error: %v", err)
-		_ = send(conn, fmt.Sprintf(respErrJSON, getDanmuType, reqHandleErr, quote(err.Error())))
+		_ = send(conn, fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), reqHandleErr, quote(err.Error())))
 		return
 	}
 	ac := new(acLive)
@@ -30,10 +30,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64) {
 	data, err := json.Marshal(info)
 	if err != nil {
 		debug("getDanmu(): cannot marshal to json: %v", err)
-		_ = send(conn, fmt.Sprintf(respErrJSON, getDanmuType, reqHandleErr, quote(err.Error())))
+		_ = send(conn, fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), reqHandleErr, quote(err.Error())))
 		return
 	}
-	err = send(conn, fmt.Sprintf(respJSON, getDanmuType, fmt.Sprintf(`{"StreamInfo":%s}`, string(data))))
+	err = send(conn, fmt.Sprintf(respJSON, getDanmuType, quote(reqID), fmt.Sprintf(`{"StreamInfo":%s}`, string(data))))
 	if err != nil {
 		return
 	}
@@ -316,14 +316,14 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64) {
 }
 
 // 停止获取弹幕
-func stopDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64) {
+func stopDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	aci, ok := acMap.Load(uid)
 	if !ok {
 		debug("Not getting liver(%d) danmu", uid)
-		_ = send(conn, fmt.Sprintf(respErrJSON, stopDanmuType, reqHandleErr, quote(fmt.Sprintf("Not getting liver(%d) danmu", uid))))
+		_ = send(conn, fmt.Sprintf(respErrJSON, stopDanmuType, quote(reqID), reqHandleErr, quote(fmt.Sprintf("Not getting liver(%d) danmu", uid))))
 		return
 	}
 	ac := aci.(*acLive)
 	ac.cancel()
-	_ = send(conn, fmt.Sprintf(respNoDataJSON, stopDanmuType))
+	_ = send(conn, fmt.Sprintf(respNoDataJSON, stopDanmuType, quote(reqID)))
 }

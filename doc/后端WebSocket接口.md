@@ -57,11 +57,14 @@
 ```json
 {
     "type": 110,
+    "requestID": "abc",
     "data": {}
 }
 ```
 
 `type`：请求类型
+
+`requestID`：请求ID，用于区分同一类型的请求，具体内容由客户端决定
 
 `data`：请求的数据，可选，一些请求不需要
 
@@ -70,12 +73,15 @@
 ```json
 {
     "type": 110,
+    "requestID": "abc",
     "result": 1,
     "data": {}
 }
 ```
 
 `type`：响应类型，和请求类型一样
+
+`requestID`：请求ID，用于区分同一类型的请求，内容和对应的请求一样
 
 `result`：请求结果，请求成功时为1
 
@@ -85,12 +91,15 @@
 ```json
 {
     "type": 110,
+    "requestID": "abc",
     "result": 11,
     "error": "error message"
 }
 ```
 
 `type`：响应类型，和请求类型一样，不需要时可为0
+
+`requestID`：请求ID，用于区分同一类型的请求，内容和对应的请求一样
 
 `result`：请求结果，出现错误时（不为1）为[错误码](#错误码)
 
@@ -129,6 +138,7 @@
 ```json
 {
     "type": 2,
+    "requestID": "abc",
     "data": {
         "account": "account",
         "password": "password"
@@ -146,6 +156,7 @@
 ```json
 {
     "type": 2,
+    "requestID": "abc",
     "result": 1,
     "data": {
         "tokenInfo": {
@@ -165,6 +176,7 @@
 ```json
 {
     "type": 100,
+    "requestID": "abc",
     "data": {
         "liverUID": 123456
     }
@@ -180,6 +192,7 @@
 {
     "type": 100,
     "result": 1,
+    "requestID": "abc",
     "data": {
         "StreamInfo": {
             "liveID": "-ZwJdCYApS4", // 直播ID
@@ -225,6 +238,7 @@
 ```json
 {
     "type": 101,
+    "requestID": "abc",
     "data": {
         "liverUID": 123456
     }
@@ -235,6 +249,7 @@
 ```json
 {
     "type": 101,
+    "requestID": "abc",
     "result": 1
 }
 ```
@@ -244,6 +259,7 @@
 ```json
 {
     "type": 102,
+    "requestID": "abc",
     "data": {
         "liveID": "cgbKNA8R5nY"
     }
@@ -256,6 +272,7 @@
 ```json
 {
     "type": 102,
+    "requestID": "abc",
     "result": 1,
     "data": [
         {
@@ -284,6 +301,7 @@
 ```json
 {
     "type": 103,
+    "requestID": "abc",
     "data": {
         "liverUID": 12345
     }
@@ -294,6 +312,7 @@
 ```json
 {
     "type": 103,
+    "requestID": "abc",
     "result": 1,
     "data": [
         {
@@ -322,6 +341,7 @@
 ```json
 {
     "type": 104,
+    "requestID": "abc",
     "data": {
         "liveID": "cgbKNA8R5nY"
     }
@@ -332,6 +352,7 @@
 ```json
 {
     "type": 104,
+    "requestID": "abc",
     "result": 1,
     "data": {
         "liveDuration": 13506514, // 直播时长，单位为毫秒
@@ -346,6 +367,7 @@
 ```json
 {
     "type": 105,
+    "requestID": "abc",
     "data": {
         "liveID": "cgbKNA8R5nY",
         "redpackID": "PSCfFH10v-w"
@@ -362,6 +384,7 @@
 ```json
 {
     "type": 106,
+    "requestID": "abc",
     "data": {
         "liveID": "cgbKNA8R5nY"
     }
@@ -372,6 +395,7 @@
 ```json
 {
     "type": 106,
+    "requestID": "abc",
     "result": 1,
     "data": {
         "duration": 13508162, // 录播视频时长，单位是毫秒
@@ -388,7 +412,8 @@
 ##### 请求
 ```json
 {
-    "type": 107
+    "type": 107,
+    "requestID": "abc",
 }
 ```
 
@@ -396,6 +421,7 @@
 ```json
 {
     "type": 107,
+    "requestID": "abc",
     "result": 1,
     "data": [
         {
@@ -447,7 +473,8 @@
 ##### 请求
 ```json
 {
-    "type": 108
+    "type": 108,
+    "requestID": "abc",
 }
 ```
 
@@ -455,6 +482,7 @@
 ```json
 {
     "type": 108,
+    "requestID": "abc",
     "result": 1,
     "data": {
         "acCoin": 57, // 账户AC币数量

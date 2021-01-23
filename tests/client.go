@@ -14,16 +14,16 @@ import (
 
 const (
 	heartbeatJSON        = `{"type":1}`
-	loginJSON            = `{"type":2,"data":{"account":%s,"password":%s}}`
-	getDanmuJSON         = `{"type":100,"data":{"liverUID":%d}}`
-	stopDanmuJSON        = `{"type":101,"data":{"liverUID":%d}}`
-	getWatchingListJSON  = `{"type":102,"data":{"liveID":%s}}`
-	getBillboardJSON     = `{"type":103,"data":{"liverUID":%d}}`
-	getSummaryJSON       = `{"type":104,"data":{"liveID":%s}}`
-	getLuckListJSON      = `{"type":105,"data":{"liveID":%s,"redpackID":%s}}`
-	getPlaybackJSON      = `{"type":106,"data":{"liveID":%s}}`
-	getAllGiftJSON       = `{"type":107}`
-	getWalletBalanceJSON = `{"type":108}`
+	loginJSON            = `{"type":2,"requestID":"abcde","data":{"account":%s,"password":%s}}`
+	getDanmuJSON         = `{"type":100,"requestID":"abcde","data":{"liverUID":%d}}`
+	stopDanmuJSON        = `{"type":101,"requestID":"abcde","data":{"liverUID":%d}}`
+	getWatchingListJSON  = `{"type":102,"requestID":"abcde","data":{"liveID":%s}}`
+	getBillboardJSON     = `{"type":103,"requestID":"abcde","data":{"liverUID":%d}}`
+	getSummaryJSON       = `{"type":104,"requestID":"abcde","data":{"liveID":%s}}`
+	getLuckListJSON      = `{"type":105,"requestID":"abcde","data":{"liveID":%s,"redpackID":%s}}`
+	getPlaybackJSON      = `{"type":106,"requestID":"abcde","data":{"liveID":%s}}`
+	getAllGiftJSON       = `{"type":107,"requestID":"abcde"}`
+	getWalletBalanceJSON = `{"type":108,"requestID":"abcde"}`
 )
 
 var quote = strconv.Quote

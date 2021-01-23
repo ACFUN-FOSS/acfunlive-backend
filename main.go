@@ -88,7 +88,7 @@ func wsHandler(conn *fastws.Conn) {
 		v, err := p.ParseBytes(msg)
 		if err != nil {
 			debug("Parsing json error: %v, request data: %s", err, string(msg))
-			err := send(conn, fmt.Sprintf(respErrJSON, 0, jsonParseErr, quote(fmt.Sprintf("%v, request data: %s", err, string(msg)))))
+			err := send(conn, fmt.Sprintf(respErrJSON, 0, "", jsonParseErr, quote(fmt.Sprintf("error: %v, request data: %s", err, string(msg)))))
 			if err != nil {
 				pool.Put(p)
 				break
@@ -98,8 +98,9 @@ func wsHandler(conn *fastws.Conn) {
 		}
 
 		reqType := v.GetInt("type")
+		reqID := string(v.GetStringBytes("requestID"))
 		if reqType != heartbeatType && reqType != loginType && ac == nil {
-			err := send(conn, fmt.Sprintf(respErrJSON, reqType, needLogin, quote("Need login")))
+			err := send(conn, fmt.Sprintf(respErrJSON, reqType, quote(reqID), needLogin, quote("Need login")))
 			if err != nil {
 				pool.Put(p)
 				break
@@ -119,6 +120,7 @@ func wsHandler(conn *fastws.Conn) {
 			password := string(v.GetStringBytes("data", "password"))
 			go func() {
 				resp := login(acMap, account, password)
+				resp = fmt.Sprintf(resp, quote(reqID))
 				if aci, ok := acMap.Load(0); ok {
 					ac = aci.(*acLive)
 				}
@@ -129,32 +131,33 @@ func wsHandler(conn *fastws.Conn) {
 			uid := v.GetInt64("data", "liverUID")
 			if uid <= 0 {
 				debug("getDanmu: liverUID not exist or less than 1")
-				_ = send(conn, fmt.Sprintf(respErrJSON, getDanmuType, invalidReqData, quote("liverUID not exist or less than 1")))
+				_ = send(conn, fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1")))
 				pool.Put(p)
 				break
 			}
-			go getDanmu(acMap, conn, uid)
+			go getDanmu(acMap, conn, uid, reqID)
 			pool.Put(p)
 		case stopDanmuType:
 			uid := v.GetInt64("data", "liverUID")
 			if uid <= 0 {
 				debug("stopDanmu: liverUID not exist or less than 1")
-				_ = send(conn, fmt.Sprintf(respErrJSON, stopDanmuType, invalidReqData, quote("liverUID not exist or less than 1")))
+				_ = send(conn, fmt.Sprintf(respErrJSON, stopDanmuType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1")))
 				pool.Put(p)
 				break
 			}
-			go stopDanmu(acMap, conn, uid)
+			go stopDanmu(acMap, conn, uid, reqID)
 			pool.Put(p)
 		default:
 			if f, ok := cmdDispatch[reqType]; ok {
 				go func() {
 					resp := f(ac, v)
+					resp = fmt.Sprintf(resp, quote(reqID))
 					_ = send(conn, resp)
 					pool.Put(p)
 				}()
 			} else {
-				debug("Unknown request type:%d", reqType)
-				_ = send(conn, fmt.Sprintf(respErrJSON, reqType, invalidReqType, quote("Unknown request type")))
+				debug("Unknown request type: %d", reqType)
+				_ = send(conn, fmt.Sprintf(respErrJSON, reqType, quote(reqID), invalidReqType, quote("Unknown request type")))
 				pool.Put(p)
 			}
 		}
