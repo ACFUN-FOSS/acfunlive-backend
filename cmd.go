@@ -25,7 +25,7 @@ func login(acMap *sync.Map, account, password string) string {
 	var newAC *acfundanmu.AcFunLive
 	var err error
 	if account == "" || password == "" {
-		newAC, err = acfundanmu.Init(0, nil)
+		newAC, err = acfundanmu.NewAcFunLive()
 		if err != nil {
 			debug("login(): cannot login as anonymous: %v", err)
 			return fmt.Sprintf(respErrJSON, loginType, reqHandleErr, quote(err.Error()))
@@ -36,7 +36,7 @@ func login(acMap *sync.Map, account, password string) string {
 			debug("login(): cannot login as AcFun user: %v", err)
 			return fmt.Sprintf(respErrJSON, loginType, reqHandleErr, quote(err.Error()))
 		}
-		newAC, err = acfundanmu.Init(0, cookies)
+		newAC, err = acfundanmu.NewAcFunLive(acfundanmu.SetCookies(cookies))
 		if err != nil {
 			debug("login(): call Init() error: %+v", err)
 			return fmt.Sprintf(respErrJSON, loginType, reqHandleErr, quote(err.Error()))

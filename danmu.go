@@ -18,7 +18,7 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64) {
 	}
 	aci, _ := acMap.Load(0)
 
-	newAC, err := aci.(*acLive).ac.ReInit(uid, true)
+	newAC, err := aci.(*acLive).ac.SetLiverUID(uid)
 	if err != nil {
 		debug("getDanmu(): call ReInit() error: %v", err)
 		_ = send(conn, fmt.Sprintf(respErrJSON, getDanmuType, reqHandleErr, quote(err.Error())))
