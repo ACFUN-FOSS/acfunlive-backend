@@ -17,6 +17,12 @@
   * [直播回放](#直播回放)
   * [全部礼物列表](#全部礼物列表)
   * [账户钱包](#账户钱包)
+  * [登陆用户的房管列表](#登陆用户的房管列表)
+  * [添加房管](#添加房管)
+  * [删除房管](#删除房管)
+  * [踢人的历史记录（未完成）](#踢人的历史记录未完成)
+  * [房管踢人](#房管踢人)
+  * [主播踢人](#主播踢人)
 * [弹幕和信号类型](#弹幕和信号类型)
   * [弹幕类型](#弹幕类型)
     * [弹幕](#弹幕)
@@ -488,6 +494,144 @@
         "acCoin": 57, // 账户AC币数量
         "banana": 289 // 账户香蕉数量
     }
+}
+```
+
+#### 登陆用户的房管列表
+##### 请求
+```json
+{
+    "type": 200,
+    "requestID": "abc",
+}
+```
+
+##### 响应
+```json
+{
+    "type": 200,
+    "requestID": "abc",
+    "result": 1,
+    "data": [
+        {
+            "userInfo": {
+                "userID": 23682490,
+                "nickname": "AC娘本体",
+                "avatar": "https://imgs.aixifan.com/FnlcvTfQHideC2bGgfRO2u9gfig_",
+                "medal": {
+                    "uperID": 0,
+                    "userID": 0,
+                    "clubName": "",
+                    "level": 0
+                },
+                "managerType": 0
+            },
+            "customData": "{\"userInfo\":{\"verified\":1,\"verifiedTypes\":[1,5,3],\"joinUpCollege\":true},\"countInfo\":{\"fansCount\":365877}}",
+            "online": false // 是否直播间在线？（可能不准确）
+        }
+    ]
+}
+```
+
+#### 添加房管
+##### 请求
+```json
+{
+    "type": 201,
+    "requestID": "abc",
+    "data": {
+        "managerUID": 12345
+    }
+}
+```
+
+`managerUID`：房管的uid
+
+##### 响应
+```json
+{
+    "type": 201,
+    "requestID": "abc",
+    "result": 1
+}
+
+```
+
+#### 删除房管
+##### 请求
+```json
+{
+    "type": 202,
+    "requestID": "abc",
+    "data": {
+        "managerUID": 12345
+    }
+}
+```
+
+##### 响应
+```json
+{
+    "type": 202,
+    "requestID": "abc",
+    "result": 1
+}
+```
+
+#### 踢人的历史记录（未完成）
+##### 请求
+```json
+{
+    "type": 203,
+    "requestID": "abc",
+}
+```
+
+##### 响应
+```json
+```
+
+#### 房管踢人
+##### 请求
+```json
+{
+    "type": 204,
+    "requestID": "abc",
+    "data": {
+        "kickedUID": 12345
+    }
+}
+```
+
+`kickedUID`：被踢的用户的uid
+
+##### 响应
+```json
+{
+    "type": 204,
+    "requestID": "abc",
+    "result": 1
+}
+```
+
+#### 主播踢人
+##### 请求
+```json
+{
+    "type": 205,
+    "requestID": "abc",
+    "data": {
+        "kickedUID": 12345
+    }
+}
+```
+
+##### 响应
+```json
+{
+    "type": 205,
+    "requestID": "abc",
+    "result": 1
 }
 ```
 

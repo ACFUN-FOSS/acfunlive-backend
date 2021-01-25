@@ -14,16 +14,21 @@ import (
 
 const (
 	heartbeatJSON        = `{"type":1}`
-	loginJSON            = `{"type":2,"requestID":"abcde","data":{"account":%s,"password":%s}}`
-	getDanmuJSON         = `{"type":100,"requestID":"abcde","data":{"liverUID":%d}}`
-	stopDanmuJSON        = `{"type":101,"requestID":"abcde","data":{"liverUID":%d}}`
-	getWatchingListJSON  = `{"type":102,"requestID":"abcde","data":{"liveID":%s}}`
-	getBillboardJSON     = `{"type":103,"requestID":"abcde","data":{"liverUID":%d}}`
-	getSummaryJSON       = `{"type":104,"requestID":"abcde","data":{"liveID":%s}}`
-	getLuckListJSON      = `{"type":105,"requestID":"abcde","data":{"liveID":%s,"redpackID":%s}}`
-	getPlaybackJSON      = `{"type":106,"requestID":"abcde","data":{"liveID":%s}}`
-	getAllGiftJSON       = `{"type":107,"requestID":"abcde"}`
-	getWalletBalanceJSON = `{"type":108,"requestID":"abcde"}`
+	loginJSON            = `{"type":2,"requestID":"abc","data":{"account":%s,"password":%s}}`
+	getDanmuJSON         = `{"type":100,"requestID":"abc","data":{"liverUID":%d}}`
+	stopDanmuJSON        = `{"type":101,"requestID":"abc","data":{"liverUID":%d}}`
+	getWatchingListJSON  = `{"type":102,"requestID":"abc","data":{"liveID":%s}}`
+	getBillboardJSON     = `{"type":103,"requestID":"abc","data":{"liverUID":%d}}`
+	getSummaryJSON       = `{"type":104,"requestID":"abc","data":{"liveID":%s}}`
+	getLuckListJSON      = `{"type":105,"requestID":"abc","data":{"liveID":%s,"redpackID":%s}}`
+	getPlaybackJSON      = `{"type":106,"requestID":"abc","data":{"liveID":%s}}`
+	getAllGiftJSON       = `{"type":107,"requestID":"abc"}`
+	getWalletBalanceJSON = `{"type":108,"requestID":"abc"}`
+	getManagerListJSON   = `{"type":200,"requestID":"abc"}`
+	addManagerJSON       = `{"type":201,"requestID":"abc","data":{"managerUID":%d}}`
+	deleteManagerJSON    = `{"type":202,"requestID":"abc","data":{"managerUID":%d}}`
+	managerKickJSON      = `{"type":204,"requestID":"abc","data":{"kickedUID":%d}}`
+	authorKickJSON       = `{"type":205,"requestID":"abc","data":{"kickedUID":%d}}`
 )
 
 var quote = strconv.Quote
@@ -112,6 +117,12 @@ func main() {
 			case 107:
 				log.Printf("%s", string(msg))
 			case 108:
+				log.Printf("%s", string(msg))
+			case 200:
+				log.Printf("%s", string(msg))
+			case 201:
+				log.Printf("%s", string(msg))
+			case 202:
 				log.Printf("%s", string(msg))
 			case 1000:
 				v = v.Get("data")
@@ -269,6 +280,22 @@ func main() {
 
 	_, err = conn.WriteString(getWalletBalanceJSON)
 	checkErr(err)
+
+	_, err = conn.WriteString(fmt.Sprintf(addManagerJSON, 23682490))
+	checkErr(err)
+	time.Sleep(2 * time.Second)
+
+	_, err = conn.WriteString(getManagerListJSON)
+	checkErr(err)
+	time.Sleep(2 * time.Second)
+
+	_, err = conn.WriteString(fmt.Sprintf(deleteManagerJSON, 23682490))
+	checkErr(err)
+
+	//_, err = conn.WriteString(fmt.Sprintf(managerKickJSON, 23682490))
+	//checkErr(err)
+	//_, err = conn.WriteString(fmt.Sprintf(authorKickJSON, 23682490))
+	//checkErr(err)
 
 	time.Sleep(10 * time.Second)
 	_, err = conn.WriteString(fmt.Sprintf(stopDanmuJSON, *liverUID))

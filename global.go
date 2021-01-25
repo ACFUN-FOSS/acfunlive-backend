@@ -30,7 +30,7 @@ const (
 	getSummaryType
 	getLuckListType
 	getPlaybackType
-	getAllGiftType
+	getAllGiftListType
 	getWalletBalanceType
 )
 

@@ -16,8 +16,13 @@ var cmdDispatch = map[int]func(*acLive, *fastjson.Value) string{
 	getSummaryType:       (*acLive).getSummary,
 	getLuckListType:      (*acLive).getLuckList,
 	getPlaybackType:      (*acLive).getPlayback,
-	getAllGiftType:       (*acLive).getAllGift,
+	getAllGiftListType:   (*acLive).getAllGiftList,
 	getWalletBalanceType: (*acLive).getWalletBalance,
+	getManagerListType:   (*acLive).getManagerList,
+	addManagerType:       (*acLive).addManager,
+	deleteManagerType:    (*acLive).deleteManager,
+	managerKickType:      (*acLive).managerKick,
+	authorKickType:       (*acLive).authorKick,
 }
 
 // 处理登陆命令
@@ -173,11 +178,11 @@ func (ac *acLive) getPlayback(v *fastjson.Value) string {
 }
 
 // 获取全部礼物的列表
-func (ac *acLive) getAllGift(v *fastjson.Value) string {
+func (ac *acLive) getAllGiftList(v *fastjson.Value) string {
 	gift, err := ac.ac.GetAllGift()
 	if err != nil {
-		debug("getAllGift(): call GetAllGift() error: %v", err)
-		return fmt.Sprintf(respErrJSON, getAllGiftType, "%s", reqHandleErr, quote(err.Error()))
+		debug("getAllGiftList(): call GetAllGiftList() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getAllGiftListType, "%s", reqHandleErr, quote(err.Error()))
 	}
 	list := make([]acfundanmu.GiftDetail, 0, len(gift))
 	for _, g := range gift {
@@ -188,11 +193,11 @@ func (ac *acLive) getAllGift(v *fastjson.Value) string {
 	})
 	data, err := json.Marshal(list)
 	if err != nil {
-		debug("getAllGift(): cannot marshal to json: %+v", list)
-		return fmt.Sprintf(respErrJSON, getAllGiftType, "%s", reqHandleErr, quote(err.Error()))
+		debug("getAllGiftList(): cannot marshal to json: %+v", list)
+		return fmt.Sprintf(respErrJSON, getAllGiftListType, "%s", reqHandleErr, quote(err.Error()))
 	}
 
-	return fmt.Sprintf(respJSON, getAllGiftType, "%s", string(data))
+	return fmt.Sprintf(respJSON, getAllGiftListType, "%s", string(data))
 }
 
 // 获取账户钱包数据
@@ -204,4 +209,89 @@ func (ac *acLive) getWalletBalance(v *fastjson.Value) string {
 	}
 
 	return fmt.Sprintf(respJSON, getWalletBalanceType, "%s", fmt.Sprintf(`{"acCoin":%d,"banana":%d}`, acCoin, banana))
+}
+
+// 获取主播的房管列表
+func (ac *acLive) getManagerList(v *fastjson.Value) string {
+	list, err := ac.ac.GetManagerList()
+	if err != nil {
+		debug("getManagerList(): call GetManagerList() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getManagerListType, "%s", reqHandleErr, quote(err.Error()))
+	}
+
+	data, err := json.Marshal(list)
+	if err != nil {
+		debug("getManagerList(): cannot marshal to json: %+v", list)
+		return fmt.Sprintf(respErrJSON, getManagerListType, "%s", reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getManagerListType, "%s", string(data))
+}
+
+// 添加房管
+func (ac *acLive) addManager(v *fastjson.Value) string {
+	uid := v.GetInt64("data", "managerUID")
+	if uid <= 0 {
+		debug("addManager(): managerUID not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, addManagerType, "%s", invalidReqData, quote("managerUID not exist or less than 1"))
+	}
+
+	err := ac.ac.AddManager(uid)
+	if err != nil {
+		debug("addManager(): call AddManager() error: %v", err)
+		return fmt.Sprintf(respErrJSON, addManagerType, "%s", reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respNoDataJSON, addManagerType, "%s")
+}
+
+// 删除房管
+func (ac *acLive) deleteManager(v *fastjson.Value) string {
+	uid := v.GetInt64("data", "managerUID")
+	if uid <= 0 {
+		debug("deleteManager(): managerUID not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, deleteManagerType, "%s", invalidReqData, quote("managerUID not exist or less than 1"))
+	}
+
+	err := ac.ac.DeleteManager(uid)
+	if err != nil {
+		debug("deleteManager(): call DeleteManager() error: %v", err)
+		return fmt.Sprintf(respErrJSON, deleteManagerType, "%s", reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respNoDataJSON, deleteManagerType, "%s")
+}
+
+// 房管踢人
+func (ac *acLive) managerKick(v *fastjson.Value) string {
+	uid := v.GetInt64("data", "kickedUID")
+	if uid <= 0 {
+		debug("managerKick(): kickedUID not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, managerKickType, "%s", invalidReqData, quote("kickedUID not exist or less than 1"))
+	}
+
+	err := ac.ac.ManagerKick(uid)
+	if err != nil {
+		debug("managerKick(): call ManagerKick() error: %v", err)
+		return fmt.Sprintf(respErrJSON, managerKickType, "%s", reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respNoDataJSON, managerKickType, "%s")
+}
+
+// 主播踢人
+func (ac *acLive) authorKick(v *fastjson.Value) string {
+	uid := v.GetInt64("data", "kickedUID")
+	if uid <= 0 {
+		debug("authorKick(): kickedUID not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, authorKickType, "%s", invalidReqData, quote("kickedUID not exist or less than 1"))
+	}
+
+	err := ac.ac.AuthorKick(uid)
+	if err != nil {
+		debug("authorKick(): call AuthorKick() error: %v", err)
+		return fmt.Sprintf(respErrJSON, authorKickType, "%s", reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respNoDataJSON, authorKickType, "%s")
 }
