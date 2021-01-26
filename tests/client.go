@@ -269,8 +269,8 @@ func main() {
 	_, err = conn.WriteString(fmt.Sprintf(getSummaryJSON, quote(liveID)))
 	checkErr(err)
 
-	//_, err = conn.WriteString(fmt.Sprintf(getLuckListJSON, quote("aaa"), quote("bbb")))
-	//checkErr(err)
+	_, err = conn.WriteString(fmt.Sprintf(getLuckListJSON, quote("7McE2WZl9Xc"), quote("b-D8XOlAlxI")))
+	checkErr(err)
 
 	_, err = conn.WriteString(fmt.Sprintf(getPlaybackJSON, quote(liveID)))
 	checkErr(err)
@@ -281,7 +281,7 @@ func main() {
 	_, err = conn.WriteString(getWalletBalanceJSON)
 	checkErr(err)
 
-	_, err = conn.WriteString(fmt.Sprintf(addManagerJSON, 23682490))
+	_, err = conn.WriteString(fmt.Sprintf(addManagerJSON, *liverUID))
 	checkErr(err)
 	time.Sleep(2 * time.Second)
 
@@ -289,12 +289,12 @@ func main() {
 	checkErr(err)
 	time.Sleep(2 * time.Second)
 
-	_, err = conn.WriteString(fmt.Sprintf(deleteManagerJSON, 23682490))
+	_, err = conn.WriteString(fmt.Sprintf(deleteManagerJSON, *liverUID))
 	checkErr(err)
 
-	//_, err = conn.WriteString(fmt.Sprintf(managerKickJSON, 23682490))
+	//_, err = conn.WriteString(fmt.Sprintf(managerKickJSON, *liverUID))
 	//checkErr(err)
-	//_, err = conn.WriteString(fmt.Sprintf(authorKickJSON, 23682490))
+	//_, err = conn.WriteString(fmt.Sprintf(authorKickJSON, *liverUID))
 	//checkErr(err)
 
 	time.Sleep(10 * time.Second)

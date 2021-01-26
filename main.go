@@ -119,8 +119,7 @@ func wsHandler(conn *fastws.Conn) {
 			account := string(v.GetStringBytes("data", "account"))
 			password := string(v.GetStringBytes("data", "password"))
 			go func() {
-				resp := login(acMap, account, password)
-				resp = fmt.Sprintf(resp, quote(reqID))
+				resp := login(acMap, account, password, reqID)
 				if aci, ok := acMap.Load(0); ok {
 					ac = aci.(*acLive)
 				}
@@ -150,8 +149,7 @@ func wsHandler(conn *fastws.Conn) {
 		default:
 			if f, ok := cmdDispatch[reqType]; ok {
 				go func() {
-					resp := f(ac, v)
-					resp = fmt.Sprintf(resp, quote(reqID))
+					resp := f(ac, v, reqID)
 					_ = send(conn, resp)
 					pool.Put(p)
 				}()

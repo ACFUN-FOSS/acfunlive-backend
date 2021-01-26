@@ -32,6 +32,8 @@ const (
 	getPlaybackType
 	getAllGiftListType
 	getWalletBalanceType
+	getUserLiveInfoType
+	getAllLiveListType
 )
 
 const (
@@ -44,7 +46,14 @@ const (
 )
 
 const (
-	checkLiveAuthType = iota + 300
+	getMedalDetailType = iota + 300
+	getMedalListType
+	getMedalRankListType
+	getUserMedalType
+)
+
+const (
+	checkLiveAuthType = iota + 900
 	getLiveTypeListType
 	getOBSConfigType
 )

@@ -13,7 +13,7 @@
   * [直播间观众列表](#直播间观众列表)
   * [礼物贡献榜](#礼物贡献榜)
   * [直播总结信息](#直播总结信息)
-  * [抢红包结果（未完成）](#抢红包结果未完成)
+  * [抢红包结果](#抢红包结果)
   * [直播回放](#直播回放)
   * [全部礼物列表](#全部礼物列表)
   * [账户钱包](#账户钱包)
@@ -368,21 +368,43 @@
 }
 ```
 
-#### 抢红包结果（未完成）
+#### 抢红包结果
 ##### 请求
 ```json
 {
     "type": 105,
     "requestID": "abc",
     "data": {
-        "liveID": "cgbKNA8R5nY",
-        "redpackID": "PSCfFH10v-w"
+        "liveID": "7McE2WZl9Xc",
+        "redpackID": "b-D8XOlAlxI"
     }
 }
 ```
 
 ##### 响应
 ```json
+{
+    "type": 105,
+    "requestID": "abc",
+    "result": 1,
+    "data": [
+        {
+            "userInfo": {
+                "userID": 41073755,
+                "nickname": "弹幕姬～",
+                "avatar": "https://imgs.aixifan.com/content/2020_11_09/1604880424274.JPG",
+                "medal": { // 没有守护徽章信息
+                    "uperID": 0,
+                    "userID": 0,
+                    "clubName": "",
+                    "level": 0
+                },
+                "managerType": 0 // 没有房管信息
+            },
+            "grabAmount": 7 // 抢到的AC币数量
+        }
+    ]
+}
 ```
 
 #### 直播回放
@@ -518,13 +540,13 @@
                 "userID": 23682490,
                 "nickname": "AC娘本体",
                 "avatar": "https://imgs.aixifan.com/FnlcvTfQHideC2bGgfRO2u9gfig_",
-                "medal": {
+                "medal": { // 没有守护徽章信息
                     "uperID": 0,
                     "userID": 0,
                     "clubName": "",
                     "level": 0
                 },
-                "managerType": 0
+                "managerType": 0 // 没有房管信息
             },
             "customData": "{\"userInfo\":{\"verified\":1,\"verifiedTypes\":[1,5,3],\"joinUpCollege\":true},\"countInfo\":{\"fansCount\":365877}}",
             "online": false // 是否直播间在线？（可能不准确）
@@ -633,6 +655,15 @@
     "requestID": "abc",
     "result": 1
 }
+```
+
+#### 登陆用户的守护徽章列表
+##### 请求
+```json
+```
+
+##### 响应
+```json
 ```
 
 ### 弹幕和信号类型
