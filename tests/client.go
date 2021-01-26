@@ -29,6 +29,10 @@ const (
 	deleteManagerJSON    = `{"type":202,"requestID":"abc","data":{"managerUID":%d}}`
 	managerKickJSON      = `{"type":204,"requestID":"abc","data":{"kickedUID":%d}}`
 	authorKickJSON       = `{"type":205,"requestID":"abc","data":{"kickedUID":%d}}`
+	getMedalDetailJSON   = `{"type":300,"requestID":"abc","data":{"liverUID":%d}}`
+	getMedalListJSON     = `{"type":301,"requestID":"abc","data":{"liverUID":%d}}`
+	getMedalRankListJSON = `{"type":302,"requestID":"abc","data":{"liverUID":%d}}`
+	getUserMedalJSON     = `{"type":303,"requestID":"abc","data":{"userID":%d}}`
 )
 
 var quote = strconv.Quote
@@ -296,6 +300,18 @@ func main() {
 	//checkErr(err)
 	//_, err = conn.WriteString(fmt.Sprintf(authorKickJSON, *liverUID))
 	//checkErr(err)
+
+	_, err = conn.WriteString(fmt.Sprintf(getMedalDetailJSON, *liverUID))
+	checkErr(err)
+
+	//_, err = conn.WriteString(fmt.Sprintf(getMedalListJSON, *liverUID))
+	//checkErr(err)
+
+	_, err = conn.WriteString(fmt.Sprintf(getMedalRankListJSON, *liverUID))
+	checkErr(err)
+
+	_, err = conn.WriteString(fmt.Sprintf(getUserMedalJSON, *liverUID))
+	checkErr(err)
 
 	time.Sleep(10 * time.Second)
 	_, err = conn.WriteString(fmt.Sprintf(stopDanmuJSON, *liverUID))

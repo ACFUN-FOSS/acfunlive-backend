@@ -23,6 +23,10 @@
   * [踢人的历史记录（未完成）](#踢人的历史记录未完成)
   * [房管踢人](#房管踢人)
   * [主播踢人](#主播踢人)
+  * [登陆用户拥有的指定主播守护徽章详细信息](#登陆用户拥有的指定主播守护徽章详细信息)
+  * [登陆用户拥有的守护徽章列表](#登陆用户拥有的守护徽章列表)
+  * [主播守护榜](#主播守护榜)
+  * [指定用户正在佩戴的守护徽章信息](#指定用户正在佩戴的守护徽章信息)
 * [弹幕和信号类型](#弹幕和信号类型)
   * [弹幕类型](#弹幕类型)
     * [弹幕](#弹幕)
@@ -657,13 +661,206 @@
 }
 ```
 
-#### 登陆用户的守护徽章列表
+#### 登陆用户拥有的指定主播守护徽章详细信息
 ##### 请求
 ```json
+{
+    "type": 300,
+    "requestID": "abc",
+    "data": {
+        "liverUID": 12891327
+    }
+}
 ```
 
 ##### 响应
 ```json
+{
+    "type": 300,
+    "requestID": "abc",
+    "result": 1,
+    "data": {
+        "medal": {
+            "medalInfo": {
+                "uperID": 12891327, // 主播uid
+                "userID": 103411, // 用户uid
+                "clubName": "白白的", // 守护徽章名字
+                "level": 10 // 守护徽章等级
+            },
+            "uperName": "白白_Anlessya", // 主播名字
+            "uperAvatar": "https://tx-free-imgs.acfun.cn/content/2020_12_27/1609078598105.JPG?imageslim", // 主播头像
+            "wearMedal": false, // 用户是否佩戴主播的守护徽章
+            "friendshipDegree": 18015, // 目前用户的守护徽章亲密度
+            "joinClubTime": 1602752837775, // 用户加入主播守护团的时间，是以毫秒为单位的Unix时间
+            "currentDegreeLimit": 18887 // 用户守护徽章目前等级的亲密度的上限
+        },
+        "medalDegree": {
+            "uperID": 12891327,
+            "giftDegree": 0, // 本日送直播礼物增加的亲密度
+            "giftDegreeLimit": 2000, // 本日送直播礼物增加的亲密度上限
+            "peachDegree": 0, // 本日投桃增加的亲密度
+            "peachDegreeLimit": 520, // 本日投桃增加的亲密度上限
+            "liveWatchDegree": 331, // 本日看直播时长增加的亲密度
+            "liveWatchDegreeLimit": 360, // 本日看直播时长增加的亲密度上限
+            "bananaDegree": 0, // 本日投蕉增加的亲密度
+            "bananaDegreeLimit": 10 // 本日投蕉增加的亲密度上限
+        },
+        "userRank": 31, // 用户的守护徽章亲密度的排名
+        "clubName": "白白的"
+    }
+}
+```
+
+#### 登陆用户拥有的守护徽章列表
+##### 请求
+```json
+{
+    "type": 301,
+    "requestID": "abc",
+    "data": {
+        "liverUID": 26675034
+    }
+}
+```
+
+`liverUID`：用于获取用户拥有的指定主播守护徽章的详细信息，可以为0
+
+##### 响应
+```json
+{
+    "type": 301,
+    "requestID": "abc",
+    "result": 1,
+    "data": {
+        "medalList": [ // 用户拥有的守护徽章列表
+            {
+                "medalInfo": {
+                    "uperID": 378269,
+                    "userID": 103411,
+                    "clubName": "QQ星",
+                    "level": 12
+                },
+                "uperName": "qyqx",
+                "uperAvatar": "https://tx-free-imgs.acfun.cn/style/image/201907/0ldW0vL9ifWM29JzsAyMlEQxdf1vRgIL.jpg?imageslim",
+                "wearMedal": true,
+                "friendshipDegree": 31391,
+                "joinClubTime": 1600777699862,
+                "currentDegreeLimit": 48887
+            }
+        ],
+        "medalDetail": { // liverUID指定的主播的守护徽章详细信息
+            "medal": {
+                "medalInfo": {
+                    "uperID": 26675034,
+                    "userID": 103411,
+                    "clubName": "偷芯猫",
+                    "level": 10
+                },
+                "uperName": "艾栗AIri",
+                "uperAvatar": "https://tx-free-imgs.acfun.cn/content/2020_11_22/1606036415911.JPG?imageslim",
+                "wearMedal": false,
+                "friendshipDegree": 14216,
+                "joinClubTime": 1604114733093,
+                "currentDegreeLimit": 18887
+            },
+            "medalDegree": {
+                "uperID": 26675034,
+                "giftDegree": 0,
+                "giftDegreeLimit": 2000,
+                "peachDegree": 0,
+                "peachDegreeLimit": 520,
+                "liveWatchDegree": 202,
+                "liveWatchDegreeLimit": 360,
+                "bananaDegree": 0,
+                "bananaDegreeLimit": 10
+            },
+            "userRank": 79,
+            "clubName": "偷芯猫"
+        }
+    }
+}
+```
+
+#### 主播守护榜
+##### 请求
+```json
+{
+    "type": 302,
+    "requestID": "abc",
+    "data": {
+        "liverUID": 26675034
+    }
+}
+```
+
+##### 响应
+```json
+{
+    "type": 302,
+    "requestID": "abc",
+    "result": 1,
+    "data": {
+        "rankList": [
+            {
+                "profile": { // 用户信息
+                    "userID": 7755,
+                    "nickname": "saga-R",
+                    "avatar": "https://tx-free-imgs.acfun.cn/style/image/201907/w1v9fCGV7uhiNYbv5c5hAfAHehgVyHuM.jpg?imageslim",
+                    "avatarFrame": "http://imgs.aixifan.com/o_1cvf33pb5e1q1puncp21ku0a3446.png",
+                    "followingCount": 723,
+                    "fansCount": 23,
+                    "contributeCount": 20,
+                    "signature": "不写不写！",
+                    "verifiedText": "",
+                    "isJoinUpCollege": false,
+                    "isFollowing": false
+                },
+                "friendshipDegree": 57676,
+                "level": 13
+            }
+        ],
+        "clubName": "偷芯猫",
+        "medalCount": 991, // 主播守护团总人数
+        "hasMedal": true, // 登陆用户是否有主播的守护徽章
+        "userFriendshipDegree": 14234, // 目前登陆用户的守护徽章亲密度
+        "userRank": 79 // 登陆用户的守护徽章亲密度的排名
+    }
+}
+```
+
+#### 指定用户正在佩戴的守护徽章信息
+##### 请求
+```json
+{
+    "type": 303,
+    "requestID": "abc",
+    "data": {
+        "userID": 26675034
+    }
+}
+```
+
+##### 响应
+```json
+{
+    "type": 303,
+    "requestID": "abc",
+    "result": 1,
+    "data": {
+        "medalInfo": {
+            "uperID": 16005,
+            "userID": 26675034,
+            "clubName": "坏女人",
+            "level": 1
+        },
+        "uperName": "乌拉喵",
+        "uperAvatar": "https://imgs.aixifan.com/style/image/201907/4jUWfchONKiX1yLuhkGUtKfUl1YOJatr.jpg",
+        "wearMedal": true,
+        "friendshipDegree": 0, // 没有亲密度
+        "joinClubTime": 0, // 没有用户加入守护团的时间
+        "currentDegreeLimit": 0 // 没有目前等级的亲密度上限
+    }
+}
 ```
 
 ### 弹幕和信号类型

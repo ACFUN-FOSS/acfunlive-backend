@@ -23,6 +23,10 @@ var cmdDispatch = map[int]func(*acLive, *fastjson.Value, string) string{
 	deleteManagerType:    (*acLive).deleteManager,
 	managerKickType:      (*acLive).managerKick,
 	authorKickType:       (*acLive).authorKick,
+	getMedalDetailType:   (*acLive).getMedalDetail,
+	getMedalListType:     (*acLive).getMedalList,
+	getMedalRankListType: (*acLive).getMedalRankList,
+	getUserMedalType:     (*acLive).getUserMedal,
 }
 
 // 处理登陆命令
@@ -298,4 +302,92 @@ func (ac *acLive) authorKick(v *fastjson.Value, reqID string) string {
 	}
 
 	return fmt.Sprintf(respNoDataJSON, authorKickType, quote(reqID))
+}
+
+// 获取指定主播的守护徽章详细信息
+func (ac *acLive) getMedalDetail(v *fastjson.Value, reqID string) string {
+	uid := v.GetInt64("data", "liverUID")
+	if uid <= 0 {
+		debug("getMedalDetail(): liverUID not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, getMedalDetailType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1"))
+	}
+
+	medal, err := ac.ac.GetMedalDetail(uid)
+	if err != nil {
+		debug("getMedalDetail(): call GetMedalDetail() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getMedalDetailType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+	data, err := json.Marshal(medal)
+	if err != nil {
+		debug("getMedalDetail(): cannot marshal to json: %+v", medal)
+		return fmt.Sprintf(respErrJSON, getMedalDetailType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getMedalDetailType, quote(reqID), string(data))
+}
+
+// 获取用户拥有的守护徽章列表
+func (ac *acLive) getMedalList(v *fastjson.Value, reqID string) string {
+	uid := v.GetInt64("data", "liverUID")
+	if uid <= 0 {
+		debug("getMedalList(): liverUID not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, getMedalListType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1"))
+	}
+
+	list, err := ac.ac.GetMedalList(uid)
+	if err != nil {
+		debug("getMedalList(): call GetMedalList() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getMedalListType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+	data, err := json.Marshal(list)
+	if err != nil {
+		debug("getMedalList(): cannot marshal to json: %+v", list)
+		return fmt.Sprintf(respErrJSON, getMedalListType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getMedalListType, quote(reqID), string(data))
+}
+
+// 获取主播的守护榜
+func (ac *acLive) getMedalRankList(v *fastjson.Value, reqID string) string {
+	uid := v.GetInt64("data", "liverUID")
+	if uid <= 0 {
+		debug("getMedalRankList(): liverUID not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, getMedalRankListType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1"))
+	}
+
+	list, err := ac.ac.GetMedalRankList(uid)
+	if err != nil {
+		debug("getMedalRankList(): call GetMedalRankList() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getMedalRankListType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+	data, err := json.Marshal(list)
+	if err != nil {
+		debug("getMedalRankList(): cannot marshal to json: %+v", list)
+		return fmt.Sprintf(respErrJSON, getMedalRankListType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getMedalRankListType, quote(reqID), string(data))
+}
+
+// 获取指定用户正在佩戴的守护徽章信息
+func (ac *acLive) getUserMedal(v *fastjson.Value, reqID string) string {
+	uid := v.GetInt64("data", "userID")
+	if uid <= 0 {
+		debug("getUserMedal(): userID not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, getUserMedalType, quote(reqID), invalidReqData, quote("userID not exist or less than 1"))
+	}
+
+	medal, err := acfundanmu.GetUserMedal(uid)
+	if err != nil {
+		debug("getUserMedal(): call GetUserMedal() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getUserMedalType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+	data, err := json.Marshal(medal)
+	if err != nil {
+		debug("getUserMedal(): cannot marshal to json: %+v", medal)
+		return fmt.Sprintf(respErrJSON, getUserMedalType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getUserMedalType, quote(reqID), string(data))
 }
