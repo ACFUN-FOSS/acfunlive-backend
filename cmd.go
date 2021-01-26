@@ -18,6 +18,8 @@ var cmdDispatch = map[int]func(*acLive, *fastjson.Value, string) string{
 	getPlaybackType:      (*acLive).getPlayback,
 	getAllGiftListType:   (*acLive).getAllGiftList,
 	getWalletBalanceType: (*acLive).getWalletBalance,
+	getUserLiveInfoType:  (*acLive).getUserLiveInfo,
+	getAllLiveListType:   (*acLive).getAllLiveList,
 	getManagerListType:   (*acLive).getManagerList,
 	addManagerType:       (*acLive).addManager,
 	deleteManagerType:    (*acLive).deleteManager,
@@ -215,8 +217,42 @@ func (ac *acLive) getWalletBalance(v *fastjson.Value, reqID string) string {
 	return fmt.Sprintf(respJSON, getWalletBalanceType, quote(reqID), fmt.Sprintf(`{"acCoin":%d,"banana":%d}`, acCoin, banana))
 }
 
-func (ac *acLive) getMedalInfo(v *fastjson.Value) {
+// 获取指定用户的直播信息
+func (ac *acLive) getUserLiveInfo(v *fastjson.Value, reqID string) string {
+	uid := v.GetInt64("data", "userID")
+	if uid <= 0 {
+		debug("getUserLiveInfo(): userID not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, getUserLiveInfoType, quote(reqID), invalidReqData, quote("userID not exist or less than 1"))
+	}
 
+	info, err := ac.ac.GetUserLiveInfo(uid)
+	if err != nil {
+		debug("getUserLiveInfo(): call GetUserLiveInfo() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getUserLiveInfoType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+	data, err := json.Marshal(info)
+	if err != nil {
+		debug("getUserLiveInfo(): cannot marshal to json: %+v", info)
+		return fmt.Sprintf(respErrJSON, getUserLiveInfoType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getUserLiveInfoType, quote(reqID), string(data))
+}
+
+// 获取直播间列表
+func (ac *acLive) getAllLiveList(v *fastjson.Value, reqID string) string {
+	list, err := ac.ac.GetAllLiveList()
+	if err != nil {
+		debug("getAllLiveList(): call GetAllLiveList() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getAllLiveListType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+	data, err := json.Marshal(list)
+	if err != nil {
+		debug("getAllLiveList(): cannot marshal to json: %+v", list)
+		return fmt.Sprintf(respErrJSON, getAllLiveListType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getAllLiveListType, quote(reqID), string(data))
 }
 
 // 获取主播的房管列表

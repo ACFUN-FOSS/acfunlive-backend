@@ -53,8 +53,7 @@ const (
 )
 
 const (
-	checkLiveAuthType = iota + 900
-	getLiveTypeListType
+	getLiveTypeListType = iota + 900
 	getOBSConfigType
 )
 

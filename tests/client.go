@@ -24,6 +24,8 @@ const (
 	getPlaybackJSON      = `{"type":106,"requestID":"abc","data":{"liveID":%s}}`
 	getAllGiftJSON       = `{"type":107,"requestID":"abc"}`
 	getWalletBalanceJSON = `{"type":108,"requestID":"abc"}`
+	getUserLiveInfoJSON  = `{"type":109,"requestID":"abc","data":{"userID":%d}}`
+	getAllLiveListJSON   = `{"type":110,"requestID":"abc"}`
 	getManagerListJSON   = `{"type":200,"requestID":"abc"}`
 	addManagerJSON       = `{"type":201,"requestID":"abc","data":{"managerUID":%d}}`
 	deleteManagerJSON    = `{"type":202,"requestID":"abc","data":{"managerUID":%d}}`
@@ -109,25 +111,23 @@ func main() {
 					continue
 				}
 			case 102:
-				log.Printf("%s", string(msg))
 			case 103:
-				log.Printf("%s", string(msg))
 			case 104:
-				log.Printf("%s", string(msg))
 			case 105:
-				log.Printf("%s", string(msg))
 			case 106:
-				log.Printf("%s", string(msg))
 			case 107:
-				log.Printf("%s", string(msg))
 			case 108:
-				log.Printf("%s", string(msg))
+			case 109:
+			case 110:
 			case 200:
-				log.Printf("%s", string(msg))
 			case 201:
-				log.Printf("%s", string(msg))
 			case 202:
-				log.Printf("%s", string(msg))
+			case 204:
+			case 205:
+			case 300:
+			case 301:
+			case 302:
+			case 303:
 			case 1000:
 				v = v.Get("data")
 				log.Printf("%s %d %s(%d): %s",
@@ -283,6 +283,12 @@ func main() {
 	checkErr(err)
 
 	_, err = conn.WriteString(getWalletBalanceJSON)
+	checkErr(err)
+
+	_, err = conn.WriteString(fmt.Sprintf(getUserLiveInfoJSON, *liverUID))
+	checkErr(err)
+
+	_, err = conn.WriteString(getAllLiveListJSON)
 	checkErr(err)
 
 	_, err = conn.WriteString(fmt.Sprintf(addManagerJSON, *liverUID))

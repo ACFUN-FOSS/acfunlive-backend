@@ -17,6 +17,8 @@
   * [直播回放](#直播回放)
   * [全部礼物列表](#全部礼物列表)
   * [账户钱包](#账户钱包)
+  * [指定用户的直播信息](#指定用户的直播信息)
+  * [直播间列表](#直播间列表)
   * [登陆用户的房管列表](#登陆用户的房管列表)
   * [添加房管](#添加房管)
   * [删除房管](#删除房管)
@@ -520,6 +522,113 @@
         "acCoin": 57, // 账户AC币数量
         "banana": 289 // 账户香蕉数量
     }
+}
+```
+
+#### 指定用户的直播信息
+##### 请求
+```json
+{
+    "type": 109,
+    "requestID": "abc",
+    "data": {
+        "userID": 26675034
+    }
+}
+```
+
+##### 响应
+```json
+{
+    "type": 109,
+    "requestID": "abc",
+    "result": 1,
+    "data": {
+        "profile": { // 用户信息
+            "userID": 26675034, // 用户uid
+            "nickname": "艾栗AIri", // 用户昵称
+            "avatar": "https://tx-free-imgs.acfun.cn/content/2020_11_22/1606036415911.JPG?imageslim", // 用户头像
+            "avatarFrame": "https://imgs.aixifan.com/WxlISL5vzX-6vMBv2-R3ARFn-q2iMZr-FzayAv.gif", // 用户头像挂件
+            "followingCount": 109, // 用户关注数量
+            "fansCount": 7090, // 用户粉丝数量
+            "contributeCount": 45, // 用户投稿总数
+            "signature": "盐系Vup/红毛狐栗/语音助手/传奇丝袜朋克\n纸板屋：790088315｜微博@艾栗AIri\nLevel up up！", // 用户签名
+            "verifiedText": "AVI联盟成员 AcFun签约虚拟偶像 ", // 用户验证信息
+            "isJoinUpCollege": true, // 用户是否加入阿普学院
+            "isFollowing": true // 登陆用户是否关注了该用户
+        },
+        "liveType": { // 直播类型
+            "categoryID": 4, // 直播主分类ID
+            "categoryName": "虚拟偶像", // 直播主分类名字
+            "subCategoryID": 403, // 直播次分类ID
+            "subCategoryName": "歌回" // 直播次分类名字
+        },
+        "liveID": "R3bNghsjBTI", // 直播ID
+        "streamName": "kszt_2pmWEVxgcRY", // 直播源名字
+        "title": "第一届斯托瑞DD歌回（8点开始）", // 直播间标题
+        "liveStartTime": 1611661443616, // 直播开始的时间，是以毫秒为单位的Unix时间
+        "portrait": false, // 是否手机直播
+        "panoramic": false, // 是否全景直播
+        "liveCover": "https://static.yximgs.com/bs2/ztlc/cover_R3bNghsjBTI_raw.jpg", // 直播间封面
+        "onlineCount": 824, // 直播间在线人数
+        "likeCount": 37669, // 直播间点赞总数
+        "hasFansClub": true, // 主播是否有守护团
+        "disableDanmakuShow": false, // 是否禁止显示弹幕？
+        "paidShowUserBuyStatus": false // 登陆用户是否购买了付费直播？
+    }
+}
+```
+
+#### 直播间列表
+##### 请求
+```json
+{
+    "type": 110,
+    "requestID": "abc",
+}
+```
+
+##### 响应
+```json
+{
+    "type": 110,
+    "requestID": "abc",
+    "result": 1,
+    "data": [
+        {
+            "profile": { // 用户信息
+                "userID": 378269,
+                "nickname": "qyqx",
+                "avatar": "https://tx-free-imgs.acfun.cn/style/image/201907/0ldW0vL9ifWM29JzsAyMlEQxdf1vRgIL.jpg?imageslim",
+                "avatarFrame": "",
+                "followingCount": 5,
+                "fansCount": 93573,
+                "contributeCount": 72,
+                "signature": "不是所有人都是人",
+                "verifiedText": "AcFun游戏区官方认证UP主",
+                "isJoinUpCollege": true,
+                "isFollowing": true
+            },
+            "liveType": { // 直播类型
+                "categoryID": 1,
+                "categoryName": "游戏直播",
+                "subCategoryID": 122,
+                "subCategoryName": "主机游戏"
+            },
+            "liveID": "_sLc9sJZIrk",
+            "streamName": "kszt_wS-uzFjFxjc",
+            "title": "铜之间，只玩狠牌！",
+            "liveStartTime": 1611659503558,
+            "portrait": false,
+            "panoramic": false,
+            "liveCover": "https://static.yximgs.com/bs2/ztlc/cover__sLc9sJZIrk_raw.jpg",
+            "onlineCount": 1712,
+            "likeCount": 46704,
+            "hasFansClub": true,
+            "disableDanmakuShow": false,
+            "paidShowUserBuyStatus": false
+        }
+    ]
 }
 ```
 
