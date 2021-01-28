@@ -15,6 +15,8 @@ import (
 	"github.com/valyala/fastjson"
 )
 
+//go:generate go run github.com/ACFUN-FOSS/acfunlive-backend/cmd -o cmd_tpl.go
+
 func main() {
 	port := flag.Uint("port", 0, "WebSocket server port, default 15368")
 	isDebug = flag.Bool("debug", false, "Debug")
@@ -64,7 +66,7 @@ func send(conn *fastws.Conn, msg string) error {
 
 // 处理WebSocket连接
 func wsHandler(conn *fastws.Conn) {
-	defer debug("WebSocket connection close")
+	defer debug("WebSocket connection from %s close", conn.RemoteAddr().String())
 
 	debug("WebSocket connection open, local address: %s, remote address: %s", conn.LocalAddr().String(), conn.RemoteAddr().String())
 	var pool fastjson.ParserPool
@@ -154,7 +156,7 @@ func wsHandler(conn *fastws.Conn) {
 					pool.Put(p)
 				}()
 			} else {
-				debug("Unknown request type: %d", reqType)
+				debug("Error: unknown request type: %d", reqType)
 				_ = send(conn, fmt.Sprintf(respErrJSON, reqType, quote(reqID), invalidReqType, quote("Unknown request type")))
 				pool.Put(p)
 			}

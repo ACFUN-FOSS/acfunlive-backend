@@ -1430,7 +1430,7 @@
     "data": {
         "chatID": "abcd",
         "mediaType": 1,
-        "arraySignalInfo": "abcde"
+        "signalInfo": "abcde"
     }
 }
 ```

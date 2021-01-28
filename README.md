@@ -7,7 +7,7 @@ go get -u github.com/ACFUN-FOSS/acfunlive-backend
 ```
 
 ### 运行参数
-`-port 端口`：设置后端WebSocket端口
+`-port 端口`：设置后端WebSocket端口，默认是15368
 
 `-debug`：打印调试信息
 

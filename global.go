@@ -25,7 +25,7 @@ const (
 const (
 	getDanmuType = iota + 100
 	stopDanmuType
-	getWatchlingListType
+	getWatchingListType
 	getBillboardType
 	getSummaryType
 	getLuckListType

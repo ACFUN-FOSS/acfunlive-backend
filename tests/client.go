@@ -250,7 +250,7 @@ func main() {
 			case 3002:
 				log.Printf("%s", string(msg))
 			default:
-				log.Printf("Unknown response type: %d", respType)
+				log.Printf("Error: unknown response type: %d", respType)
 			}
 
 			pool.Put(p)
@@ -273,8 +273,8 @@ func main() {
 	_, err = conn.WriteString(fmt.Sprintf(getSummaryJSON, quote(liveID)))
 	checkErr(err)
 
-	_, err = conn.WriteString(fmt.Sprintf(getLuckListJSON, quote("7McE2WZl9Xc"), quote("b-D8XOlAlxI")))
-	checkErr(err)
+	//_, err = conn.WriteString(fmt.Sprintf(getLuckListJSON, quote("7McE2WZl9Xc"), quote("b-D8XOlAlxI")))
+	//checkErr(err)
 
 	_, err = conn.WriteString(fmt.Sprintf(getPlaybackJSON, quote(liveID)))
 	checkErr(err)
@@ -288,8 +288,8 @@ func main() {
 	_, err = conn.WriteString(fmt.Sprintf(getUserLiveInfoJSON, *liverUID))
 	checkErr(err)
 
-	_, err = conn.WriteString(getAllLiveListJSON)
-	checkErr(err)
+	//_, err = conn.WriteString(getAllLiveListJSON)
+	//checkErr(err)
 
 	_, err = conn.WriteString(fmt.Sprintf(addManagerJSON, *liverUID))
 	checkErr(err)
