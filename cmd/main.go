@@ -27,7 +27,7 @@ func (ac *acLive) __FUNC__(v *fastjson.Value, reqID string) string {
 	__PARAM__ := string(v.GetStringBytes("data", "__PARAM__"))
 	if __PARAM__ == "" {
 		debug("__FUNC__() error: No __PARAM__")
-		return fmt.Sprintf(respErrJSON, __FUNCType__, quote(reqID), invalidReqData, quote("Need __PARAM__"))
+		return fmt.Sprintf(respErrJSON, __FUNCTYPE__, quote(reqID), invalidReqData, quote("Need __PARAM__"))
 	}
 ` + callSingleFunc + jsonMarshal + dataReturn
 
@@ -36,7 +36,7 @@ func (ac *acLive) __FUNC__(v *fastjson.Value, reqID string) string {
 	__PARAM__ := v.GetInt64("data", "__PARAM__")
 	if __PARAM__ <= 0 {
 		debug("__FUNC__() error: __PARAM__ not exist or less than 1")
-		return fmt.Sprintf(respErrJSON, __FUNCType__, quote(reqID), invalidReqData, quote("__PARAM__ not exist or less than 1"))
+		return fmt.Sprintf(respErrJSON, __FUNCTYPE__, quote(reqID), invalidReqData, quote("__PARAM__ not exist or less than 1"))
 	}
 `
 
@@ -56,7 +56,7 @@ const callSingleNoDataFunc = `
 const callFuncErrHandle = `
 	if err != nil {
 		debug("__FUNC__() error: %v", err)
-		return fmt.Sprintf(respErrJSON, __FUNCType__, quote(reqID), reqHandleErr, quote(err.Error()))
+		return fmt.Sprintf(respErrJSON, __FUNCTYPE__, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 `
 
@@ -64,17 +64,17 @@ const jsonMarshal = `
 	data, err := json.Marshal(ret)
 	if err != nil {
 		debug("__FUNC__() error: cannot marshal to json: %+v", ret)
-		return fmt.Sprintf(respErrJSON, __FUNCType__, quote(reqID), reqHandleErr, quote(err.Error()))
+		return fmt.Sprintf(respErrJSON, __FUNCTYPE__, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 `
 
 const dataReturn = `
-	return fmt.Sprintf(respJSON, __FUNCType__, quote(reqID), string(data))
+	return fmt.Sprintf(respJSON, __FUNCTYPE__, quote(reqID), string(data))
 }
 `
 
 const noDataReturn = `
-	return fmt.Sprintf(respNoDataJSON, __FUNCType__, quote(reqID))
+	return fmt.Sprintf(respNoDataJSON, __FUNCTYPE__, quote(reqID))
 }
 `
 
@@ -128,7 +128,7 @@ func main() {
 	}
 	for _, s := range noParam {
 		f := strings.ReplaceAll(noParamFunc, "__FUNC__", s[0])
-		f = strings.ReplaceAll(f, "__FUNCType__", s[1])
+		f = strings.ReplaceAll(f, "__FUNCTYPE__", s[1])
 		f = strings.ReplaceAll(f, "__CALLFUNC__", s[2])
 		_, err = file.WriteString(f)
 		if err != nil {
@@ -137,7 +137,7 @@ func main() {
 	}
 	for _, s := range singleString {
 		f := strings.ReplaceAll(singleStringFunc, "__FUNC__", s[0])
-		f = strings.ReplaceAll(f, "__FUNCType__", s[1])
+		f = strings.ReplaceAll(f, "__FUNCTYPE__", s[1])
 		f = strings.ReplaceAll(f, "__CALLFUNC__", s[2])
 		f = strings.ReplaceAll(f, "__PARAM__", s[3])
 		_, err = file.WriteString(f)
@@ -147,7 +147,7 @@ func main() {
 	}
 	for _, s := range singleInt64 {
 		f := strings.ReplaceAll(singleInt64Func, "__FUNC__", s[0])
-		f = strings.ReplaceAll(f, "__FUNCType__", s[1])
+		f = strings.ReplaceAll(f, "__FUNCTYPE__", s[1])
 		f = strings.ReplaceAll(f, "__CALLFUNC__", s[2])
 		f = strings.ReplaceAll(f, "__PARAM__", s[3])
 		_, err = file.WriteString(f)
@@ -157,7 +157,7 @@ func main() {
 	}
 	for _, s := range singleInt64NoData {
 		f := strings.ReplaceAll(singleInt64NoDataFunc, "__FUNC__", s[0])
-		f = strings.ReplaceAll(f, "__FUNCType__", s[1])
+		f = strings.ReplaceAll(f, "__FUNCTYPE__", s[1])
 		f = strings.ReplaceAll(f, "__CALLFUNC__", s[2])
 		f = strings.ReplaceAll(f, "__PARAM__", s[3])
 		_, err = file.WriteString(f)
