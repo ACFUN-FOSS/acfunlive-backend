@@ -31,23 +31,18 @@ func (ac *acLive) __FUNC__(v *fastjson.Value, reqID string) string {
 	}
 ` + callSingleFunc + jsonMarshal + dataReturn
 
-const singleInt64Func = `
+const singleInt64FuncHeader = `
 func (ac *acLive) __FUNC__(v *fastjson.Value, reqID string) string {
 	__PARAM__ := v.GetInt64("data", "__PARAM__")
 	if __PARAM__ <= 0 {
 		debug("__FUNC__() error: __PARAM__ not exist or less than 1")
 		return fmt.Sprintf(respErrJSON, __FUNCType__, quote(reqID), invalidReqData, quote("__PARAM__ not exist or less than 1"))
 	}
-` + callSingleFunc + jsonMarshal + dataReturn
+`
 
-const singleInt64NoDataFunc = `
-func (ac *acLive) __FUNC__(v *fastjson.Value, reqID string) string {
-	__PARAM__ := v.GetInt64("data", "__PARAM__")
-	if __PARAM__ <= 0 {
-		debug("__FUNC__() error: __PARAM__ not exist or less than 1")
-		return fmt.Sprintf(respErrJSON, __FUNCType__, quote(reqID), invalidReqData, quote("__PARAM__ not exist or less than 1"))
-	}
-` + callNoDataFunc + noDataReturn
+const singleInt64Func = singleInt64FuncHeader + callSingleFunc + jsonMarshal + dataReturn
+
+const singleInt64NoDataFunc = singleInt64FuncHeader + callSingleNoDataFunc + noDataReturn
 
 const callNoParamFunc = `
 	ret, err := __CALLFUNC__()` + callFuncErrHandle
@@ -55,7 +50,7 @@ const callNoParamFunc = `
 const callSingleFunc = `
 	ret, err := __CALLFUNC__(__PARAM__)` + callFuncErrHandle
 
-const callNoDataFunc = `
+const callSingleNoDataFunc = `
 	err := __CALLFUNC__(__PARAM__)` + callFuncErrHandle
 
 const callFuncErrHandle = `
