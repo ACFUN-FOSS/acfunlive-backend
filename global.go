@@ -53,8 +53,14 @@ const (
 )
 
 const (
-	getLiveTypeListType = iota + 900
-	getOBSConfigType
+	checkLiveAuthType = iota + 900
+	getLiveTypeListType
+	getPushConfigType
+	getPushStatusType
+	getTranscodeInfoType
+	startLiveType
+	stopLiveType
+	changeTitleAndCoverType
 )
 
 // 弹幕类型

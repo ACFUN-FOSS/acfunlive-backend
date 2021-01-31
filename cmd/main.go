@@ -78,20 +78,25 @@ const noDataReturn = `
 }
 `
 
-// 函数名，函数分类，调用的库函数
+// 调用的函数没有参数，有返回，函数名/函数分类/调用的库函数
 var noParam = [][]string{
 	{"getAllLiveList", "getAllLiveListType", "ac.ac.GetAllLiveList"},
 	{"getManagerList", "getManagerListType", "ac.ac.GetManagerList"},
+	{"getLiveTypeList", "getLiveTypeListType", "ac.ac.GetLiveTypeList"},
+	{"getPushConfig", "getPushConfigType", "ac.ac.GetPushConfig"},
+	{"getPushStatus", "getPushStatusType", "ac.ac.GetPushStatus"},
 }
 
-// 函数名，函数分类，调用的库函数，参数
+// 调用的函数有一个string参数，有返回，函数名/函数分类/调用的库函数/参数
 var singleString = [][]string{
 	{"getWatchingList", "getWatchingListType", "ac.ac.GetWatchingListWithLiveID", "liveID"},
 	{"getSummary", "getSummaryType", "ac.ac.GetSummaryWithLiveID", "liveID"},
 	{"getPlayback", "getPlaybackType", "ac.ac.GetPlayback", "liveID"},
+	{"getTranscodeInfo", "getTranscodeInfoType", "ac.ac.GetTranscodeInfo", "streamName"},
+	{"stopLive", "stopLiveType", "ac.ac.StopLive", "liveID"},
 }
 
-// 函数名，函数分类，调用的库函数，参数
+// 调用的函数有一个int64参数，有返回，函数名/函数分类/调用的库函数/参数
 var singleInt64 = [][]string{
 	{"getBillboard", "getBillboardType", "ac.ac.GetBillboard", "liverUID"},
 	{"getUserLiveInfo", "getUserLiveInfoType", "ac.ac.GetUserLiveInfo", "userID"},
@@ -101,7 +106,7 @@ var singleInt64 = [][]string{
 	{"getUserMedal", "getUserMedalType", "acfundanmu.GetUserMedal", "userID"},
 }
 
-// 函数名，函数分类，调用的库函数，参数
+// 调用的函数有一个int64参数，没有返回，函数名/函数分类/调用的库函数/参数
 var singleInt64NoData = [][]string{
 	{"addManager", "addManagerType", "ac.ac.AddManager", "managerUID"},
 	{"deleteManager", "deleteManagerType", "ac.ac.DeleteManager", "managerUID"},

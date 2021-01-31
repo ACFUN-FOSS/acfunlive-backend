@@ -13,28 +13,18 @@ import (
 )
 
 const (
-	heartbeatJSON        = `{"type":1}`
-	loginJSON            = `{"type":2,"requestID":"abc","data":{"account":%s,"password":%s}}`
-	getDanmuJSON         = `{"type":100,"requestID":"abc","data":{"liverUID":%d}}`
-	stopDanmuJSON        = `{"type":101,"requestID":"abc","data":{"liverUID":%d}}`
-	getWatchingListJSON  = `{"type":102,"requestID":"abc","data":{"liveID":%s}}`
-	getBillboardJSON     = `{"type":103,"requestID":"abc","data":{"liverUID":%d}}`
-	getSummaryJSON       = `{"type":104,"requestID":"abc","data":{"liveID":%s}}`
-	getLuckListJSON      = `{"type":105,"requestID":"abc","data":{"liveID":%s,"redpackID":%s}}`
-	getPlaybackJSON      = `{"type":106,"requestID":"abc","data":{"liveID":%s}}`
-	getAllGiftJSON       = `{"type":107,"requestID":"abc"}`
-	getWalletBalanceJSON = `{"type":108,"requestID":"abc"}`
-	getUserLiveInfoJSON  = `{"type":109,"requestID":"abc","data":{"userID":%d}}`
-	getAllLiveListJSON   = `{"type":110,"requestID":"abc"}`
-	getManagerListJSON   = `{"type":200,"requestID":"abc"}`
-	addManagerJSON       = `{"type":201,"requestID":"abc","data":{"managerUID":%d}}`
-	deleteManagerJSON    = `{"type":202,"requestID":"abc","data":{"managerUID":%d}}`
-	managerKickJSON      = `{"type":204,"requestID":"abc","data":{"kickedUID":%d}}`
-	authorKickJSON       = `{"type":205,"requestID":"abc","data":{"kickedUID":%d}}`
-	getMedalDetailJSON   = `{"type":300,"requestID":"abc","data":{"liverUID":%d}}`
-	getMedalListJSON     = `{"type":301,"requestID":"abc","data":{"liverUID":%d}}`
-	getMedalRankListJSON = `{"type":302,"requestID":"abc","data":{"liverUID":%d}}`
-	getUserMedalJSON     = `{"type":303,"requestID":"abc","data":{"userID":%d}}`
+	heartbeatJSON           = `{"type":1}`
+	loginJSON               = `{"type":2,"requestID":"abc","data":{"account":%s,"password":%s}}`
+	getDanmuJSON            = `{"type":100,"requestID":"abc","data":{"liverUID":%d}}`
+	stopDanmuJSON           = `{"type":101,"requestID":"abc","data":{"liverUID":%d}}`
+	checkLiveAuthJSON       = `{"type":900,"requestID":"abc"}`
+	getLiveTypeListJSON     = `{"type":901,"requestID":"abc"}`
+	getPushConfigJSON       = `{"type":902,"requestID":"abc"}`
+	getPushStatusJSON       = `{"type":903,"requestID":"abc"}`
+	getTranscodeInfoJSON    = `{"type":904,"requestID":"abc","data":{"streamName":%s}}`
+	startLiveJSON           = `{"type":905,"requestID":"abc","data":{"title":%s,"coverFile":%s,"streamName":%s,"portrait":false,"panoramic":false,"categoryID":3,"subCategoryID":399}}`
+	stopLiveJSON            = `{"type":906,"requestID":"abc","data":{"liveID":%s}}`
+	changeTitleAndCoverJSON = `{"type":907,"requestID":"abc","data":{"title":%s,"coverFile":%s,"liveID":%s}}`
 )
 
 var quote = strconv.Quote
@@ -42,7 +32,10 @@ var quote = strconv.Quote
 func main() {
 	account := flag.String("account", "", "AcFun account")
 	password := flag.String("password", "", "AcFun account password")
-	liverUID := flag.Int64("uid", 0, "AcFun liver uid")
+	title1 := flag.String("title1", "", "Live title before changed")
+	title2 := flag.String("title2", "", "Live title after changed")
+	cover1 := flag.String("cover1", "", "Live cover before changed")
+	cover2 := flag.String("cover2", "", "Live cover after changed")
 	flag.Parse()
 
 	conn, err := fastws.Dial("ws://127.0.0.1:15368")
@@ -64,6 +57,7 @@ func main() {
 	}()
 
 	var liveID string
+	var streamName string
 	ch := make(chan struct{}, 1)
 	go func() {
 		var pool fastjson.ParserPool
@@ -128,6 +122,20 @@ func main() {
 			case 301:
 			case 302:
 			case 303:
+			case 900:
+			case 901:
+			case 902:
+				streamName = string(v.GetStringBytes("data", "streamName"))
+				log.Printf("Stream name: %s", streamName)
+				log.Printf("RTMP server: %s", string(v.GetStringBytes("data", "rtmpServer")))
+				log.Printf("Stream key: %s", string(v.GetStringBytes("data", "streamKey")))
+			case 903:
+			case 904:
+			case 905:
+				liveID = string(v.GetStringBytes("data", "liveID"))
+				log.Printf("Live ID: %s", liveID)
+			case 906:
+			case 907:
 			case 1000:
 				v = v.Get("data")
 				log.Printf("%s %d %s(%d): %s",
@@ -260,69 +268,42 @@ func main() {
 	_, err = conn.WriteString(fmt.Sprintf(loginJSON, quote(*account), quote(*password)))
 	checkErr(err)
 	<-ch
-	_, err = conn.WriteString(fmt.Sprintf(getDanmuJSON, *liverUID))
-	checkErr(err)
-	<-ch
-
-	_, err = conn.WriteString(fmt.Sprintf(getWatchingListJSON, quote(liveID)))
-	checkErr(err)
-
-	_, err = conn.WriteString(fmt.Sprintf(getBillboardJSON, *liverUID))
-	checkErr(err)
-
-	_, err = conn.WriteString(fmt.Sprintf(getSummaryJSON, quote(liveID)))
-	checkErr(err)
-
-	//_, err = conn.WriteString(fmt.Sprintf(getLuckListJSON, quote("7McE2WZl9Xc"), quote("b-D8XOlAlxI")))
+	//_, err = conn.WriteString(fmt.Sprintf(getDanmuJSON, *liverUID))
 	//checkErr(err)
+	//<-ch
 
-	_, err = conn.WriteString(fmt.Sprintf(getPlaybackJSON, quote(liveID)))
-	checkErr(err)
-
-	_, err = conn.WriteString(getAllGiftJSON)
-	checkErr(err)
-
-	_, err = conn.WriteString(getWalletBalanceJSON)
-	checkErr(err)
-
-	_, err = conn.WriteString(fmt.Sprintf(getUserLiveInfoJSON, *liverUID))
-	checkErr(err)
-
-	//_, err = conn.WriteString(getAllLiveListJSON)
+	//time.Sleep(10 * time.Second)
+	//_, err = conn.WriteString(fmt.Sprintf(stopDanmuJSON, *liverUID))
 	//checkErr(err)
+	//time.Sleep(10 * time.Second)
 
-	_, err = conn.WriteString(fmt.Sprintf(addManagerJSON, *liverUID))
-	checkErr(err)
-	time.Sleep(2 * time.Second)
-
-	_, err = conn.WriteString(getManagerListJSON)
-	checkErr(err)
-	time.Sleep(2 * time.Second)
-
-	_, err = conn.WriteString(fmt.Sprintf(deleteManagerJSON, *liverUID))
+	_, err = conn.WriteString(checkLiveAuthJSON)
 	checkErr(err)
 
-	//_, err = conn.WriteString(fmt.Sprintf(managerKickJSON, *liverUID))
-	//checkErr(err)
-	//_, err = conn.WriteString(fmt.Sprintf(authorKickJSON, *liverUID))
-	//checkErr(err)
-
-	_, err = conn.WriteString(fmt.Sprintf(getMedalDetailJSON, *liverUID))
+	_, err = conn.WriteString(getLiveTypeListJSON)
 	checkErr(err)
 
-	//_, err = conn.WriteString(fmt.Sprintf(getMedalListJSON, *liverUID))
-	//checkErr(err)
-
-	_, err = conn.WriteString(fmt.Sprintf(getMedalRankListJSON, *liverUID))
+	_, err = conn.WriteString(getPushConfigJSON)
 	checkErr(err)
 
-	_, err = conn.WriteString(fmt.Sprintf(getUserMedalJSON, *liverUID))
+	time.Sleep(time.Minute)
+	_, err = conn.WriteString(fmt.Sprintf(getTranscodeInfoJSON, quote(streamName)))
 	checkErr(err)
 
-	time.Sleep(10 * time.Second)
-	_, err = conn.WriteString(fmt.Sprintf(stopDanmuJSON, *liverUID))
+	_, err = conn.WriteString(fmt.Sprintf(startLiveJSON, quote(*title1), quote(*cover1), quote(streamName)))
 	checkErr(err)
-	time.Sleep(10 * time.Second)
+
+	time.Sleep(time.Minute)
+	_, err = conn.WriteString(getPushStatusJSON)
+	checkErr(err)
+
+	time.Sleep(20 * time.Minute)
+	_, err = conn.WriteString(fmt.Sprintf(changeTitleAndCoverJSON, quote(*title2), quote(*cover2), quote(liveID)))
+	checkErr(err)
+
+	time.Sleep(20 * time.Minute)
+	_, err = conn.WriteString(fmt.Sprintf(stopLiveJSON, quote(liveID)))
+	time.Sleep(time.Minute)
 
 	_ = conn.Close()
 }

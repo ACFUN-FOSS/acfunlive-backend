@@ -15,7 +15,7 @@ import (
 	"github.com/valyala/fastjson"
 )
 
-//go:generate go run github.com/ACFUN-FOSS/acfunlive-backend/cmd -o cmd_tpl.go
+//go:generate go run github.com/ACFUN-FOSS/acfunlive-backend/cmd -o cmd_gen.go
 
 func main() {
 	port := flag.Uint("port", 0, "WebSocket server port, default 15368")

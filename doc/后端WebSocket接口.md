@@ -29,6 +29,14 @@
   * [登陆用户拥有的守护徽章列表](#登陆用户拥有的守护徽章列表)
   * [主播守护榜](#主播守护榜)
   * [指定用户正在佩戴的守护徽章信息](#指定用户正在佩戴的守护徽章信息)
+  * [检测开播权限](#检测开播权限)
+  * [直播分类列表](#直播分类列表)
+  * [推流设置](#推流设置)
+  * [推流状态](#推流状态)
+  * [转码信息](#转码信息)
+  * [开始直播](#开始直播)
+  * [停止直播](#停止直播)
+  * [更改直播间标题和封面](#更改直播间标题和封面)
 * [弹幕和信号类型](#弹幕和信号类型)
   * [弹幕类型](#弹幕类型)
     * [弹幕](#弹幕)
@@ -367,9 +375,12 @@
     "requestID": "abc",
     "result": 1,
     "data": {
-        "liveDuration": 13506514, // 直播时长，单位为毫秒
-        "likeCount": "39380", // 点赞总数
-        "watchCount": "13475" // 观看过直播的人数总数
+        "duration": 7565966, // 直播时长，单位为毫秒
+        "likeCount": 12996, // 点赞总数
+        "watchCount": 926, // 观看过直播的人数总数
+        "giftCount": 10, // 直播收到的付费礼物数量，登陆主播帐号才能查询到
+        "diamondCount": 50000, // 直播收到的付费礼物对应的钻石数量，100钻石=1AC币，登陆主播帐号才能查询到
+        "bananaCount": 100 // 直播收到的香蕉数量，登陆主播帐号才能查询到
     }
 }
 ```
@@ -972,6 +983,235 @@
 }
 ```
 
+#### 检测开播权限
+##### 请求
+```json
+{
+    "type": 900,
+    "requestID": "abc"
+}
+```
+
+##### 响应
+```json
+{
+    "type": 900,
+    "requestID": "abc",
+    "result": 1,
+    "data": {
+        "liveAuth": true
+    }
+}
+```
+
+`liveAuth`：能否直播
+
+#### 直播分类列表
+##### 请求
+```json
+{
+    "type": 901,
+    "requestID": "abc"
+}
+```
+
+##### 响应
+```json
+{
+    "type": 901,
+    "requestID": "abc",
+    "result": 1,
+    "data": [
+        {
+            "categoryID": 1, // 直播主分类ID
+            "categoryName": "游戏直播", // 直播主分类名字
+            "subCategoryID": 101, // 直播次分类ID
+            "subCategoryName": "英雄联盟" // 直播次分类名字
+        }
+    ]
+}
+```
+
+#### 推流设置
+##### 请求
+```json
+{
+    "type": 902,
+    "requestID": "abc"
+}
+```
+
+##### 响应
+```json
+{
+    "type": 902,
+    "requestID": "abc",
+    "result": 1,
+    "data": {
+        "streamName": "kszt_PYrssS_J4w", // 直播源名字
+        "streamPullAddress": "https://tx-adaptive.pull.yximgs.com/livecloud/kszt_PYrssS_J4w.flv?txSecret=adfd9fcb80b9d8f6d0071ba88f33ee8b\u0026txTime=603eadd2\u0026stat=XIFGbCNUSzcScMvRvgKb%2FT%2FT2mInuvBYcy5eD%2FRbbmk%3D\u0026oidc=alihb", // 拉流地址，也就是直播源地址
+        "streamPushAddress": [ // 推流地址，目前分为阿里云和腾讯云两种
+            "rtmp://aliyun-open-push.voip.yximgs.com/livecloud/kszt_PYrssS_J4w?sign=c0377c25-c6e74ddb3ea81bd98c7279d87a16ae75\u0026ks_fix_ts\u0026ks_ctx=dHRwOlBVTEw7dGZiOjE7dmVyOjYzMTtwZHk6MDt2cXQ6VU5LTk9XTjtpc1Y6ZmFsc2U7YWlkOjEwMzQxMQ%3D%3D",
+            "rtmp://txyun-open-push.voip.yximgs.com/livecloud/kszt_PYrssS_J4w?sign=c0377c25-c6e74ddb3ea81bd98c7279d87a16ae75\u0026ks_fix_ts\u0026ks_ctx=dHRwOlBVTEw7dGZiOjE7dmVyOjYzMTtwZHk6MDt2cXQ6VU5LTk9XTjtpc1Y6ZmFsc2U7YWlkOjEwMzQxMQ%3D%3D"
+        ],
+        "panoramic": false, // 是否全景直播
+        "interval": 5000, // 发送查询转码信息的时间间隔，单位为毫秒
+        "rtmpServer": "rtmp://aliyun-open-push.voip.yximgs.com/livecloud", // RTMP服务器
+        "streamKey": "kszt_PYrssS_J4w?sign=c0377c25-c6e74ddb3ea81bd987279d87a16ae75\u0026ks_fix_ts\u0026ks_ctx=dHRwOlBVTEw7dGZiOjE7dmVyOjYzMTtwZHk6MDt2cXQ6VULTk9XTjtpc1Y6ZmFsc2U7YWlkOjEwMzQxMQ%3D%3D" // 直播码/串流密钥
+    }
+}
+```
+
+#### 推流状态
+##### 请求
+```json
+{
+    "type": 903,
+    "requestID": "abc"
+}
+```
+
+开播后才有返回
+
+##### 响应
+```json
+{
+    "type": 903,
+    "requestID": "abc",
+    "result": 1,
+    "data": {
+        "liveID": "yECC9bopbF",
+        "streamName": "kszt_PYrssS_J4w",
+        "title": "听歌", // 直播间标题
+        "liveCover": "https://ali-live.static.yximgs.com/bs2/ztlc/cover_yECC9bopbF_compress.webp", // 直播间封面
+        "liveStartTime": 1612128526972, // 直播开始的时间，是以毫秒为单位的Unix时间
+        "panoramic": false, // 是否全景直播
+        "bizUnit": "acfun", // 通常是"acfun"
+        "bizCustomData": "{\"typeId\":399,\"type\":[3,399]}" // 直播分类，格式是json
+    }
+}
+```
+
+#### 转码信息
+##### 请求
+```json
+{
+    "type": 904,
+    "requestID": "abc",
+    "data": {
+        "streamName": "cdefg"
+    }
+}
+```
+
+`streamName`从[推流设置](#推流设置)那里获得
+
+##### 响应
+```json
+{
+    "type": 904,
+    "requestID": "abc",
+    "result": 1,
+    "data": [
+        {
+            "streamURL": {
+                "url": "https://tx-adaptive.pull.yximgs.com/livecloud/kszt_PYrssS_J4w_hd2000.flv?txSecret=75073aa3db830c6e9ab9d50c5b97640\u0026txTime=603eae0e\u0026stat=XIFGbCNUSzcScMvRvgKb%2FT%2FT2mInuvBcy5eD%2FRbbmk%3D\u0026tsc=origin\u0026oidc=alihb", // 直播源链接
+                "bitrate": 2000, // 直播源码率，不一定是实际码率
+                "qualityType": "HIGH", // 直播源类型
+                "qualityName": "超清" // 直播源类型的中文名字
+            },
+            "resolution": "1280x720", // 直播视频分辨率
+            "frameRate": 26, // 直播视频FPS？
+            "template": "hd2000" // 直播模板？
+        }
+    ]
+}
+```
+
+`data`不为空说明服务器开始转码，推流成功，可以[开始直播](#开始直播)
+
+#### 开始直播
+##### 请求
+```json
+{
+    "type": 905,
+    "requestID": "abc",
+    "data": {
+        "title": "测试", // 直播间标题
+        "coverFile": "cdefg.jpg", // 直播间封面图片（可以是gif）的本地路径
+        "streamName": "ghijkd", // 直播源名字，从推流设置那里获得
+        "portrait": false, // 是否手机直播
+        "panoramic": false, // 是否全景直播
+        "categoryID": 3, // 直播主分类ID
+        "subCategoryID": 399 // 直播次分类ID
+    }
+}
+```
+
+##### 响应
+```json
+{
+    "type": 905,
+    "requestID": "abc",
+    "result": 1,
+    "data": {
+        "liveID": "yECC9bopbF"
+    }
+}
+```
+
+#### 停止直播
+##### 请求
+```json
+{
+    "type": 906,
+    "requestID": "abc",
+    "data": {
+        "liveID": "cdefg"
+    }
+}
+```
+
+`liveID`从[开始直播](#开始直播)那里获得
+
+##### 响应
+```json
+{
+    "type": 906,
+    "requestID": "abc",
+    "result": 1,
+    "data": {
+        "duration": 2459600, // 直播时长，单位为毫秒
+        "endReason": "author stopped" // 停止直播的原因
+    }
+}
+```
+
+#### 更改直播间标题和封面
+##### 请求
+```json
+{
+    "type": 907,
+    "requestID": "abc",
+    "data": {
+        "title": "测试",
+        "coverFile": "cdefg.jpg",
+        "liveID": "hijklmn"
+    }
+}
+```
+
+`liveID`从[开始直播](#开始直播)那里获得
+
+##### 响应
+```json
+{
+    "type": 907,
+    "requestID": "abc",
+    "result": 1
+}
+```
+
 ### 弹幕和信号类型
 弹幕和信号数据在客户端请求[获取弹幕](#获取弹幕)后由服务端发送给客户端
 
@@ -1401,7 +1641,7 @@
             "grabBeginTime": 1608464088394, // 开始抢红包的时间，是以毫秒为单位的Unix时间
             "getTokenLatestTime": 1608464086394, // 抢红包的用户获得token的最晚时间，是以毫秒为单位的Unix时间
             "redpackID": "c5N6p7IMyjA", // 红包ID
-            "redpackBizUnit": "ztLiveAcfunRedpackGift", // 一般是"ztLiveAcfunRedpackGift"
+            "redpackBizUnit": "ztLiveAcfunRedpackGift", // "ztLiveAcfunRedpackGift"代表的是观众，"ztLiveAcfunRedpackAuthor"代表的是主播？
             "redpackAmount": 99, // 红包的总价值，单位是AC币
             "settleBeginTime": 1608464148394 // 抢红包的结束时间，是以毫秒为单位的Unix时间
         }
