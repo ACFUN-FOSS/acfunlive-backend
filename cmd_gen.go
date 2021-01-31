@@ -73,20 +73,20 @@ func (ac *acLive) getPushConfig(v *fastjson.Value, reqID string) string {
 	return fmt.Sprintf(respJSON, getPushConfigType, quote(reqID), string(data))
 }
 
-func (ac *acLive) getPushStatus(v *fastjson.Value, reqID string) string {
-	ret, err := ac.ac.GetPushStatus()
+func (ac *acLive) getLiveStatus(v *fastjson.Value, reqID string) string {
+	ret, err := ac.ac.GetLiveStatus()
 	if err != nil {
-		debug("getPushStatus() error: %v", err)
-		return fmt.Sprintf(respErrJSON, getPushStatusType, quote(reqID), reqHandleErr, quote(err.Error()))
+		debug("getLiveStatus() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getLiveStatusType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getPushStatus() error: cannot marshal to json: %+v", ret)
-		return fmt.Sprintf(respErrJSON, getPushStatusType, quote(reqID), reqHandleErr, quote(err.Error()))
+		debug("getLiveStatus() error: cannot marshal to json: %+v", ret)
+		return fmt.Sprintf(respErrJSON, getLiveStatusType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
-	return fmt.Sprintf(respJSON, getPushStatusType, quote(reqID), string(data))
+	return fmt.Sprintf(respJSON, getLiveStatusType, quote(reqID), string(data))
 }
 
 func (ac *acLive) getWatchingList(v *fastjson.Value, reqID string) string {

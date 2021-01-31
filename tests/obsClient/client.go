@@ -20,7 +20,7 @@ const (
 	checkLiveAuthJSON       = `{"type":900,"requestID":"abc"}`
 	getLiveTypeListJSON     = `{"type":901,"requestID":"abc"}`
 	getPushConfigJSON       = `{"type":902,"requestID":"abc"}`
-	getPushStatusJSON       = `{"type":903,"requestID":"abc"}`
+	getLiveStatusJSON       = `{"type":903,"requestID":"abc"}`
 	getTranscodeInfoJSON    = `{"type":904,"requestID":"abc","data":{"streamName":%s}}`
 	startLiveJSON           = `{"type":905,"requestID":"abc","data":{"title":%s,"coverFile":%s,"streamName":%s,"portrait":false,"panoramic":false,"categoryID":3,"subCategoryID":399}}`
 	stopLiveJSON            = `{"type":906,"requestID":"abc","data":{"liveID":%s}}`
@@ -294,7 +294,7 @@ func main() {
 	checkErr(err)
 
 	time.Sleep(time.Minute)
-	_, err = conn.WriteString(getPushStatusJSON)
+	_, err = conn.WriteString(getLiveStatusJSON)
 	checkErr(err)
 
 	time.Sleep(20 * time.Minute)

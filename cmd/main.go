@@ -84,7 +84,7 @@ var noParam = [][]string{
 	{"getManagerList", "getManagerListType", "ac.ac.GetManagerList"},
 	{"getLiveTypeList", "getLiveTypeListType", "ac.ac.GetLiveTypeList"},
 	{"getPushConfig", "getPushConfigType", "ac.ac.GetPushConfig"},
-	{"getPushStatus", "getPushStatusType", "ac.ac.GetPushStatus"},
+	{"getLiveStatus", "getLiveStatusType", "ac.ac.GetLiveStatus"},
 }
 
 // 调用的函数有一个string参数，有返回，函数名/函数分类/调用的库函数/参数

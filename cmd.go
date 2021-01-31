@@ -32,7 +32,7 @@ var cmdDispatch = map[int]func(*acLive, *fastjson.Value, string) string{
 	checkLiveAuthType:       (*acLive).checkLiveAuth,
 	getLiveTypeListType:     (*acLive).getLiveTypeList,
 	getPushConfigType:       (*acLive).getPushConfig,
-	getPushStatusType:       (*acLive).getPushStatus,
+	getLiveStatusType:       (*acLive).getLiveStatus,
 	getTranscodeInfoType:    (*acLive).getTranscodeInfo,
 	startLiveType:           (*acLive).startLive,
 	stopLiveType:            (*acLive).stopLive,

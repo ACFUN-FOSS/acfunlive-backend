@@ -56,7 +56,7 @@ const (
 	checkLiveAuthType = iota + 900
 	getLiveTypeListType
 	getPushConfigType
-	getPushStatusType
+	getLiveStatusType
 	getTranscodeInfoType
 	startLiveType
 	stopLiveType
