@@ -19,20 +19,18 @@ import (
 )
 `
 
-const noParamFunc = `
-func (ac *acLive) __FUNC__(v *fastjson.Value, reqID string) string {` + callNoParamFunc + jsonMarshal + dataReturn
+const funcHeader = `
+func (ac *acLive) __FUNC__(v *fastjson.Value, reqID string) string {`
 
-const singleStringFunc = `
-func (ac *acLive) __FUNC__(v *fastjson.Value, reqID string) string {
+const singleString = `
 	__PARAM__ := string(v.GetStringBytes("data", "__PARAM__"))
 	if __PARAM__ == "" {
 		debug("__FUNC__() error: No __PARAM__")
 		return fmt.Sprintf(respErrJSON, __FUNCTYPE__, quote(reqID), invalidReqData, quote("Need __PARAM__"))
 	}
-` + callSingleFunc + jsonMarshal + dataReturn
+`
 
-const singleInt64FuncHeader = `
-func (ac *acLive) __FUNC__(v *fastjson.Value, reqID string) string {
+const singleInt64 = `
 	__PARAM__ := v.GetInt64("data", "__PARAM__")
 	if __PARAM__ <= 0 {
 		debug("__FUNC__() error: __PARAM__ not exist or less than 1")
@@ -40,18 +38,14 @@ func (ac *acLive) __FUNC__(v *fastjson.Value, reqID string) string {
 	}
 `
 
-const singleInt64Func = singleInt64FuncHeader + callSingleFunc + jsonMarshal + dataReturn
-
-const singleInt64NoDataFunc = singleInt64FuncHeader + callSingleNoDataFunc + noDataReturn
-
 const callNoParamFunc = `
 	ret, err := __CALLFUNC__()` + callFuncErrHandle
 
-const callSingleFunc = `
-	ret, err := __CALLFUNC__(__PARAM__)` + callFuncErrHandle
+const callFunc = `
+	ret, err := __CALLFUNC__(__ALLPARAM__)` + callFuncErrHandle
 
-const callSingleNoDataFunc = `
-	err := __CALLFUNC__(__PARAM__)` + callFuncErrHandle
+const callNoDataFunc = `
+	err := __CALLFUNC__(__ALLPARAM__)` + callFuncErrHandle
 
 const callFuncErrHandle = `
 	if err != nil {
@@ -78,40 +72,51 @@ const noDataReturn = `
 }
 `
 
-// 调用的函数没有参数，有返回，函数名/函数分类/调用的库函数
-var noParam = [][]string{
-	{"getAllLiveList", "getAllLiveListType", "ac.ac.GetAllLiveList"},
-	{"getManagerList", "getManagerListType", "ac.ac.GetManagerList"},
-	{"getLiveTypeList", "getLiveTypeListType", "ac.ac.GetLiveTypeList"},
-	{"getPushConfig", "getPushConfigType", "ac.ac.GetPushConfig"},
-	{"getLiveStatus", "getLiveStatusType", "ac.ac.GetLiveStatus"},
+const noParamFunc = funcHeader + callNoParamFunc + jsonMarshal + dataReturn
+
+// 函数内容
+type funcContent struct {
+	funcName string   // 函数名字
+	funcType string   // 函数类型
+	callFunc string   // 调用的函数
+	params   []string // 调用函数的参数
 }
 
-// 调用的函数有一个string参数，有返回，函数名/函数分类/调用的库函数/参数
-var singleString = [][]string{
-	{"getWatchingList", "getWatchingListType", "ac.ac.GetWatchingListWithLiveID", "liveID"},
-	{"getSummary", "getSummaryType", "ac.ac.GetSummaryWithLiveID", "liveID"},
-	{"getPlayback", "getPlaybackType", "ac.ac.GetPlayback", "liveID"},
-	{"getTranscodeInfo", "getTranscodeInfoType", "ac.ac.GetTranscodeInfo", "streamName"},
-	{"stopLive", "stopLiveType", "ac.ac.StopLive", "liveID"},
+// 调用的函数没有参数，有返回
+var noParamFuncContent = []funcContent{
+	{"getAllLiveList", "getAllLiveListType", "ac.ac.GetAllLiveList", []string{}},
+	{"getManagerList", "getManagerListType", "ac.ac.GetManagerList", []string{}},
+	{"getLiveTypeList", "getLiveTypeListType", "ac.ac.GetLiveTypeList", []string{}},
+	{"getPushConfig", "getPushConfigType", "ac.ac.GetPushConfig", []string{}},
+	{"getLiveStatus", "getLiveStatusType", "ac.ac.GetLiveStatus", []string{}},
 }
 
-// 调用的函数有一个int64参数，有返回，函数名/函数分类/调用的库函数/参数
-var singleInt64 = [][]string{
-	{"getBillboard", "getBillboardType", "ac.ac.GetBillboard", "liverUID"},
-	{"getUserLiveInfo", "getUserLiveInfoType", "ac.ac.GetUserLiveInfo", "userID"},
-	{"getMedalDetail", "getMedalDetailType", "ac.ac.GetMedalDetail", "liverUID"},
-	{"getMedalList", "getMedalListType", "ac.ac.GetMedalList", "liverUID"},
-	{"getMedalRankList", "getMedalRankListType", "ac.ac.GetMedalRankList", "liverUID"},
-	{"getUserMedal", "getUserMedalType", "acfundanmu.GetUserMedal", "userID"},
+// 调用的函数只有string参数，有返回
+var stringFuncContent = []funcContent{
+	{"getWatchingList", "getWatchingListType", "ac.ac.GetWatchingListWithLiveID", []string{"liveID"}},
+	{"getSummary", "getSummaryType", "ac.ac.GetSummaryWithLiveID", []string{"liveID"}},
+	{"getLuckList", "getLuckListType", "ac.ac.GetLuckList", []string{"liveID", "redpackID"}},
+	{"getPlayback", "getPlaybackType", "ac.ac.GetPlayback", []string{"liveID"}},
+	{"getTranscodeInfo", "getTranscodeInfoType", "ac.ac.GetTranscodeInfo", []string{"streamName"}},
+	{"stopLive", "stopLiveType", "ac.ac.StopLive", []string{"liveID"}},
 }
 
-// 调用的函数有一个int64参数，没有返回，函数名/函数分类/调用的库函数/参数
-var singleInt64NoData = [][]string{
-	{"addManager", "addManagerType", "ac.ac.AddManager", "managerUID"},
-	{"deleteManager", "deleteManagerType", "ac.ac.DeleteManager", "managerUID"},
-	{"managerKick", "managerKickType", "ac.ac.ManagerKick", "kickedUID"},
-	{"authorKick", "authorKickType", "ac.ac.AuthorKick", "kickedUID"},
+// 调用的函数只有int64参数，有返回
+var int64FuncContent = []funcContent{
+	{"getBillboard", "getBillboardType", "ac.ac.GetBillboard", []string{"liverUID"}},
+	{"getUserLiveInfo", "getUserLiveInfoType", "ac.ac.GetUserLiveInfo", []string{"userID"}},
+	{"getMedalDetail", "getMedalDetailType", "ac.ac.GetMedalDetail", []string{"liverUID"}},
+	{"getMedalList", "getMedalListType", "ac.ac.GetMedalList", []string{"liverUID"}},
+	{"getMedalRankList", "getMedalRankListType", "ac.ac.GetMedalRankList", []string{"liverUID"}},
+	{"getUserMedal", "getUserMedalType", "acfundanmu.GetUserMedal", []string{"userID"}},
+}
+
+// 调用的函数只有int64参数，没有返回
+var int64NoDataFuncContent = []funcContent{
+	{"addManager", "addManagerType", "ac.ac.AddManager", []string{"managerUID"}},
+	{"deleteManager", "deleteManagerType", "ac.ac.DeleteManager", []string{"managerUID"}},
+	{"managerKick", "managerKickType", "ac.ac.ManagerKick", []string{"kickedUID"}},
+	{"authorKick", "authorKickType", "ac.ac.AuthorKick", []string{"kickedUID"}},
 }
 
 func main() {
@@ -131,41 +136,59 @@ func main() {
 	if err != nil {
 		log.Panicf("Cannot write content to %s", *output)
 	}
-	for _, s := range noParam {
-		f := strings.ReplaceAll(noParamFunc, "__FUNC__", s[0])
-		f = strings.ReplaceAll(f, "__FUNCTYPE__", s[1])
-		f = strings.ReplaceAll(f, "__CALLFUNC__", s[2])
+	for _, c := range noParamFuncContent {
+		f := strings.ReplaceAll(noParamFunc, "__FUNC__", c.funcName)
+		f = strings.ReplaceAll(f, "__FUNCTYPE__", c.funcType)
+		f = strings.ReplaceAll(f, "__CALLFUNC__", c.callFunc)
 		_, err = file.WriteString(f)
 		if err != nil {
 			log.Panicf("Cannot write content to %s", *output)
 		}
 	}
-	for _, s := range singleString {
-		f := strings.ReplaceAll(singleStringFunc, "__FUNC__", s[0])
-		f = strings.ReplaceAll(f, "__FUNCTYPE__", s[1])
-		f = strings.ReplaceAll(f, "__CALLFUNC__", s[2])
-		f = strings.ReplaceAll(f, "__PARAM__", s[3])
-		_, err = file.WriteString(f)
+	for _, c := range stringFuncContent {
+		stringFunc := funcHeader
+		for _, s := range c.params {
+			stringFunc += singleString
+			stringFunc = strings.ReplaceAll(stringFunc, "__PARAM__", s)
+		}
+		stringFunc += callFunc + jsonMarshal + dataReturn
+		stringFunc = strings.ReplaceAll(stringFunc, "__FUNC__", c.funcName)
+		stringFunc = strings.ReplaceAll(stringFunc, "__FUNCTYPE__", c.funcType)
+		stringFunc = strings.ReplaceAll(stringFunc, "__CALLFUNC__", c.callFunc)
+		stringFunc = strings.ReplaceAll(stringFunc, "__ALLPARAM__", strings.Join(c.params, ", "))
+		_, err = file.WriteString(stringFunc)
 		if err != nil {
 			log.Panicf("Cannot write content to %s", *output)
 		}
 	}
-	for _, s := range singleInt64 {
-		f := strings.ReplaceAll(singleInt64Func, "__FUNC__", s[0])
-		f = strings.ReplaceAll(f, "__FUNCTYPE__", s[1])
-		f = strings.ReplaceAll(f, "__CALLFUNC__", s[2])
-		f = strings.ReplaceAll(f, "__PARAM__", s[3])
-		_, err = file.WriteString(f)
+	for _, c := range int64FuncContent {
+		int64Func := funcHeader
+		for _, s := range c.params {
+			int64Func += singleInt64
+			int64Func = strings.ReplaceAll(int64Func, "__PARAM__", s)
+		}
+		int64Func += callFunc + jsonMarshal + dataReturn
+		int64Func = strings.ReplaceAll(int64Func, "__FUNC__", c.funcName)
+		int64Func = strings.ReplaceAll(int64Func, "__FUNCTYPE__", c.funcType)
+		int64Func = strings.ReplaceAll(int64Func, "__CALLFUNC__", c.callFunc)
+		int64Func = strings.ReplaceAll(int64Func, "__ALLPARAM__", strings.Join(c.params, ", "))
+		_, err = file.WriteString(int64Func)
 		if err != nil {
 			log.Panicf("Cannot write content to %s", *output)
 		}
 	}
-	for _, s := range singleInt64NoData {
-		f := strings.ReplaceAll(singleInt64NoDataFunc, "__FUNC__", s[0])
-		f = strings.ReplaceAll(f, "__FUNCTYPE__", s[1])
-		f = strings.ReplaceAll(f, "__CALLFUNC__", s[2])
-		f = strings.ReplaceAll(f, "__PARAM__", s[3])
-		_, err = file.WriteString(f)
+	for _, c := range int64NoDataFuncContent {
+		int64NoDataFunc := funcHeader
+		for _, s := range c.params {
+			int64NoDataFunc += singleInt64
+			int64NoDataFunc = strings.ReplaceAll(int64NoDataFunc, "__PARAM__", s)
+		}
+		int64NoDataFunc += callNoDataFunc + noDataReturn
+		int64NoDataFunc = strings.ReplaceAll(int64NoDataFunc, "__FUNC__", c.funcName)
+		int64NoDataFunc = strings.ReplaceAll(int64NoDataFunc, "__FUNCTYPE__", c.funcType)
+		int64NoDataFunc = strings.ReplaceAll(int64NoDataFunc, "__CALLFUNC__", c.callFunc)
+		int64NoDataFunc = strings.ReplaceAll(int64NoDataFunc, "__ALLPARAM__", strings.Join(c.params, ", "))
+		_, err = file.WriteString(int64NoDataFunc)
 		if err != nil {
 			log.Panicf("Cannot write content to %s", *output)
 		}

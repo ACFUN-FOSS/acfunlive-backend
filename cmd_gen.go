@@ -133,6 +133,34 @@ func (ac *acLive) getSummary(v *fastjson.Value, reqID string) string {
 	return fmt.Sprintf(respJSON, getSummaryType, quote(reqID), string(data))
 }
 
+func (ac *acLive) getLuckList(v *fastjson.Value, reqID string) string {
+	liveID := string(v.GetStringBytes("data", "liveID"))
+	if liveID == "" {
+		debug("getLuckList() error: No liveID")
+		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), invalidReqData, quote("Need liveID"))
+	}
+
+	redpackID := string(v.GetStringBytes("data", "redpackID"))
+	if redpackID == "" {
+		debug("getLuckList() error: No redpackID")
+		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), invalidReqData, quote("Need redpackID"))
+	}
+
+	ret, err := ac.ac.GetLuckList(liveID, redpackID)
+	if err != nil {
+		debug("getLuckList() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	data, err := json.Marshal(ret)
+	if err != nil {
+		debug("getLuckList() error: cannot marshal to json: %+v", ret)
+		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getLuckListType, quote(reqID), string(data))
+}
+
 func (ac *acLive) getPlayback(v *fastjson.Value, reqID string) string {
 	liveID := string(v.GetStringBytes("data", "liveID"))
 	if liveID == "" {

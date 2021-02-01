@@ -76,33 +76,6 @@ func login(acMap *sync.Map, account, password, reqID string) string {
 	return fmt.Sprintf(respJSON, loginType, quote(reqID), fmt.Sprintf(`{"tokenInfo":%s}`, string(data)))
 }
 
-// 获取抢到红包的用户列表
-func (ac *acLive) getLuckList(v *fastjson.Value, reqID string) string {
-	liveID := string(v.GetStringBytes("data", "liveID"))
-	if liveID == "" {
-		debug("getLuckList() error: No liveID")
-		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), invalidReqData, quote("Need liveID"))
-	}
-	redpackID := string(v.GetStringBytes("data", "redpackID"))
-	if redpackID == "" {
-		debug("getLuckList() error: No redpackID")
-		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), invalidReqData, quote("Need redpackID"))
-	}
-
-	list, err := ac.ac.GetLuckList(liveID, redpackID)
-	if err != nil {
-		debug("getLuckList() error: %v", err)
-		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), reqHandleErr, quote(err.Error()))
-	}
-	data, err := json.Marshal(list)
-	if err != nil {
-		debug("getLuckList() error: cannot marshal to json: %+v", list)
-		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), reqHandleErr, quote(err.Error()))
-	}
-
-	return fmt.Sprintf(respJSON, getLuckListType, quote(reqID), string(data))
-}
-
 // 获取全部礼物的列表
 func (ac *acLive) getAllGiftList(v *fastjson.Value, reqID string) string {
 	gift, err := ac.ac.GetAllGiftList()
