@@ -20,15 +20,21 @@ var cmdDispatch = map[int]func(*acLive, *fastjson.Value, string) string{
 	getWalletBalanceType:    (*acLive).getWalletBalance,
 	getUserLiveInfoType:     (*acLive).getUserLiveInfo,
 	getAllLiveListType:      (*acLive).getAllLiveList,
+	uploadImageType:         (*acLive).uploadImage,
+	getLiveDataType:         (*acLive).getLiveData,
+	getScheduleListType:     (*acLive).getScheduleList,
 	getManagerListType:      (*acLive).getManagerList,
 	addManagerType:          (*acLive).addManager,
 	deleteManagerType:       (*acLive).deleteManager,
+	getAllKickHistoryType:   (*acLive).getAllKickHistory,
 	managerKickType:         (*acLive).managerKick,
 	authorKickType:          (*acLive).authorKick,
 	getMedalDetailType:      (*acLive).getMedalDetail,
 	getMedalListType:        (*acLive).getMedalList,
 	getMedalRankListType:    (*acLive).getMedalRankList,
 	getUserMedalType:        (*acLive).getUserMedal,
+	wearMedalType:           (*acLive).wearMedal,
+	cancelWearMedalType:     (*acLive).cancelWearMedal,
 	checkLiveAuthType:       (*acLive).checkLiveAuth,
 	getLiveTypeListType:     (*acLive).getLiveTypeList,
 	getPushConfigType:       (*acLive).getPushConfig,
@@ -110,6 +116,23 @@ func (ac *acLive) getWalletBalance(v *fastjson.Value, reqID string) string {
 	return fmt.Sprintf(respJSON, getWalletBalanceType, quote(reqID), fmt.Sprintf(`{"acCoin":%d,"banana":%d}`, acCoin, banana))
 }
 
+// 上传图片
+func (ac *acLive) uploadImage(v *fastjson.Value, reqID string) string {
+	imageFile := string(v.GetStringBytes("data", "imageFile"))
+	if imageFile == "" {
+		debug("uploadImage() error: No imageFile")
+		return fmt.Sprintf(respErrJSON, uploadImageType, quote(reqID), invalidReqData, quote("Need imageFile"))
+	}
+
+	imageURL, err := ac.ac.UploadImage(imageFile)
+	if err != nil {
+		debug("uploadImage() error: %v", err)
+		return fmt.Sprintf(respErrJSON, uploadImageType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, uploadImageType, quote(reqID), fmt.Sprintf(`{"imageURL":%s}`, quote(imageURL)))
+}
+
 // 检测是否有直播权限
 func (ac *acLive) checkLiveAuth(v *fastjson.Value, reqID string) string {
 	auth, err := ac.ac.CheckLiveAuth()
@@ -159,15 +182,7 @@ func (ac *acLive) startLive(v *fastjson.Value, reqID string) string {
 // 更改直播间标题和封面
 func (ac *acLive) changeTitleAndCover(v *fastjson.Value, reqID string) string {
 	title := string(v.GetStringBytes("data", "title"))
-	if title == "" {
-		debug("changeTitleAndCover() error: No title")
-		return fmt.Sprintf(respErrJSON, changeTitleAndCoverType, quote(reqID), invalidReqData, quote("Need title"))
-	}
 	coverFile := string(v.GetStringBytes("data", "coverFile"))
-	if coverFile == "" {
-		debug("changeTitleAndCover() error: No coverFile")
-		return fmt.Sprintf(respErrJSON, changeTitleAndCoverType, quote(reqID), invalidReqData, quote("Need coverFile"))
-	}
 	liveID := string(v.GetStringBytes("data", "liveID"))
 	if liveID == "" {
 		debug("changeTitleAndCover() error: No liveID")

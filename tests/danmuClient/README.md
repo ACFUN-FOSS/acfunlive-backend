@@ -7,5 +7,5 @@ go build
 # 在另外一个终端
 cd tests/danmuClient
 go build client.go
-./client -account youraccount -password password -uid liveruid
+./client -account youraccount -password password -image imageFile -uid liveruid
 ```

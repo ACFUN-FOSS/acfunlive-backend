@@ -38,8 +38,19 @@ const singleInt64 = `
 	}
 `
 
+const singleInt = `
+	__PARAM__ := v.GetInt("data", "__PARAM__")
+	if __PARAM__ <= 0 {
+		debug("__FUNC__() error: __PARAM__ not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, __FUNCTYPE__, quote(reqID), invalidReqData, quote("__PARAM__ not exist or less than 1"))
+	}
+`
+
 const callNoParamFunc = `
 	ret, err := __CALLFUNC__()` + callFuncErrHandle
+
+const callNoParamNoDataFunc = `
+	err := __CALLFUNC__()` + callFuncErrHandle
 
 const callFunc = `
 	ret, err := __CALLFUNC__(__ALLPARAM__)` + callFuncErrHandle
@@ -74,6 +85,8 @@ const noDataReturn = `
 
 const noParamFunc = funcHeader + callNoParamFunc + jsonMarshal + dataReturn
 
+const noParamNodataFunc = funcHeader + callNoParamNoDataFunc + noDataReturn
+
 // 函数内容
 type funcContent struct {
 	funcName string   // 函数名字
@@ -85,10 +98,17 @@ type funcContent struct {
 // 调用的函数没有参数，有返回
 var noParamFuncContent = []funcContent{
 	{"getAllLiveList", "getAllLiveListType", "ac.ac.GetAllLiveList", []string{}},
+	{"getScheduleList", "getScheduleListType", "ac.ac.GetScheduleList", []string{}},
 	{"getManagerList", "getManagerListType", "ac.ac.GetManagerList", []string{}},
+	{"getAllKickHistory", "getAllKickHistoryType", "ac.ac.GetAllKickHistory", []string{}},
 	{"getLiveTypeList", "getLiveTypeListType", "ac.ac.GetLiveTypeList", []string{}},
 	{"getPushConfig", "getPushConfigType", "ac.ac.GetPushConfig", []string{}},
 	{"getLiveStatus", "getLiveStatusType", "ac.ac.GetLiveStatus", []string{}},
+}
+
+// 调用的函数没有参数，没有返回
+var noParamNoDataFuncContent = []funcContent{
+	{"cancelWearMedal", "cancelWearMedalType", "ac.ac.CancelWearMedal", []string{}},
 }
 
 // 调用的函数只有string参数，有返回
@@ -117,6 +137,12 @@ var int64NoDataFuncContent = []funcContent{
 	{"deleteManager", "deleteManagerType", "ac.ac.DeleteManager", []string{"managerUID"}},
 	{"managerKick", "managerKickType", "ac.ac.ManagerKick", []string{"kickedUID"}},
 	{"authorKick", "authorKickType", "ac.ac.AuthorKick", []string{"kickedUID"}},
+	{"wearMedal", "wearMedalType", "ac.ac.WearMedal", []string{"liverUID"}},
+}
+
+// 调用的函数只有int参数，有返回
+var intFuncContent = []funcContent{
+	{"getLiveData", "getLiveDataType", "ac.ac.GetLiveData", []string{"days"}},
 }
 
 func main() {
@@ -138,6 +164,15 @@ func main() {
 	}
 	for _, c := range noParamFuncContent {
 		f := strings.ReplaceAll(noParamFunc, "__FUNC__", c.funcName)
+		f = strings.ReplaceAll(f, "__FUNCTYPE__", c.funcType)
+		f = strings.ReplaceAll(f, "__CALLFUNC__", c.callFunc)
+		_, err = file.WriteString(f)
+		if err != nil {
+			log.Panicf("Cannot write content to %s", *output)
+		}
+	}
+	for _, c := range noParamNoDataFuncContent {
+		f := strings.ReplaceAll(noParamNodataFunc, "__FUNC__", c.funcName)
 		f = strings.ReplaceAll(f, "__FUNCTYPE__", c.funcType)
 		f = strings.ReplaceAll(f, "__CALLFUNC__", c.callFunc)
 		_, err = file.WriteString(f)
@@ -189,6 +224,22 @@ func main() {
 		int64NoDataFunc = strings.ReplaceAll(int64NoDataFunc, "__CALLFUNC__", c.callFunc)
 		int64NoDataFunc = strings.ReplaceAll(int64NoDataFunc, "__ALLPARAM__", strings.Join(c.params, ", "))
 		_, err = file.WriteString(int64NoDataFunc)
+		if err != nil {
+			log.Panicf("Cannot write content to %s", *output)
+		}
+	}
+	for _, c := range intFuncContent {
+		intFunc := funcHeader
+		for _, s := range c.params {
+			intFunc += singleInt
+			intFunc = strings.ReplaceAll(intFunc, "__PARAM__", s)
+		}
+		intFunc += callFunc + jsonMarshal + dataReturn
+		intFunc = strings.ReplaceAll(intFunc, "__FUNC__", c.funcName)
+		intFunc = strings.ReplaceAll(intFunc, "__FUNCTYPE__", c.funcType)
+		intFunc = strings.ReplaceAll(intFunc, "__CALLFUNC__", c.callFunc)
+		intFunc = strings.ReplaceAll(intFunc, "__ALLPARAM__", strings.Join(c.params, ", "))
+		_, err = file.WriteString(intFunc)
 		if err != nil {
 			log.Panicf("Cannot write content to %s", *output)
 		}

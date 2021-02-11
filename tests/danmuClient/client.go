@@ -26,15 +26,19 @@ const (
 	getWalletBalanceJSON = `{"type":108,"requestID":"abc"}`
 	getUserLiveInfoJSON  = `{"type":109,"requestID":"abc","data":{"userID":%d}}`
 	getAllLiveListJSON   = `{"type":110,"requestID":"abc"}`
+	uploadImageJSON      = `{"type":111,"requestID":"abc","data":{"imageFile":%s}}`
+	getLiveDataJSON      = `{"type":112,"requestID":"abc","data":{"days":20}}`
+	getScheduleListJSON  = `{"type":113,"requestID":"abc"}`
 	getManagerListJSON   = `{"type":200,"requestID":"abc"}`
 	addManagerJSON       = `{"type":201,"requestID":"abc","data":{"managerUID":%d}}`
 	deleteManagerJSON    = `{"type":202,"requestID":"abc","data":{"managerUID":%d}}`
 	managerKickJSON      = `{"type":204,"requestID":"abc","data":{"kickedUID":%d}}`
-	authorKickJSON       = `{"type":205,"requestID":"abc","data":{"kickedUID":%d}}`
 	getMedalDetailJSON   = `{"type":300,"requestID":"abc","data":{"liverUID":%d}}`
 	getMedalListJSON     = `{"type":301,"requestID":"abc","data":{"liverUID":%d}}`
 	getMedalRankListJSON = `{"type":302,"requestID":"abc","data":{"liverUID":%d}}`
 	getUserMedalJSON     = `{"type":303,"requestID":"abc","data":{"userID":%d}}`
+	wearMedalJSON        = `{"type":304,"requestID":"abc","data":{"liverUID":%d}}`
+	cancelWearMedalJSON  = `{"type":305,"requestID":"abc"}`
 )
 
 var quote = strconv.Quote
@@ -42,6 +46,7 @@ var quote = strconv.Quote
 func main() {
 	account := flag.String("account", "", "AcFun account")
 	password := flag.String("password", "", "AcFun account password")
+	imageFile := flag.String("image", "", "Image file")
 	liverUID := flag.Int64("uid", 0, "AcFun liver uid")
 	flag.Parse()
 
@@ -119,15 +124,21 @@ func main() {
 			case 108:
 			case 109:
 			case 110:
+			case 111:
+			case 112:
+			case 113:
 			case 200:
 			case 201:
 			case 202:
+			case 203:
 			case 204:
 			case 205:
 			case 300:
 			case 301:
 			case 302:
 			case 303:
+			case 304:
+			case 305:
 			case 900:
 			case 901:
 			case 902:
@@ -299,6 +310,15 @@ func main() {
 	//_, err = conn.WriteString(getAllLiveListJSON)
 	//checkErr(err)
 
+	_, err = conn.WriteString(fmt.Sprintf(uploadImageJSON, quote(*imageFile)))
+	checkErr(err)
+
+	_, err = conn.WriteString(getLiveDataJSON)
+	checkErr(err)
+
+	_, err = conn.WriteString(getScheduleListJSON)
+	checkErr(err)
+
 	_, err = conn.WriteString(fmt.Sprintf(addManagerJSON, *liverUID))
 	checkErr(err)
 	time.Sleep(2 * time.Second)
@@ -312,8 +332,6 @@ func main() {
 
 	//_, err = conn.WriteString(fmt.Sprintf(managerKickJSON, *liverUID))
 	//checkErr(err)
-	//_, err = conn.WriteString(fmt.Sprintf(authorKickJSON, *liverUID))
-	//checkErr(err)
 
 	_, err = conn.WriteString(fmt.Sprintf(getMedalDetailJSON, *liverUID))
 	checkErr(err)
@@ -325,6 +343,12 @@ func main() {
 	checkErr(err)
 
 	_, err = conn.WriteString(fmt.Sprintf(getUserMedalJSON, *liverUID))
+	checkErr(err)
+
+	_, err = conn.WriteString(fmt.Sprintf(wearMedalJSON, *liverUID))
+	checkErr(err)
+
+	_, err = conn.WriteString(cancelWearMedalJSON)
 	checkErr(err)
 
 	time.Sleep(10 * time.Second)

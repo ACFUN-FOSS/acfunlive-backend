@@ -17,6 +17,8 @@ const (
 	loginJSON               = `{"type":2,"requestID":"abc","data":{"account":%s,"password":%s}}`
 	getDanmuJSON            = `{"type":100,"requestID":"abc","data":{"liverUID":%d}}`
 	stopDanmuJSON           = `{"type":101,"requestID":"abc","data":{"liverUID":%d}}`
+	getAllKickHistoryJSON   = `{"type":203,"requestID":"abc"}`
+	authorKickJSON          = `{"type":205,"requestID":"abc","data":{"kickedUID":%d}}`
 	checkLiveAuthJSON       = `{"type":900,"requestID":"abc"}`
 	getLiveTypeListJSON     = `{"type":901,"requestID":"abc"}`
 	getPushConfigJSON       = `{"type":902,"requestID":"abc"}`
@@ -113,15 +115,21 @@ func main() {
 			case 108:
 			case 109:
 			case 110:
+			case 111:
+			case 112:
+			case 113:
 			case 200:
 			case 201:
 			case 202:
+			case 203:
 			case 204:
 			case 205:
 			case 300:
 			case 301:
 			case 302:
 			case 303:
+			case 304:
+			case 305:
 			case 900:
 			case 901:
 			case 902:
@@ -295,6 +303,12 @@ func main() {
 
 	time.Sleep(time.Minute)
 	_, err = conn.WriteString(getLiveStatusJSON)
+	checkErr(err)
+
+	//_, err = conn.WriteString(fmt.Sprintf(authorKickJSON, 12345))
+	//checkErr(err)
+
+	_, err = conn.WriteString(getAllKickHistoryJSON)
 	checkErr(err)
 
 	time.Sleep(20 * time.Minute)

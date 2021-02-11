@@ -20,16 +20,21 @@
   * [账户钱包](#账户钱包)
   * [指定用户的直播信息](#指定用户的直播信息)
   * [直播间列表](#直播间列表)
+  * [上传图片](#上传图片)
+  * [直播统计数据](#直播统计数据)
+  * [直播预告列表](#直播预告列表)
   * [登陆用户的房管列表](#登陆用户的房管列表)
   * [添加房管](#添加房管)
   * [删除房管](#删除房管)
-  * [踢人的历史记录（未完成）](#踢人的历史记录未完成)
+  * [主播踢人记录](#主播踢人记录)
   * [房管踢人](#房管踢人)
   * [主播踢人](#主播踢人)
   * [登陆用户拥有的指定主播守护徽章详细信息](#登陆用户拥有的指定主播守护徽章详细信息)
   * [登陆用户拥有的守护徽章列表](#登陆用户拥有的守护徽章列表)
   * [主播守护榜](#主播守护榜)
   * [指定用户正在佩戴的守护徽章信息](#指定用户正在佩戴的守护徽章信息)
+  * [佩戴守护徽章](#佩戴守护徽章)
+  * [取消佩戴守护徽章](#取消佩戴守护徽章)
   * [检测开播权限](#检测开播权限)
   * [直播分类列表](#直播分类列表)
   * [推流设置](#推流设置)
@@ -75,7 +80,7 @@
 
 #### OBS直播流程
 1. 客户端获取[推流设置](#推流设置)，根据返回用OBS设置相应的推流服务器和串流密钥并开始推流
-2. 客户端每5秒左右获取一次[转码信息](#转码信息)（开播后可停止获取），返回不为空时请求[开始直播](#开始直播)，直播分类可以从[直播分类列表](#直播分类列表)获得
+2. 客户端每5秒左右获取一次[转码信息](#转码信息)（开播后可停止获取），返回不为空时请求[开始直播](#开始直播)，直播分类可以从[直播分类列表](#直播分类列表)获得，直播封面可以先[上传图片](#上传图片)到AcFun服务器获取图片链接
 3. 直播途中可以[更改直播间标题和封面](#更改直播间标题和封面)，当要停止直播时客户端请求[停止直播](#停止直播)并停止用OBS推流
 
 ### WebSocket数据格式
@@ -649,6 +654,146 @@
 }
 ```
 
+#### 上传图片
+##### 请求
+```json
+{
+    "type": 111,
+    "requestID": "abc",
+    "data": {
+        "imageFile": "cdefg.jpg"
+    }
+}
+```
+
+`imageFile`：图片（可以是gif）的本地路径
+
+##### 响应
+```json
+{
+    "type": 111,
+    "requestID": "abc",
+    "result": 1,
+    "data": {
+        "imageURL": "https://imgs.aixifan.com/065113e-6e32-497d-ba6d-b8ca17ad77.jpg"
+    }
+}
+```
+
+`imageURL`：上传图片的链接
+
+#### 直播统计数据
+##### 请求
+```json
+{
+    "type": 112,
+    "requestID": "abc",
+    "data": {
+        "days": 20
+    }
+}
+```
+
+获取最近`days`日的全部直播统计数据
+
+##### 响应
+```json
+{
+    "type": 112,
+    "requestID": "abc",
+    "result": 1,
+    "data": {
+        "beginDate": "20210121", // 统计开始的日期
+        "endDate": "20210209", // 统计结束的日期
+        "overview": { // 全部直播的统计概况
+            "duration": 17517892, // 直播时长，单位为毫秒
+            "maxPopularityValue": 8,
+            "watchCount": 175, // 观看过直播的人数总数
+            "diamondCount": 0, // 直播收到的付费礼物对应的钻石数量，100钻石=1AC币
+            "commentCount": 13, // 直播弹幕数量
+            "bananaCount": 383 // 直播收到的香蕉数量
+        },
+        "liveDetail": { // 单场直播统计数据
+            "20210128": [ // 直播日期
+                {
+                    "liveStartTime": 1611845023882, // 直播开始的时间，是以毫秒为单位的Unix时间
+                    "liveEndTime": 1611845099163, // 直播结束的时间，是以毫秒为单位的Unix时间
+                    "liveStat": { // 直播统计数据
+                        "duration": 75281,
+                        "maxPopularityValue": 5,
+                        "watchCount": 6,
+                        "diamondCount": 0,
+                        "commentCount": 0,
+                        "bananaCount": 0
+                    }
+                }
+            ]
+        },
+        "dailyData": [ // 单日直播统计数据
+            {
+                "date": "20210128", // 直播日期
+                "liveTimes": 1, // 当日直播次数
+                "liveStat": { // 直播统计数据
+                    "duration": 75281,
+                    "maxPopularityValue": 5,
+                    "watchCount": 6,
+                    "diamondCount": 0,
+                    "commentCount": 0,
+                    "bananaCount": 0
+                }
+            }
+        ]
+    }
+}
+```
+
+#### 直播预告列表
+##### 请求
+```json
+{
+    "type": 113,
+    "requestID": "abc",
+}
+```
+
+##### 响应
+```json
+{
+    "type": 113,
+    "requestID": "abc",
+    "result": 1,
+    "data": [
+        {
+            "activityID": 19927, // 活动ID
+            "profile": { // 主播的用户信息
+                "userID": 3568347,
+                "nickname": "暗莉斯",
+                "avatar": "https://tx-free-imgs.acfun.cn/FpUZL492VnnNC8T2XPAplXLT9eyc?imageslim",
+                "avatarFrame": "https://imgs.aixifan.com/cms/2019_06_13/1560421184892.gif",
+                "followingCount": 168,
+                "fansCount": 10852,
+                "contributeCount": 114,
+                "signature": "个人势VUP，喜欢玩游戏但很菜，其实是个染了黑毛的金渐层♪录播师傅：莉斯的小年糕 猫猫村：1072715855",
+                "verifiedText": "AVI联盟成员，AcFun签约虚拟偶像",
+                "isJoinUpCollege": true,
+                "isFollowing": true
+            },
+            "title": "暗莉斯春节新衣上线", // 预告标题
+            "cover": "https://static.yximgs.com/bs2/adminBlock/treasure-1612767546220-zrEdJpue.JPG", // 预告封面
+            "liveStartTime": 1613019600000, // 直播开始的时间，是以毫秒为单位的Unix时间
+            "liveType": { // 直播分类
+                "categoryID": 4,
+                "categoryName": "虚拟偶像",
+                "subCategoryID": 401,
+                "subCategoryName": "聊天"
+            },
+            "reserve": false, // 登陆帐号是否预约了该直播
+            "reserveNumber": 135 // 已预约用户的数量
+        }
+    ]
+}
+```
+
 #### 登陆用户的房管列表
 ##### 请求
 ```json
@@ -730,7 +875,7 @@
 }
 ```
 
-#### 踢人的历史记录（未完成）
+#### 主播踢人记录
 ##### 请求
 ```json
 {
@@ -739,8 +884,22 @@
 }
 ```
 
+只能查询主播正在直播的那一场直播的踢人记录，需要[登陆](#登陆)主播的AcFun帐号
+
 ##### 响应
 ```json
+{
+    "type": 203,
+    "requestID": "abc",
+    "result": 1,
+    "data": [
+        {
+            "userID": 45443067, // 被踢用户的uid
+            "nickname": "ACFUN-FOSS_开源⑨课", // 被踢用户的名字
+            "kickTime": 1612874404648 // 用户被踢的时间，是以毫秒为单位的Unix时间
+        }
+    ]
+}
 ```
 
 #### 房管踢人
@@ -989,6 +1148,47 @@
 }
 ```
 
+#### 佩戴守护徽章
+##### 请求
+```json
+{
+    "type": 304,
+    "requestID": "abc",
+    "data": {
+        "liverUID": 26675034
+    }
+}
+```
+
+`liverUID`：要佩戴的守护徽章的主播uid
+
+##### 响应
+```json
+{
+    "type": 304,
+    "requestID": "abc",
+    "result": 1
+}
+```
+
+#### 取消佩戴守护徽章
+##### 请求
+```json
+{
+    "type": 305,
+    "requestID": "abc"
+}
+```
+
+##### 响应
+```json
+{
+    "type": 305,
+    "requestID": "abc",
+    "result": 1
+}
+```
+
 #### 检测开播权限
 ##### 请求
 ```json
@@ -1144,7 +1344,7 @@
     "requestID": "abc",
     "data": {
         "title": "测试", // 直播间标题
-        "coverFile": "cdefg.jpg", // 直播间封面图片（可以是gif）的本地路径
+        "coverFile": "cdefg.jpg", // 直播间封面图片（可以是gif）的本地路径或网络链接，可以先上传图片到AcFun服务器获得图片链接
         "streamName": "ghijkd", // 直播源名字，从推流设置那里获得
         "portrait": false, // 是否手机直播
         "panoramic": false, // 是否全景直播
@@ -1206,6 +1406,10 @@
     }
 }
 ```
+
+`title`：直播标题，为空时会导致没有标题
+
+`coverFile`：直播间封面图片（可以是gif）的本地路径或网络链接（可以先[上传图片](#上传图片)到AcFun服务器获得图片链接），为空时只改变直播间标题
 
 `liveID`从[开始直播](#开始直播)那里获得
 

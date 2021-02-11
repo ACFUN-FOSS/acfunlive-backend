@@ -34,13 +34,16 @@ const (
 	getWalletBalanceType
 	getUserLiveInfoType
 	getAllLiveListType
+	uploadImageType
+	getLiveDataType
+	getScheduleListType
 )
 
 const (
 	getManagerListType = iota + 200
 	addManagerType
 	deleteManagerType
-	getKickHistoryType
+	getAllKickHistoryType
 	managerKickType
 	authorKickType
 )
@@ -50,6 +53,8 @@ const (
 	getMedalListType
 	getMedalRankListType
 	getUserMedalType
+	wearMedalType
+	cancelWearMedalType
 )
 
 const (

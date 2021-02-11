@@ -25,6 +25,22 @@ func (ac *acLive) getAllLiveList(v *fastjson.Value, reqID string) string {
 	return fmt.Sprintf(respJSON, getAllLiveListType, quote(reqID), string(data))
 }
 
+func (ac *acLive) getScheduleList(v *fastjson.Value, reqID string) string {
+	ret, err := ac.ac.GetScheduleList()
+	if err != nil {
+		debug("getScheduleList() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getScheduleListType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	data, err := json.Marshal(ret)
+	if err != nil {
+		debug("getScheduleList() error: cannot marshal to json: %+v", ret)
+		return fmt.Sprintf(respErrJSON, getScheduleListType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getScheduleListType, quote(reqID), string(data))
+}
+
 func (ac *acLive) getManagerList(v *fastjson.Value, reqID string) string {
 	ret, err := ac.ac.GetManagerList()
 	if err != nil {
@@ -39,6 +55,22 @@ func (ac *acLive) getManagerList(v *fastjson.Value, reqID string) string {
 	}
 
 	return fmt.Sprintf(respJSON, getManagerListType, quote(reqID), string(data))
+}
+
+func (ac *acLive) getAllKickHistory(v *fastjson.Value, reqID string) string {
+	ret, err := ac.ac.GetAllKickHistory()
+	if err != nil {
+		debug("getAllKickHistory() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getAllKickHistoryType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	data, err := json.Marshal(ret)
+	if err != nil {
+		debug("getAllKickHistory() error: cannot marshal to json: %+v", ret)
+		return fmt.Sprintf(respErrJSON, getAllKickHistoryType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getAllKickHistoryType, quote(reqID), string(data))
 }
 
 func (ac *acLive) getLiveTypeList(v *fastjson.Value, reqID string) string {
@@ -87,6 +119,16 @@ func (ac *acLive) getLiveStatus(v *fastjson.Value, reqID string) string {
 	}
 
 	return fmt.Sprintf(respJSON, getLiveStatusType, quote(reqID), string(data))
+}
+
+func (ac *acLive) cancelWearMedal(v *fastjson.Value, reqID string) string {
+	err := ac.ac.CancelWearMedal()
+	if err != nil {
+		debug("cancelWearMedal() error: %v", err)
+		return fmt.Sprintf(respErrJSON, cancelWearMedalType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respNoDataJSON, cancelWearMedalType, quote(reqID))
 }
 
 func (ac *acLive) getWatchingList(v *fastjson.Value, reqID string) string {
@@ -421,4 +463,42 @@ func (ac *acLive) authorKick(v *fastjson.Value, reqID string) string {
 	}
 
 	return fmt.Sprintf(respNoDataJSON, authorKickType, quote(reqID))
+}
+
+func (ac *acLive) wearMedal(v *fastjson.Value, reqID string) string {
+	liverUID := v.GetInt64("data", "liverUID")
+	if liverUID <= 0 {
+		debug("wearMedal() error: liverUID not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, wearMedalType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1"))
+	}
+
+	err := ac.ac.WearMedal(liverUID)
+	if err != nil {
+		debug("wearMedal() error: %v", err)
+		return fmt.Sprintf(respErrJSON, wearMedalType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respNoDataJSON, wearMedalType, quote(reqID))
+}
+
+func (ac *acLive) getLiveData(v *fastjson.Value, reqID string) string {
+	days := v.GetInt("data", "days")
+	if days <= 0 {
+		debug("getLiveData() error: days not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, getLiveDataType, quote(reqID), invalidReqData, quote("days not exist or less than 1"))
+	}
+
+	ret, err := ac.ac.GetLiveData(days)
+	if err != nil {
+		debug("getLiveData() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getLiveDataType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	data, err := json.Marshal(ret)
+	if err != nil {
+		debug("getLiveData() error: cannot marshal to json: %+v", ret)
+		return fmt.Sprintf(respErrJSON, getLiveDataType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getLiveDataType, quote(reqID), string(data))
 }
