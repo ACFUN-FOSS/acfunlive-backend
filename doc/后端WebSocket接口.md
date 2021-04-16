@@ -404,7 +404,8 @@
     "requestID": "abc",
     "data": {
         "liveID": "7McE2WZl9Xc",
-        "redpackID": "b-D8XOlAlxI"
+        "redpackID": "b-D8XOlAlxI",
+        "redpackBizUnit": "ztLiveAcfunRedpackGift"
     }
 }
 ```

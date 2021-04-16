@@ -188,7 +188,13 @@ func (ac *acLive) getLuckList(v *fastjson.Value, reqID string) string {
 		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), invalidReqData, quote("Need redpackID"))
 	}
 
-	ret, err := ac.ac.GetLuckList(liveID, redpackID)
+	redpackBizUnit := string(v.GetStringBytes("data", "redpackBizUnit"))
+	if redpackBizUnit == "" {
+		debug("getLuckList() error: No redpackBizUnit")
+		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), invalidReqData, quote("Need redpackBizUnit"))
+	}
+
+	ret, err := ac.ac.GetLuckList(liveID, redpackID, redpackBizUnit)
 	if err != nil {
 		debug("getLuckList() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), reqHandleErr, quote(err.Error()))

@@ -115,7 +115,7 @@ var noParamNoDataFuncContent = []funcContent{
 var stringFuncContent = []funcContent{
 	{"getWatchingList", "getWatchingListType", "ac.ac.GetWatchingListWithLiveID", []string{"liveID"}},
 	{"getSummary", "getSummaryType", "ac.ac.GetSummaryWithLiveID", []string{"liveID"}},
-	{"getLuckList", "getLuckListType", "ac.ac.GetLuckList", []string{"liveID", "redpackID"}},
+	{"getLuckList", "getLuckListType", "ac.ac.GetLuckList", []string{"liveID", "redpackID", "redpackBizUnit"}},
 	{"getPlayback", "getPlaybackType", "ac.ac.GetPlayback", []string{"liveID"}},
 	{"getTranscodeInfo", "getTranscodeInfoType", "ac.ac.GetTranscodeInfo", []string{"streamName"}},
 	{"stopLive", "stopLiveType", "ac.ac.StopLive", []string{"liveID"}},
