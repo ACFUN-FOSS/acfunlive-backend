@@ -11,6 +11,8 @@ import (
 	"syscall"
 
 	"github.com/dgrr/fastws"
+	"github.com/segmentio/encoding/json"
+	"github.com/ugjka/messenger"
 	"github.com/valyala/fasthttp"
 	"github.com/valyala/fastjson"
 )
@@ -26,6 +28,8 @@ func main() {
 		*port = 15368
 	}
 	debug("WebSocket server port is %d", *port)
+
+	server_ch = messenger.New(100, true)
 
 	server := &fasthttp.Server{
 		Handler: fastws.Upgrade(wsHandler),
@@ -69,14 +73,42 @@ func wsHandler(conn *fastws.Conn) {
 	defer debug("WebSocket connection from %s close", conn.RemoteAddr().String())
 
 	debug("WebSocket connection open, local address: %s, remote address: %s", conn.LocalAddr().String(), conn.RemoteAddr().String())
+
+	ch, err := server_ch.Sub()
+	if err != nil {
+		debug("Server's main channel has been killed")
+		return
+	}
+	defer server_ch.Unsub(ch)
+
 	var pool fastjson.ParserPool
 	var msg []byte
-	var err error
+	var clientID string
 	// map(int64, *acLive)
 	acMap := new(sync.Map)
 	var ac *acLive
 
 	for {
+		select {
+		case msg, ok := <-ch:
+			if ok {
+				msg := msg.(*forwardMsg)
+				if msg.ClientID == "" || msg.ClientID == clientID {
+					resp := forwardMsg{
+						ClientID: msg.sourceID,
+						Message:  msg.Message,
+					}
+					data, err := json.Marshal(resp)
+					if err != nil {
+						debug("Forward message error: cannot marshal to json: %+v", msg)
+						_ = send(conn, fmt.Sprintf(respErrJSON, forwardDataType, quote(msg.requestID), reqHandleErr, quote(err.Error())))
+					}
+					_ = send(conn, fmt.Sprintf(respJSON, forwardDataType, quote(msg.requestID), string(data)))
+				}
+			}
+		default:
+		}
+
 		_, msg, err = conn.ReadMessage(msg[:0])
 		if err != nil {
 			if !errors.Is(err, fastws.EOF) {
@@ -101,7 +133,7 @@ func wsHandler(conn *fastws.Conn) {
 
 		reqType := v.GetInt("type")
 		reqID := string(v.GetStringBytes("requestID"))
-		if reqType != heartbeatType && reqType != loginType && ac == nil {
+		if reqType != heartbeatType && reqType != loginType && reqType != setClientIDType && reqType != requestForwardDataType && ac == nil {
 			err := send(conn, fmt.Sprintf(respErrJSON, reqType, quote(reqID), needLogin, quote("Need login")))
 			if err != nil {
 				pool.Put(p)
@@ -127,6 +159,19 @@ func wsHandler(conn *fastws.Conn) {
 				}
 				_ = send(conn, resp)
 			}()
+			pool.Put(p)
+		case setClientIDType:
+			clientID = string(v.GetStringBytes("data", "clientID"))
+			_ = send(conn, fmt.Sprintf(respNoDataJSON, setClientIDType, quote(reqID)))
+			pool.Put(p)
+		case requestForwardDataType:
+			msg := new(forwardMsg)
+			msg.requestID = reqID
+			msg.sourceID = clientID
+			msg.ClientID = string(v.GetStringBytes("data", "clientID"))
+			msg.Message = string(v.GetStringBytes("data", "message"))
+			server_ch.Broadcast(msg)
+			_ = send(conn, fmt.Sprintf(respNoDataJSON, requestForwardDataType, quote(reqID)))
 			pool.Put(p)
 		case getDanmuType:
 			uid := v.GetInt64("data", "liverUID")

@@ -13,32 +13,34 @@ import (
 )
 
 const (
-	heartbeatJSON        = `{"type":1}`
-	loginJSON            = `{"type":2,"requestID":"abc","data":{"account":%s,"password":%s}}`
-	getDanmuJSON         = `{"type":100,"requestID":"abc","data":{"liverUID":%d}}`
-	stopDanmuJSON        = `{"type":101,"requestID":"abc","data":{"liverUID":%d}}`
-	getWatchingListJSON  = `{"type":102,"requestID":"abc","data":{"liveID":%s}}`
-	getBillboardJSON     = `{"type":103,"requestID":"abc","data":{"liverUID":%d}}`
-	getSummaryJSON       = `{"type":104,"requestID":"abc","data":{"liveID":%s}}`
-	getLuckListJSON      = `{"type":105,"requestID":"abc","data":{"liveID":%s,"redpackID":%s}}`
-	getPlaybackJSON      = `{"type":106,"requestID":"abc","data":{"liveID":%s}}`
-	getAllGiftJSON       = `{"type":107,"requestID":"abc"}`
-	getWalletBalanceJSON = `{"type":108,"requestID":"abc"}`
-	getUserLiveInfoJSON  = `{"type":109,"requestID":"abc","data":{"userID":%d}}`
-	getAllLiveListJSON   = `{"type":110,"requestID":"abc"}`
-	uploadImageJSON      = `{"type":111,"requestID":"abc","data":{"imageFile":%s}}`
-	getLiveDataJSON      = `{"type":112,"requestID":"abc","data":{"days":20}}`
-	getScheduleListJSON  = `{"type":113,"requestID":"abc"}`
-	getManagerListJSON   = `{"type":200,"requestID":"abc"}`
-	addManagerJSON       = `{"type":201,"requestID":"abc","data":{"managerUID":%d}}`
-	deleteManagerJSON    = `{"type":202,"requestID":"abc","data":{"managerUID":%d}}`
-	managerKickJSON      = `{"type":204,"requestID":"abc","data":{"kickedUID":%d}}`
-	getMedalDetailJSON   = `{"type":300,"requestID":"abc","data":{"liverUID":%d}}`
-	getMedalListJSON     = `{"type":301,"requestID":"abc","data":{"liverUID":%d}}`
-	getMedalRankListJSON = `{"type":302,"requestID":"abc","data":{"liverUID":%d}}`
-	getUserMedalJSON     = `{"type":303,"requestID":"abc","data":{"userID":%d}}`
-	wearMedalJSON        = `{"type":304,"requestID":"abc","data":{"liverUID":%d}}`
-	cancelWearMedalJSON  = `{"type":305,"requestID":"abc"}`
+	heartbeatJSON          = `{"type":1}`
+	loginJSON              = `{"type":2,"requestID":"abc","data":{"account":%s,"password":%s}}`
+	setClientIDJSON        = `{"type":3,"requestID":"abc","data":{"clientID":%s}}`
+	requestForwardDataJSON = `{"type":4,"requestID":"abc","data":{"clientID":%s,"message":%s}}`
+	getDanmuJSON           = `{"type":100,"requestID":"abc","data":{"liverUID":%d}}`
+	stopDanmuJSON          = `{"type":101,"requestID":"abc","data":{"liverUID":%d}}`
+	getWatchingListJSON    = `{"type":102,"requestID":"abc","data":{"liveID":%s}}`
+	getBillboardJSON       = `{"type":103,"requestID":"abc","data":{"liverUID":%d}}`
+	getSummaryJSON         = `{"type":104,"requestID":"abc","data":{"liveID":%s}}`
+	getLuckListJSON        = `{"type":105,"requestID":"abc","data":{"liveID":%s,"redpackID":%s}}`
+	getPlaybackJSON        = `{"type":106,"requestID":"abc","data":{"liveID":%s}}`
+	getAllGiftJSON         = `{"type":107,"requestID":"abc"}`
+	getWalletBalanceJSON   = `{"type":108,"requestID":"abc"}`
+	getUserLiveInfoJSON    = `{"type":109,"requestID":"abc","data":{"userID":%d}}`
+	getAllLiveListJSON     = `{"type":110,"requestID":"abc"}`
+	uploadImageJSON        = `{"type":111,"requestID":"abc","data":{"imageFile":%s}}`
+	getLiveDataJSON        = `{"type":112,"requestID":"abc","data":{"days":20}}`
+	getScheduleListJSON    = `{"type":113,"requestID":"abc"}`
+	getManagerListJSON     = `{"type":200,"requestID":"abc"}`
+	addManagerJSON         = `{"type":201,"requestID":"abc","data":{"managerUID":%d}}`
+	deleteManagerJSON      = `{"type":202,"requestID":"abc","data":{"managerUID":%d}}`
+	managerKickJSON        = `{"type":204,"requestID":"abc","data":{"kickedUID":%d}}`
+	getMedalDetailJSON     = `{"type":300,"requestID":"abc","data":{"liverUID":%d}}`
+	getMedalListJSON       = `{"type":301,"requestID":"abc","data":{"liverUID":%d}}`
+	getMedalRankListJSON   = `{"type":302,"requestID":"abc","data":{"liverUID":%d}}`
+	getUserMedalJSON       = `{"type":303,"requestID":"abc","data":{"userID":%d}}`
+	wearMedalJSON          = `{"type":304,"requestID":"abc","data":{"liverUID":%d}}`
+	cancelWearMedalJSON    = `{"type":305,"requestID":"abc"}`
 )
 
 var quote = strconv.Quote
@@ -100,6 +102,10 @@ func main() {
 				}
 				log.Printf("Login sucess, account uid: %d", v.GetInt64("data", "tokenInfo", "userID"))
 				ch <- struct{}{}
+			case 3:
+			case 4:
+			case 5:
+				log.Printf("Receive broadcast from %s : %s", string(v.GetStringBytes("data", "clientID")), string(v.GetStringBytes("data", "message")))
 			case 100:
 				if v.GetInt("result") != 1 {
 					log.Printf("Cannot get danmu, response: %s", string(msg))
@@ -276,6 +282,9 @@ func main() {
 		}
 	}()
 
+	_, err = conn.WriteString(fmt.Sprintf(setClientIDJSON, quote("client1")))
+	checkErr(err)
+
 	_, err = conn.WriteString(fmt.Sprintf(loginJSON, quote(*account), quote(*password)))
 	checkErr(err)
 	<-ch
@@ -349,6 +358,12 @@ func main() {
 	checkErr(err)
 
 	_, err = conn.WriteString(cancelWearMedalJSON)
+	checkErr(err)
+
+	_, err = conn.WriteString(fmt.Sprintf(requestForwardDataJSON, quote(""), quote("hello all")))
+	checkErr(err)
+
+	_, err = conn.WriteString(fmt.Sprintf(requestForwardDataJSON, quote("client2"), quote("hello client2")))
 	checkErr(err)
 
 	time.Sleep(10 * time.Second)

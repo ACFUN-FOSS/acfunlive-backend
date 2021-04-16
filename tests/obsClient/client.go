@@ -91,6 +91,10 @@ func main() {
 				}
 				log.Printf("Login sucess, account uid: %d", v.GetInt64("data", "tokenInfo", "userID"))
 				ch <- struct{}{}
+			case 3:
+			case 4:
+			case 5:
+				log.Printf("Receive broadcast from %s : %s", string(v.GetStringBytes("data", "clientID")), string(v.GetStringBytes("data", "message")))
 			case 100:
 				if v.GetInt("result") != 1 {
 					log.Printf("Cannot get danmu, response: %s", string(msg))
@@ -317,6 +321,7 @@ func main() {
 
 	time.Sleep(20 * time.Minute)
 	_, err = conn.WriteString(fmt.Sprintf(stopLiveJSON, quote(liveID)))
+	checkErr(err)
 	time.Sleep(time.Minute)
 
 	_ = conn.Close()

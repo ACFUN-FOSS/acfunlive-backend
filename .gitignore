@@ -1,5 +1,7 @@
 acfunlive-backend
 client
+client1
+client2
 cmd/cmd
 *.json
 

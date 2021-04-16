@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/orzogc/acfundanmu"
+	"github.com/ugjka/messenger"
 )
 
 const (
@@ -19,6 +20,9 @@ const (
 const (
 	heartbeatType = iota + 1
 	loginType
+	setClientIDType
+	requestForwardDataType
+	forwardDataType
 )
 
 // 命令类型
@@ -122,12 +126,21 @@ const (
 )
 
 var (
-	isDebug *bool           // 是否调试
-	quote   = strconv.Quote // 给字符串加上双引号
+	isDebug   *bool                // 是否调试
+	quote     = strconv.Quote      // 给字符串加上双引号
+	server_ch *messenger.Messenger // server间通讯的channel
 )
 
 // 直播相关信息
 type acLive struct {
 	ac     *acfundanmu.AcFunLive
 	cancel context.CancelFunc
+}
+
+// 转发数据
+type forwardMsg struct {
+	requestID string
+	sourceID  string
+	ClientID  string `json:"clientID"`
+	Message   string `json:"message"`
 }
