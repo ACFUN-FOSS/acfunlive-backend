@@ -93,12 +93,8 @@ func wsHandler(conn *fastws.Conn) {
 		case msg, ok := <-ch:
 			if ok {
 				msg := msg.(*forwardMsg)
-				if msg.ClientID == "" || msg.ClientID == clientID {
-					resp := forwardMsg{
-						ClientID: msg.sourceID,
-						Message:  msg.Message,
-					}
-					data, err := json.Marshal(resp)
+				if msg.clientID == "" || msg.clientID == clientID {
+					data, err := json.Marshal(msg)
 					if err != nil {
 						debug("Forward message error: cannot marshal to json: %+v", msg)
 						_ = send(conn, fmt.Sprintf(respErrJSON, forwardDataType, quote(msg.requestID), reqHandleErr, quote(err.Error())))
@@ -167,8 +163,8 @@ func wsHandler(conn *fastws.Conn) {
 		case requestForwardDataType:
 			msg := new(forwardMsg)
 			msg.requestID = reqID
-			msg.sourceID = clientID
-			msg.ClientID = string(v.GetStringBytes("data", "clientID"))
+			msg.SourceID = clientID
+			msg.clientID = string(v.GetStringBytes("data", "clientID"))
 			msg.Message = string(v.GetStringBytes("data", "message"))
 			server_ch.Broadcast(msg)
 			_ = send(conn, fmt.Sprintf(respNoDataJSON, requestForwardDataType, quote(reqID)))

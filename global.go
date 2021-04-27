@@ -140,7 +140,7 @@ type acLive struct {
 // 转发数据
 type forwardMsg struct {
 	requestID string
-	sourceID  string
-	ClientID  string `json:"clientID"`
+	SourceID  string `json:"clientID"`
+	clientID  string
 	Message   string `json:"message"`
 }
