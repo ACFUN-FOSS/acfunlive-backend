@@ -570,6 +570,7 @@
             "canCombo": false, // 是否能连击，一般免费礼物（香蕉）不能连击，其余能连击
             "canDraw": false, // 是否能涂鸦？
             "magicFaceID": 0,
+            "vupArID": 0,
             "description": "达成蕉易，投蕉鼓励！", // 礼物的描述
             "redpackPrice": 0 // 礼物红包价格总额，单位为AC币
         },
