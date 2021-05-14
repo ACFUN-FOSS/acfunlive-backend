@@ -316,8 +316,8 @@ func main() {
 	_, err = conn.WriteString(fmt.Sprintf(getUserLiveInfoJSON, *liverUID))
 	checkErr(err)
 
-	//_, err = conn.WriteString(getAllLiveListJSON)
-	//checkErr(err)
+	_, err = conn.WriteString(getAllLiveListJSON)
+	checkErr(err)
 
 	_, err = conn.WriteString(fmt.Sprintf(uploadImageJSON, quote(*imageFile)))
 	checkErr(err)
@@ -345,8 +345,8 @@ func main() {
 	_, err = conn.WriteString(fmt.Sprintf(getMedalDetailJSON, *liverUID))
 	checkErr(err)
 
-	//_, err = conn.WriteString(fmt.Sprintf(getMedalListJSON, *liverUID))
-	//checkErr(err)
+	_, err = conn.WriteString(fmt.Sprintf(getMedalListJSON, *liverUID))
+	checkErr(err)
 
 	_, err = conn.WriteString(fmt.Sprintf(getMedalRankListJSON, *liverUID))
 	checkErr(err)

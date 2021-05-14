@@ -29,7 +29,7 @@ func main() {
 	}
 	debug("WebSocket server port is %d", *port)
 
-	server_ch = messenger.New(100, true)
+	server_ch = messenger.New(1024, false)
 
 	server := &fasthttp.Server{
 		Handler: fastws.Upgrade(wsHandler),
@@ -97,9 +97,10 @@ func wsHandler(conn *fastws.Conn) {
 					data, err := json.Marshal(msg)
 					if err != nil {
 						debug("Forward message error: cannot marshal to json: %+v", msg)
-						_ = send(conn, fmt.Sprintf(respErrJSON, forwardDataType, quote(msg.requestID), reqHandleErr, quote(err.Error())))
+						go send(conn, fmt.Sprintf(respErrJSON, forwardDataType, quote(msg.requestID), reqHandleErr, quote(err.Error())))
+					} else {
+						go send(conn, fmt.Sprintf(respJSON, forwardDataType, quote(msg.requestID), string(data)))
 					}
-					_ = send(conn, fmt.Sprintf(respJSON, forwardDataType, quote(msg.requestID), string(data)))
 				}
 			}
 		default:
@@ -141,24 +142,26 @@ func wsHandler(conn *fastws.Conn) {
 
 		switch reqType {
 		case heartbeatType:
-			go func() {
-				_ = send(conn, heartbeatJSON)
-			}()
+			go send(conn, heartbeatJSON)
 			pool.Put(p)
 		case loginType:
-			account := string(v.GetStringBytes("data", "account"))
-			password := string(v.GetStringBytes("data", "password"))
-			go func() {
-				resp := login(acMap, account, password, reqID)
-				if aci, ok := acMap.Load(0); ok {
-					ac = aci.(*acLive)
-				}
-				_ = send(conn, resp)
-			}()
+			if ac == nil {
+				account := string(v.GetStringBytes("data", "account"))
+				password := string(v.GetStringBytes("data", "password"))
+				go func() {
+					resp := login(acMap, account, password, reqID)
+					if aci, ok := acMap.Load(0); ok {
+						ac = aci.(*acLive)
+					}
+					_ = send(conn, resp)
+				}()
+			} else {
+				go send(conn, fmt.Sprintf(respErrJSON, reqType, quote(reqID), invalidReqType, quote("Forbid login twice")))
+			}
 			pool.Put(p)
 		case setClientIDType:
 			clientID = string(v.GetStringBytes("data", "clientID"))
-			_ = send(conn, fmt.Sprintf(respNoDataJSON, setClientIDType, quote(reqID)))
+			go send(conn, fmt.Sprintf(respNoDataJSON, setClientIDType, quote(reqID)))
 			pool.Put(p)
 		case requestForwardDataType:
 			msg := new(forwardMsg)
@@ -166,14 +169,16 @@ func wsHandler(conn *fastws.Conn) {
 			msg.SourceID = clientID
 			msg.clientID = string(v.GetStringBytes("data", "clientID"))
 			msg.Message = string(v.GetStringBytes("data", "message"))
-			server_ch.Broadcast(msg)
-			_ = send(conn, fmt.Sprintf(respNoDataJSON, requestForwardDataType, quote(reqID)))
+			go func() {
+				server_ch.Broadcast(msg)
+				_ = send(conn, fmt.Sprintf(respNoDataJSON, requestForwardDataType, quote(reqID)))
+			}()
 			pool.Put(p)
 		case getDanmuType:
 			uid := v.GetInt64("data", "liverUID")
 			if uid <= 0 {
 				debug("getDanmu: liverUID not exist or less than 1")
-				_ = send(conn, fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1")))
+				go send(conn, fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1")))
 				pool.Put(p)
 				break
 			}
@@ -183,7 +188,7 @@ func wsHandler(conn *fastws.Conn) {
 			uid := v.GetInt64("data", "liverUID")
 			if uid <= 0 {
 				debug("stopDanmu: liverUID not exist or less than 1")
-				_ = send(conn, fmt.Sprintf(respErrJSON, stopDanmuType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1")))
+				go send(conn, fmt.Sprintf(respErrJSON, stopDanmuType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1")))
 				pool.Put(p)
 				break
 			}
@@ -198,7 +203,7 @@ func wsHandler(conn *fastws.Conn) {
 				}()
 			} else {
 				debug("Error: unknown request type: %d", reqType)
-				_ = send(conn, fmt.Sprintf(respErrJSON, reqType, quote(reqID), invalidReqType, quote("Unknown request type")))
+				go send(conn, fmt.Sprintf(respErrJSON, reqType, quote(reqID), invalidReqType, quote("Unknown request type")))
 				pool.Put(p)
 			}
 		}
