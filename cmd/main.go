@@ -25,7 +25,7 @@ func (ac *acLive) __FUNC__(v *fastjson.Value, reqID string) string {`
 const singleString = `
 	__PARAM__ := string(v.GetStringBytes("data", "__PARAM__"))
 	if __PARAM__ == "" {
-		debug("__FUNC__() error: No __PARAM__")
+		ac.conn.debug("__FUNC__() error: No __PARAM__")
 		return fmt.Sprintf(respErrJSON, __FUNCTYPE__, quote(reqID), invalidReqData, quote("Need __PARAM__"))
 	}
 `
@@ -33,7 +33,7 @@ const singleString = `
 const singleInt64 = `
 	__PARAM__ := v.GetInt64("data", "__PARAM__")
 	if __PARAM__ <= 0 {
-		debug("__FUNC__() error: __PARAM__ not exist or less than 1")
+		ac.conn.debug("__FUNC__() error: __PARAM__ not exist or less than 1")
 		return fmt.Sprintf(respErrJSON, __FUNCTYPE__, quote(reqID), invalidReqData, quote("__PARAM__ not exist or less than 1"))
 	}
 `
@@ -41,7 +41,7 @@ const singleInt64 = `
 const singleInt = `
 	__PARAM__ := v.GetInt("data", "__PARAM__")
 	if __PARAM__ <= 0 {
-		debug("__FUNC__() error: __PARAM__ not exist or less than 1")
+		ac.conn.debug("__FUNC__() error: __PARAM__ not exist or less than 1")
 		return fmt.Sprintf(respErrJSON, __FUNCTYPE__, quote(reqID), invalidReqData, quote("__PARAM__ not exist or less than 1"))
 	}
 `
@@ -60,7 +60,7 @@ const callNoDataFunc = `
 
 const callFuncErrHandle = `
 	if err != nil {
-		debug("__FUNC__() error: %v", err)
+		ac.conn.debug("__FUNC__() error: %v", err)
 		return fmt.Sprintf(respErrJSON, __FUNCTYPE__, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 `
@@ -68,7 +68,7 @@ const callFuncErrHandle = `
 const jsonMarshal = `
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("__FUNC__() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("__FUNC__() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, __FUNCTYPE__, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 `

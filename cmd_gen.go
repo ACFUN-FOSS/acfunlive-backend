@@ -12,13 +12,13 @@ import (
 func (ac *acLive) getAllLiveList(v *fastjson.Value, reqID string) string {
 	ret, err := ac.ac.GetAllLiveList()
 	if err != nil {
-		debug("getAllLiveList() error: %v", err)
+		ac.conn.debug("getAllLiveList() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getAllLiveListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getAllLiveList() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getAllLiveList() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getAllLiveListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -28,13 +28,13 @@ func (ac *acLive) getAllLiveList(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getScheduleList(v *fastjson.Value, reqID string) string {
 	ret, err := ac.ac.GetScheduleList()
 	if err != nil {
-		debug("getScheduleList() error: %v", err)
+		ac.conn.debug("getScheduleList() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getScheduleListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getScheduleList() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getScheduleList() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getScheduleListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -44,13 +44,13 @@ func (ac *acLive) getScheduleList(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getManagerList(v *fastjson.Value, reqID string) string {
 	ret, err := ac.ac.GetManagerList()
 	if err != nil {
-		debug("getManagerList() error: %v", err)
+		ac.conn.debug("getManagerList() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getManagerListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getManagerList() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getManagerList() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getManagerListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -60,13 +60,13 @@ func (ac *acLive) getManagerList(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getAllKickHistory(v *fastjson.Value, reqID string) string {
 	ret, err := ac.ac.GetAllKickHistory()
 	if err != nil {
-		debug("getAllKickHistory() error: %v", err)
+		ac.conn.debug("getAllKickHistory() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getAllKickHistoryType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getAllKickHistory() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getAllKickHistory() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getAllKickHistoryType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -76,13 +76,13 @@ func (ac *acLive) getAllKickHistory(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getLiveTypeList(v *fastjson.Value, reqID string) string {
 	ret, err := ac.ac.GetLiveTypeList()
 	if err != nil {
-		debug("getLiveTypeList() error: %v", err)
+		ac.conn.debug("getLiveTypeList() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getLiveTypeListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getLiveTypeList() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getLiveTypeList() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getLiveTypeListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -92,13 +92,13 @@ func (ac *acLive) getLiveTypeList(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getPushConfig(v *fastjson.Value, reqID string) string {
 	ret, err := ac.ac.GetPushConfig()
 	if err != nil {
-		debug("getPushConfig() error: %v", err)
+		ac.conn.debug("getPushConfig() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getPushConfigType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getPushConfig() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getPushConfig() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getPushConfigType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -108,13 +108,13 @@ func (ac *acLive) getPushConfig(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getLiveStatus(v *fastjson.Value, reqID string) string {
 	ret, err := ac.ac.GetLiveStatus()
 	if err != nil {
-		debug("getLiveStatus() error: %v", err)
+		ac.conn.debug("getLiveStatus() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getLiveStatusType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getLiveStatus() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getLiveStatus() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getLiveStatusType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -124,7 +124,7 @@ func (ac *acLive) getLiveStatus(v *fastjson.Value, reqID string) string {
 func (ac *acLive) cancelWearMedal(v *fastjson.Value, reqID string) string {
 	err := ac.ac.CancelWearMedal()
 	if err != nil {
-		debug("cancelWearMedal() error: %v", err)
+		ac.conn.debug("cancelWearMedal() error: %v", err)
 		return fmt.Sprintf(respErrJSON, cancelWearMedalType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -134,19 +134,19 @@ func (ac *acLive) cancelWearMedal(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getWatchingList(v *fastjson.Value, reqID string) string {
 	liveID := string(v.GetStringBytes("data", "liveID"))
 	if liveID == "" {
-		debug("getWatchingList() error: No liveID")
+		ac.conn.debug("getWatchingList() error: No liveID")
 		return fmt.Sprintf(respErrJSON, getWatchingListType, quote(reqID), invalidReqData, quote("Need liveID"))
 	}
 
 	ret, err := ac.ac.GetWatchingListWithLiveID(liveID)
 	if err != nil {
-		debug("getWatchingList() error: %v", err)
+		ac.conn.debug("getWatchingList() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getWatchingListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getWatchingList() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getWatchingList() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getWatchingListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -156,19 +156,19 @@ func (ac *acLive) getWatchingList(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getSummary(v *fastjson.Value, reqID string) string {
 	liveID := string(v.GetStringBytes("data", "liveID"))
 	if liveID == "" {
-		debug("getSummary() error: No liveID")
+		ac.conn.debug("getSummary() error: No liveID")
 		return fmt.Sprintf(respErrJSON, getSummaryType, quote(reqID), invalidReqData, quote("Need liveID"))
 	}
 
 	ret, err := ac.ac.GetSummaryWithLiveID(liveID)
 	if err != nil {
-		debug("getSummary() error: %v", err)
+		ac.conn.debug("getSummary() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getSummaryType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getSummary() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getSummary() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getSummaryType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -178,31 +178,31 @@ func (ac *acLive) getSummary(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getLuckList(v *fastjson.Value, reqID string) string {
 	liveID := string(v.GetStringBytes("data", "liveID"))
 	if liveID == "" {
-		debug("getLuckList() error: No liveID")
+		ac.conn.debug("getLuckList() error: No liveID")
 		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), invalidReqData, quote("Need liveID"))
 	}
 
 	redpackID := string(v.GetStringBytes("data", "redpackID"))
 	if redpackID == "" {
-		debug("getLuckList() error: No redpackID")
+		ac.conn.debug("getLuckList() error: No redpackID")
 		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), invalidReqData, quote("Need redpackID"))
 	}
 
 	redpackBizUnit := string(v.GetStringBytes("data", "redpackBizUnit"))
 	if redpackBizUnit == "" {
-		debug("getLuckList() error: No redpackBizUnit")
+		ac.conn.debug("getLuckList() error: No redpackBizUnit")
 		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), invalidReqData, quote("Need redpackBizUnit"))
 	}
 
 	ret, err := ac.ac.GetLuckList(liveID, redpackID, redpackBizUnit)
 	if err != nil {
-		debug("getLuckList() error: %v", err)
+		ac.conn.debug("getLuckList() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getLuckList() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getLuckList() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getLuckListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -212,19 +212,19 @@ func (ac *acLive) getLuckList(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getPlayback(v *fastjson.Value, reqID string) string {
 	liveID := string(v.GetStringBytes("data", "liveID"))
 	if liveID == "" {
-		debug("getPlayback() error: No liveID")
+		ac.conn.debug("getPlayback() error: No liveID")
 		return fmt.Sprintf(respErrJSON, getPlaybackType, quote(reqID), invalidReqData, quote("Need liveID"))
 	}
 
 	ret, err := ac.ac.GetPlayback(liveID)
 	if err != nil {
-		debug("getPlayback() error: %v", err)
+		ac.conn.debug("getPlayback() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getPlaybackType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getPlayback() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getPlayback() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getPlaybackType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -234,19 +234,19 @@ func (ac *acLive) getPlayback(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getTranscodeInfo(v *fastjson.Value, reqID string) string {
 	streamName := string(v.GetStringBytes("data", "streamName"))
 	if streamName == "" {
-		debug("getTranscodeInfo() error: No streamName")
+		ac.conn.debug("getTranscodeInfo() error: No streamName")
 		return fmt.Sprintf(respErrJSON, getTranscodeInfoType, quote(reqID), invalidReqData, quote("Need streamName"))
 	}
 
 	ret, err := ac.ac.GetTranscodeInfo(streamName)
 	if err != nil {
-		debug("getTranscodeInfo() error: %v", err)
+		ac.conn.debug("getTranscodeInfo() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getTranscodeInfoType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getTranscodeInfo() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getTranscodeInfo() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getTranscodeInfoType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -256,19 +256,19 @@ func (ac *acLive) getTranscodeInfo(v *fastjson.Value, reqID string) string {
 func (ac *acLive) stopLive(v *fastjson.Value, reqID string) string {
 	liveID := string(v.GetStringBytes("data", "liveID"))
 	if liveID == "" {
-		debug("stopLive() error: No liveID")
+		ac.conn.debug("stopLive() error: No liveID")
 		return fmt.Sprintf(respErrJSON, stopLiveType, quote(reqID), invalidReqData, quote("Need liveID"))
 	}
 
 	ret, err := ac.ac.StopLive(liveID)
 	if err != nil {
-		debug("stopLive() error: %v", err)
+		ac.conn.debug("stopLive() error: %v", err)
 		return fmt.Sprintf(respErrJSON, stopLiveType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("stopLive() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("stopLive() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, stopLiveType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -278,19 +278,19 @@ func (ac *acLive) stopLive(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getBillboard(v *fastjson.Value, reqID string) string {
 	liverUID := v.GetInt64("data", "liverUID")
 	if liverUID <= 0 {
-		debug("getBillboard() error: liverUID not exist or less than 1")
+		ac.conn.debug("getBillboard() error: liverUID not exist or less than 1")
 		return fmt.Sprintf(respErrJSON, getBillboardType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1"))
 	}
 
 	ret, err := ac.ac.GetBillboard(liverUID)
 	if err != nil {
-		debug("getBillboard() error: %v", err)
+		ac.conn.debug("getBillboard() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getBillboardType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getBillboard() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getBillboard() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getBillboardType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -300,19 +300,19 @@ func (ac *acLive) getBillboard(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getUserLiveInfo(v *fastjson.Value, reqID string) string {
 	userID := v.GetInt64("data", "userID")
 	if userID <= 0 {
-		debug("getUserLiveInfo() error: userID not exist or less than 1")
+		ac.conn.debug("getUserLiveInfo() error: userID not exist or less than 1")
 		return fmt.Sprintf(respErrJSON, getUserLiveInfoType, quote(reqID), invalidReqData, quote("userID not exist or less than 1"))
 	}
 
 	ret, err := ac.ac.GetUserLiveInfo(userID)
 	if err != nil {
-		debug("getUserLiveInfo() error: %v", err)
+		ac.conn.debug("getUserLiveInfo() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getUserLiveInfoType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getUserLiveInfo() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getUserLiveInfo() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getUserLiveInfoType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -322,19 +322,19 @@ func (ac *acLive) getUserLiveInfo(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getMedalDetail(v *fastjson.Value, reqID string) string {
 	liverUID := v.GetInt64("data", "liverUID")
 	if liverUID <= 0 {
-		debug("getMedalDetail() error: liverUID not exist or less than 1")
+		ac.conn.debug("getMedalDetail() error: liverUID not exist or less than 1")
 		return fmt.Sprintf(respErrJSON, getMedalDetailType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1"))
 	}
 
 	ret, err := ac.ac.GetMedalDetail(liverUID)
 	if err != nil {
-		debug("getMedalDetail() error: %v", err)
+		ac.conn.debug("getMedalDetail() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getMedalDetailType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getMedalDetail() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getMedalDetail() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getMedalDetailType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -344,19 +344,19 @@ func (ac *acLive) getMedalDetail(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getMedalList(v *fastjson.Value, reqID string) string {
 	liverUID := v.GetInt64("data", "liverUID")
 	if liverUID <= 0 {
-		debug("getMedalList() error: liverUID not exist or less than 1")
+		ac.conn.debug("getMedalList() error: liverUID not exist or less than 1")
 		return fmt.Sprintf(respErrJSON, getMedalListType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1"))
 	}
 
 	ret, err := ac.ac.GetMedalList(liverUID)
 	if err != nil {
-		debug("getMedalList() error: %v", err)
+		ac.conn.debug("getMedalList() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getMedalListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getMedalList() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getMedalList() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getMedalListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -366,19 +366,19 @@ func (ac *acLive) getMedalList(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getMedalRankList(v *fastjson.Value, reqID string) string {
 	liverUID := v.GetInt64("data", "liverUID")
 	if liverUID <= 0 {
-		debug("getMedalRankList() error: liverUID not exist or less than 1")
+		ac.conn.debug("getMedalRankList() error: liverUID not exist or less than 1")
 		return fmt.Sprintf(respErrJSON, getMedalRankListType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1"))
 	}
 
 	ret, err := ac.ac.GetMedalRankList(liverUID)
 	if err != nil {
-		debug("getMedalRankList() error: %v", err)
+		ac.conn.debug("getMedalRankList() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getMedalRankListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getMedalRankList() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getMedalRankList() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getMedalRankListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -388,19 +388,19 @@ func (ac *acLive) getMedalRankList(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getUserMedal(v *fastjson.Value, reqID string) string {
 	userID := v.GetInt64("data", "userID")
 	if userID <= 0 {
-		debug("getUserMedal() error: userID not exist or less than 1")
+		ac.conn.debug("getUserMedal() error: userID not exist or less than 1")
 		return fmt.Sprintf(respErrJSON, getUserMedalType, quote(reqID), invalidReqData, quote("userID not exist or less than 1"))
 	}
 
 	ret, err := acfundanmu.GetUserMedal(userID)
 	if err != nil {
-		debug("getUserMedal() error: %v", err)
+		ac.conn.debug("getUserMedal() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getUserMedalType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getUserMedal() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getUserMedal() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getUserMedalType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -410,13 +410,13 @@ func (ac *acLive) getUserMedal(v *fastjson.Value, reqID string) string {
 func (ac *acLive) addManager(v *fastjson.Value, reqID string) string {
 	managerUID := v.GetInt64("data", "managerUID")
 	if managerUID <= 0 {
-		debug("addManager() error: managerUID not exist or less than 1")
+		ac.conn.debug("addManager() error: managerUID not exist or less than 1")
 		return fmt.Sprintf(respErrJSON, addManagerType, quote(reqID), invalidReqData, quote("managerUID not exist or less than 1"))
 	}
 
 	err := ac.ac.AddManager(managerUID)
 	if err != nil {
-		debug("addManager() error: %v", err)
+		ac.conn.debug("addManager() error: %v", err)
 		return fmt.Sprintf(respErrJSON, addManagerType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -426,13 +426,13 @@ func (ac *acLive) addManager(v *fastjson.Value, reqID string) string {
 func (ac *acLive) deleteManager(v *fastjson.Value, reqID string) string {
 	managerUID := v.GetInt64("data", "managerUID")
 	if managerUID <= 0 {
-		debug("deleteManager() error: managerUID not exist or less than 1")
+		ac.conn.debug("deleteManager() error: managerUID not exist or less than 1")
 		return fmt.Sprintf(respErrJSON, deleteManagerType, quote(reqID), invalidReqData, quote("managerUID not exist or less than 1"))
 	}
 
 	err := ac.ac.DeleteManager(managerUID)
 	if err != nil {
-		debug("deleteManager() error: %v", err)
+		ac.conn.debug("deleteManager() error: %v", err)
 		return fmt.Sprintf(respErrJSON, deleteManagerType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -442,13 +442,13 @@ func (ac *acLive) deleteManager(v *fastjson.Value, reqID string) string {
 func (ac *acLive) managerKick(v *fastjson.Value, reqID string) string {
 	kickedUID := v.GetInt64("data", "kickedUID")
 	if kickedUID <= 0 {
-		debug("managerKick() error: kickedUID not exist or less than 1")
+		ac.conn.debug("managerKick() error: kickedUID not exist or less than 1")
 		return fmt.Sprintf(respErrJSON, managerKickType, quote(reqID), invalidReqData, quote("kickedUID not exist or less than 1"))
 	}
 
 	err := ac.ac.ManagerKick(kickedUID)
 	if err != nil {
-		debug("managerKick() error: %v", err)
+		ac.conn.debug("managerKick() error: %v", err)
 		return fmt.Sprintf(respErrJSON, managerKickType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -458,13 +458,13 @@ func (ac *acLive) managerKick(v *fastjson.Value, reqID string) string {
 func (ac *acLive) authorKick(v *fastjson.Value, reqID string) string {
 	kickedUID := v.GetInt64("data", "kickedUID")
 	if kickedUID <= 0 {
-		debug("authorKick() error: kickedUID not exist or less than 1")
+		ac.conn.debug("authorKick() error: kickedUID not exist or less than 1")
 		return fmt.Sprintf(respErrJSON, authorKickType, quote(reqID), invalidReqData, quote("kickedUID not exist or less than 1"))
 	}
 
 	err := ac.ac.AuthorKick(kickedUID)
 	if err != nil {
-		debug("authorKick() error: %v", err)
+		ac.conn.debug("authorKick() error: %v", err)
 		return fmt.Sprintf(respErrJSON, authorKickType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -474,13 +474,13 @@ func (ac *acLive) authorKick(v *fastjson.Value, reqID string) string {
 func (ac *acLive) wearMedal(v *fastjson.Value, reqID string) string {
 	liverUID := v.GetInt64("data", "liverUID")
 	if liverUID <= 0 {
-		debug("wearMedal() error: liverUID not exist or less than 1")
+		ac.conn.debug("wearMedal() error: liverUID not exist or less than 1")
 		return fmt.Sprintf(respErrJSON, wearMedalType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1"))
 	}
 
 	err := ac.ac.WearMedal(liverUID)
 	if err != nil {
-		debug("wearMedal() error: %v", err)
+		ac.conn.debug("wearMedal() error: %v", err)
 		return fmt.Sprintf(respErrJSON, wearMedalType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -490,19 +490,19 @@ func (ac *acLive) wearMedal(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getLiveData(v *fastjson.Value, reqID string) string {
 	days := v.GetInt("data", "days")
 	if days <= 0 {
-		debug("getLiveData() error: days not exist or less than 1")
+		ac.conn.debug("getLiveData() error: days not exist or less than 1")
 		return fmt.Sprintf(respErrJSON, getLiveDataType, quote(reqID), invalidReqData, quote("days not exist or less than 1"))
 	}
 
 	ret, err := ac.ac.GetLiveData(days)
 	if err != nil {
-		debug("getLiveData() error: %v", err)
+		ac.conn.debug("getLiveData() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getLiveDataType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	data, err := json.Marshal(ret)
 	if err != nil {
-		debug("getLiveData() error: cannot marshal to json: %+v", ret)
+		ac.conn.debug("getLiveData() error: cannot marshal to json: %+v", ret)
 		return fmt.Sprintf(respErrJSON, getLiveDataType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 

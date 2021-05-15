@@ -46,36 +46,37 @@ var cmdDispatch = map[int]func(*acLive, *fastjson.Value, string) string{
 }
 
 // 处理登陆命令
-func login(acMap *sync.Map, account, password, reqID string) string {
+func (conn *wsConn) login(acMap *sync.Map, account, password, reqID string) string {
 	var newAC *acfundanmu.AcFunLive
 	var err error
 	if account == "" || password == "" {
 		newAC, err = acfundanmu.NewAcFunLive()
 		if err != nil {
-			debug("login() error: cannot login as anonymous: %v", err)
+			conn.debug("login() error: cannot login as anonymous: %v", err)
 			return fmt.Sprintf(respErrJSON, loginType, quote(reqID), reqHandleErr, quote(err.Error()))
 		}
 	} else {
 		cookies, err := acfundanmu.Login(account, password)
 		if err != nil {
-			debug("login() error: cannot login as AcFun user: %v", err)
+			conn.debug("login() error: cannot login as AcFun user: %v", err)
 			return fmt.Sprintf(respErrJSON, loginType, quote(reqID), reqHandleErr, quote(err.Error()))
 		}
 		newAC, err = acfundanmu.NewAcFunLive(acfundanmu.SetCookies(cookies))
 		if err != nil {
-			debug("login() error: %+v", err)
+			conn.debug("login() error: %+v", err)
 			return fmt.Sprintf(respErrJSON, loginType, quote(reqID), reqHandleErr, quote(err.Error()))
 		}
 	}
 
 	ac := new(acLive)
+	ac.conn = conn
 	ac.ac = newAC
 	acMap.Store(0, ac)
 
 	info := ac.ac.GetTokenInfo()
 	data, err := json.Marshal(info)
 	if err != nil {
-		debug("login() error: cannot marshal to json: %+v", info)
+		conn.debug("login() error: cannot marshal to json: %+v", info)
 		return fmt.Sprintf(respErrJSON, loginType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -86,7 +87,7 @@ func login(acMap *sync.Map, account, password, reqID string) string {
 func (ac *acLive) getAllGiftList(v *fastjson.Value, reqID string) string {
 	gift, err := ac.ac.GetAllGiftList()
 	if err != nil {
-		debug("getAllGiftList() error: %v", err)
+		ac.conn.debug("getAllGiftList() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getAllGiftListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 	list := make([]acfundanmu.GiftDetail, 0, len(gift))
@@ -98,7 +99,7 @@ func (ac *acLive) getAllGiftList(v *fastjson.Value, reqID string) string {
 	})
 	data, err := json.Marshal(list)
 	if err != nil {
-		debug("getAllGiftList() error: cannot marshal to json: %+v", list)
+		ac.conn.debug("getAllGiftList() error: cannot marshal to json: %+v", list)
 		return fmt.Sprintf(respErrJSON, getAllGiftListType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -109,7 +110,7 @@ func (ac *acLive) getAllGiftList(v *fastjson.Value, reqID string) string {
 func (ac *acLive) getWalletBalance(v *fastjson.Value, reqID string) string {
 	acCoin, banana, err := ac.ac.GetWalletBalance()
 	if err != nil {
-		debug("getWalletBalance() error: %v", err)
+		ac.conn.debug("getWalletBalance() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getWalletBalanceType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -120,13 +121,13 @@ func (ac *acLive) getWalletBalance(v *fastjson.Value, reqID string) string {
 func (ac *acLive) uploadImage(v *fastjson.Value, reqID string) string {
 	imageFile := string(v.GetStringBytes("data", "imageFile"))
 	if imageFile == "" {
-		debug("uploadImage() error: No imageFile")
+		ac.conn.debug("uploadImage() error: No imageFile")
 		return fmt.Sprintf(respErrJSON, uploadImageType, quote(reqID), invalidReqData, quote("Need imageFile"))
 	}
 
 	imageURL, err := ac.ac.UploadImage(imageFile)
 	if err != nil {
-		debug("uploadImage() error: %v", err)
+		ac.conn.debug("uploadImage() error: %v", err)
 		return fmt.Sprintf(respErrJSON, uploadImageType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -137,7 +138,7 @@ func (ac *acLive) uploadImage(v *fastjson.Value, reqID string) string {
 func (ac *acLive) checkLiveAuth(v *fastjson.Value, reqID string) string {
 	auth, err := ac.ac.CheckLiveAuth()
 	if err != nil {
-		debug("checkLiveAuth() error: %v", err)
+		ac.conn.debug("checkLiveAuth() error: %v", err)
 		return fmt.Sprintf(respErrJSON, checkLiveAuthType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -148,17 +149,17 @@ func (ac *acLive) checkLiveAuth(v *fastjson.Value, reqID string) string {
 func (ac *acLive) startLive(v *fastjson.Value, reqID string) string {
 	title := string(v.GetStringBytes("data", "title"))
 	if title == "" {
-		debug("startLive() error: No title")
+		ac.conn.debug("startLive() error: No title")
 		return fmt.Sprintf(respErrJSON, startLiveType, quote(reqID), invalidReqData, quote("Need title"))
 	}
 	coverFile := string(v.GetStringBytes("data", "coverFile"))
 	if coverFile == "" {
-		debug("startLive() error: No coverFile")
+		ac.conn.debug("startLive() error: No coverFile")
 		return fmt.Sprintf(respErrJSON, startLiveType, quote(reqID), invalidReqData, quote("Need coverFile"))
 	}
 	streamName := string(v.GetStringBytes("data", "streamName"))
 	if streamName == "" {
-		debug("startLive() error: No streamName")
+		ac.conn.debug("startLive() error: No streamName")
 		return fmt.Sprintf(respErrJSON, startLiveType, quote(reqID), invalidReqData, quote("Need streamName"))
 	}
 	portrait := v.GetBool("data", "portrait")
@@ -172,7 +173,7 @@ func (ac *acLive) startLive(v *fastjson.Value, reqID string) string {
 			SubCategoryID: subCategoryID,
 		})
 	if err != nil {
-		debug("startLive() error: %v", err)
+		ac.conn.debug("startLive() error: %v", err)
 		return fmt.Sprintf(respErrJSON, startLiveType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
@@ -185,13 +186,13 @@ func (ac *acLive) changeTitleAndCover(v *fastjson.Value, reqID string) string {
 	coverFile := string(v.GetStringBytes("data", "coverFile"))
 	liveID := string(v.GetStringBytes("data", "liveID"))
 	if liveID == "" {
-		debug("changeTitleAndCover() error: No liveID")
+		ac.conn.debug("changeTitleAndCover() error: No liveID")
 		return fmt.Sprintf(respErrJSON, changeTitleAndCoverType, quote(reqID), invalidReqData, quote("Need liveID"))
 	}
 
 	err := ac.ac.ChangeTitleAndCover(title, coverFile, liveID)
 	if err != nil {
-		debug("changeTitleAndCover() error: %v", err)
+		ac.conn.debug("changeTitleAndCover() error: %v", err)
 		return fmt.Sprintf(respErrJSON, changeTitleAndCoverType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 

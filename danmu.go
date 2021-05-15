@@ -6,13 +6,12 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/dgrr/fastws"
 	"github.com/orzogc/acfundanmu"
 	"github.com/segmentio/encoding/json"
 )
 
 // 获取弹幕
-func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
+func (conn *wsConn) getDanmu(acMap *sync.Map, uid int64, reqID string) {
 	if _, ok := acMap.Load(uid); ok {
 		return
 	}
@@ -20,20 +19,21 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 
 	newAC, err := aci.(*acLive).ac.SetLiverUID(uid)
 	if err != nil {
-		debug("getDanmu(): call ReInit() error: %v", err)
-		_ = send(conn, fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), reqHandleErr, quote(err.Error())))
+		conn.debug("getDanmu(): call ReInit() error: %v", err)
+		_ = conn.send(fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), reqHandleErr, quote(err.Error())))
 		return
 	}
 	ac := new(acLive)
+	ac.conn = conn
 	ac.ac = newAC
 	info := ac.ac.GetStreamInfo()
 	data, err := json.Marshal(info)
 	if err != nil {
-		debug("getDanmu(): cannot marshal to json: %v", err)
-		_ = send(conn, fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), reqHandleErr, quote(err.Error())))
+		conn.debug("getDanmu(): cannot marshal to json: %v", err)
+		_ = conn.send(fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), reqHandleErr, quote(err.Error())))
 		return
 	}
-	err = send(conn, fmt.Sprintf(respJSON, getDanmuType, quote(reqID), fmt.Sprintf(`{"StreamInfo":%s}`, string(data))))
+	err = conn.send(fmt.Sprintf(respJSON, getDanmuType, quote(reqID), fmt.Sprintf(`{"StreamInfo":%s}`, string(data))))
 	if err != nil {
 		return
 	}
@@ -43,10 +43,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	ac.ac.OnComment(func(ac *acfundanmu.AcFunLive, d *acfundanmu.Comment) {
 		data, err := json.Marshal(d)
 		if err != nil {
-			debug("OnComment(): cannot marshal to json: %+v", d)
+			conn.debug("OnComment(): cannot marshal to json: %+v", d)
 			return
 		}
-		err = send(conn, fmt.Sprintf(danmuJSON, uid, commentType, string(data)))
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, commentType, string(data)))
 		if err != nil {
 			errCh <- err
 		}
@@ -55,10 +55,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	ac.ac.OnLike(func(ac *acfundanmu.AcFunLive, d *acfundanmu.Like) {
 		data, err := json.Marshal(d)
 		if err != nil {
-			debug("OnLike(): cannot marshal to json: %+v", d)
+			conn.debug("OnLike(): cannot marshal to json: %+v", d)
 			return
 		}
-		err = send(conn, fmt.Sprintf(danmuJSON, uid, likeType, string(data)))
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, likeType, string(data)))
 		if err != nil {
 			errCh <- err
 		}
@@ -67,10 +67,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	ac.ac.OnEnterRoom(func(ac *acfundanmu.AcFunLive, d *acfundanmu.EnterRoom) {
 		data, err := json.Marshal(d)
 		if err != nil {
-			debug("OnEnterRoom(): cannot marshal to json: %+v", d)
+			conn.debug("OnEnterRoom(): cannot marshal to json: %+v", d)
 			return
 		}
-		err = send(conn, fmt.Sprintf(danmuJSON, uid, enterRoomType, string(data)))
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, enterRoomType, string(data)))
 		if err != nil {
 			errCh <- err
 		}
@@ -79,10 +79,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	ac.ac.OnFollowAuthor(func(ac *acfundanmu.AcFunLive, d *acfundanmu.FollowAuthor) {
 		data, err := json.Marshal(d)
 		if err != nil {
-			debug("OnFollowAuthor(): cannot marshal to json: %+v", d)
+			conn.debug("OnFollowAuthor(): cannot marshal to json: %+v", d)
 			return
 		}
-		err = send(conn, fmt.Sprintf(danmuJSON, uid, followAuthorType, string(data)))
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, followAuthorType, string(data)))
 		if err != nil {
 			errCh <- err
 		}
@@ -91,10 +91,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	ac.ac.OnThrowBanana(func(ac *acfundanmu.AcFunLive, d *acfundanmu.ThrowBanana) {
 		data, err := json.Marshal(d)
 		if err != nil {
-			debug("OnThrowBanana(): cannot marshal to json: %+v", d)
+			conn.debug("OnThrowBanana(): cannot marshal to json: %+v", d)
 			return
 		}
-		err = send(conn, fmt.Sprintf(danmuJSON, uid, throwBananaType, string(data)))
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, throwBananaType, string(data)))
 		if err != nil {
 			errCh <- err
 		}
@@ -103,10 +103,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	ac.ac.OnGift(func(ac *acfundanmu.AcFunLive, d *acfundanmu.Gift) {
 		data, err := json.Marshal(d)
 		if err != nil {
-			debug("OnGift(): cannot marshal to json: %+v", d)
+			conn.debug("OnGift(): cannot marshal to json: %+v", d)
 			return
 		}
-		err = send(conn, fmt.Sprintf(danmuJSON, uid, giftType, string(data)))
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, giftType, string(data)))
 		if err != nil {
 			errCh <- err
 		}
@@ -121,28 +121,28 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 			case *acfundanmu.RichTextUserInfo:
 				t, err := json.Marshal(r)
 				if err != nil {
-					debug("OnRichText(): cannot marshal to json: %+v", r)
+					conn.debug("OnRichText(): cannot marshal to json: %+v", r)
 					return
 				}
 				s[i] = fmt.Sprintf(richText, richTextUserInfoType, string(t))
 			case *acfundanmu.RichTextPlain:
 				t, err := json.Marshal(r)
 				if err != nil {
-					debug("OnRichText(): cannot marshal to json: %+v", r)
+					conn.debug("OnRichText(): cannot marshal to json: %+v", r)
 					return
 				}
 				s[i] = fmt.Sprintf(richText, richTextPlainType, string(t))
 			case *acfundanmu.RichTextImage:
 				t, err := json.Marshal(r)
 				if err != nil {
-					debug("OnRichText(): cannot marshal to json: %+v", r)
+					conn.debug("OnRichText(): cannot marshal to json: %+v", r)
 					return
 				}
 				s[i] = fmt.Sprintf(richText, richTextImageType, string(t))
 			}
 		}
 		data = fmt.Sprintf(data, d.SendTime, strings.Join(s, `,`))
-		err := send(conn, fmt.Sprintf(danmuJSON, uid, richTextType, data))
+		err := conn.send(fmt.Sprintf(danmuJSON, uid, richTextType, data))
 		if err != nil {
 			errCh <- err
 		}
@@ -151,10 +151,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	ac.ac.OnJoinClub(func(ac *acfundanmu.AcFunLive, d *acfundanmu.JoinClub) {
 		data, err := json.Marshal(d)
 		if err != nil {
-			debug("OnJoinClub(): cannot marshal to json: %+v", d)
+			conn.debug("OnJoinClub(): cannot marshal to json: %+v", d)
 			return
 		}
-		err = send(conn, fmt.Sprintf(danmuJSON, uid, joinClubType, string(data)))
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, joinClubType, string(data)))
 		if err != nil {
 			errCh <- err
 		}
@@ -167,7 +167,7 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 		} else {
 			msg = fmt.Sprintf(`{"liveClosed":false,"reason":%s}`, quote(err.Error()))
 		}
-		e := send(conn, fmt.Sprintf(danmuJSON, uid, danmuStopType, quote(msg)))
+		e := conn.send(fmt.Sprintf(danmuJSON, uid, danmuStopType, quote(msg)))
 		if e != nil {
 			errCh <- e
 		}
@@ -175,7 +175,7 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 
 	ac.ac.OnBananaCount(func(ac *acfundanmu.AcFunLive, allBananaCount string) {
 		data := fmt.Sprintf(`{"bananaCount":%s}`, quote(allBananaCount))
-		err := send(conn, fmt.Sprintf(danmuJSON, uid, bananaCountType, data))
+		err := conn.send(fmt.Sprintf(danmuJSON, uid, bananaCountType, data))
 		if err != nil {
 			errCh <- err
 		}
@@ -184,10 +184,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	ac.ac.OnDisplayInfo(func(ac *acfundanmu.AcFunLive, d *acfundanmu.DisplayInfo) {
 		data, err := json.Marshal(d)
 		if err != nil {
-			debug("OnDisplayInfo(): cannot marshal to json: %+v", d)
+			conn.debug("OnDisplayInfo(): cannot marshal to json: %+v", d)
 			return
 		}
-		err = send(conn, fmt.Sprintf(danmuJSON, uid, displayInfoType, string(data)))
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, displayInfoType, string(data)))
 		if err != nil {
 			errCh <- err
 		}
@@ -196,10 +196,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	ac.ac.OnTopUsers(func(ac *acfundanmu.AcFunLive, d []acfundanmu.TopUser) {
 		data, err := json.Marshal(d)
 		if err != nil {
-			debug("OnTopUsers(): cannot marshal to json: %+v", d)
+			conn.debug("OnTopUsers(): cannot marshal to json: %+v", d)
 			return
 		}
-		err = send(conn, fmt.Sprintf(danmuJSON, uid, topUsersType, string(data)))
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, topUsersType, string(data)))
 		if err != nil {
 			errCh <- err
 		}
@@ -208,10 +208,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	ac.ac.OnRecentComment(func(ac *acfundanmu.AcFunLive, d []acfundanmu.Comment) {
 		data, err := json.Marshal(d)
 		if err != nil {
-			debug("OnRecentComment(): cannot marshal to json: %+v", d)
+			conn.debug("OnRecentComment(): cannot marshal to json: %+v", d)
 			return
 		}
-		err = send(conn, fmt.Sprintf(danmuJSON, uid, recentCommentType, string(data)))
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, recentCommentType, string(data)))
 		if err != nil {
 			errCh <- err
 		}
@@ -220,10 +220,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	ac.ac.OnRedpackList(func(ac *acfundanmu.AcFunLive, d []acfundanmu.Redpack) {
 		data, err := json.Marshal(d)
 		if err != nil {
-			debug("OnRedpackList(): cannot marshal to json: %+v", d)
+			conn.debug("OnRedpackList(): cannot marshal to json: %+v", d)
 			return
 		}
-		err = send(conn, fmt.Sprintf(danmuJSON, uid, redpackListType, string(data)))
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, redpackListType, string(data)))
 		if err != nil {
 			errCh <- err
 		}
@@ -232,10 +232,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	ac.ac.OnChatCall(func(ac *acfundanmu.AcFunLive, d *acfundanmu.ChatCall) {
 		data, err := json.Marshal(d)
 		if err != nil {
-			debug("OnChatCall(): cannot marshal to json: %+v", d)
+			conn.debug("OnChatCall(): cannot marshal to json: %+v", d)
 			return
 		}
-		err = send(conn, fmt.Sprintf(danmuJSON, uid, chatCallType, string(data)))
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, chatCallType, string(data)))
 		if err != nil {
 			errCh <- err
 		}
@@ -244,10 +244,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	ac.ac.OnChatAccept(func(ac *acfundanmu.AcFunLive, d *acfundanmu.ChatAccept) {
 		data, err := json.Marshal(d)
 		if err != nil {
-			debug("OnChatAccept(): cannot marshal to json: %+v", d)
+			conn.debug("OnChatAccept(): cannot marshal to json: %+v", d)
 			return
 		}
-		err = send(conn, fmt.Sprintf(danmuJSON, uid, chatAcceptType, string(data)))
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, chatAcceptType, string(data)))
 		if err != nil {
 			errCh <- err
 		}
@@ -256,10 +256,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	ac.ac.OnChatReady(func(ac *acfundanmu.AcFunLive, d *acfundanmu.ChatReady) {
 		data, err := json.Marshal(d)
 		if err != nil {
-			debug("OnChatReady(): cannot marshal to json: %+v", d)
+			conn.debug("OnChatReady(): cannot marshal to json: %+v", d)
 			return
 		}
-		err = send(conn, fmt.Sprintf(danmuJSON, uid, chatReadyType, string(data)))
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, chatReadyType, string(data)))
 		if err != nil {
 			errCh <- err
 		}
@@ -268,10 +268,10 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	ac.ac.OnChatEnd(func(ac *acfundanmu.AcFunLive, d *acfundanmu.ChatEnd) {
 		data, err := json.Marshal(d)
 		if err != nil {
-			debug("OnChatEnd(): cannot marshal to json: %+v", d)
+			conn.debug("OnChatEnd(): cannot marshal to json: %+v", d)
 			return
 		}
-		err = send(conn, fmt.Sprintf(danmuJSON, uid, chatEndType, string(data)))
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, chatEndType, string(data)))
 		if err != nil {
 			errCh <- err
 		}
@@ -279,7 +279,7 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 
 	ac.ac.OnKickedOut(func(ac *acfundanmu.AcFunLive, kickedOutReason string) {
 		data := fmt.Sprintf(`{"kickedOutReason":%s}`, quote(kickedOutReason))
-		err := send(conn, fmt.Sprintf(danmuJSON, uid, kickedOutType, data))
+		err := conn.send(fmt.Sprintf(danmuJSON, uid, kickedOutType, data))
 		if err != nil {
 			errCh <- err
 		}
@@ -287,7 +287,7 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 
 	ac.ac.OnViolationAlert(func(ac *acfundanmu.AcFunLive, violationContent string) {
 		data := fmt.Sprintf(`{"violationContent":%s}`, quote(violationContent))
-		err := send(conn, fmt.Sprintf(danmuJSON, uid, violationAlertType, data))
+		err := conn.send(fmt.Sprintf(danmuJSON, uid, violationAlertType, data))
 		if err != nil {
 			errCh <- err
 		}
@@ -295,7 +295,7 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 
 	ac.ac.OnManagerState(func(ac *acfundanmu.AcFunLive, d acfundanmu.ManagerState) {
 		data := fmt.Sprintf(`{"managerState":%d}`, d)
-		err := send(conn, fmt.Sprintf(danmuJSON, uid, managerStateType, data))
+		err := conn.send(fmt.Sprintf(danmuJSON, uid, managerStateType, data))
 		if err != nil {
 			errCh <- err
 		}
@@ -307,8 +307,8 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 	acMap.Store(uid, ac)
 	defer acMap.Delete(uid)
 	danmuCh := ac.ac.StartDanmu(ctx, true)
-	debug("Start getting liver(%d) danmu", uid)
-	defer debug("Stop getting liver(%d) danmu", uid)
+	conn.debug("Start getting liver(%d) danmu", uid)
+	defer conn.debug("Stop getting liver(%d) danmu", uid)
 	select {
 	case <-danmuCh:
 	case <-errCh:
@@ -316,14 +316,14 @@ func getDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
 }
 
 // 停止获取弹幕
-func stopDanmu(acMap *sync.Map, conn *fastws.Conn, uid int64, reqID string) {
+func (conn *wsConn) stopDanmu(acMap *sync.Map, uid int64, reqID string) {
 	aci, ok := acMap.Load(uid)
 	if !ok {
-		debug("Not getting liver(%d) danmu", uid)
-		_ = send(conn, fmt.Sprintf(respErrJSON, stopDanmuType, quote(reqID), reqHandleErr, quote(fmt.Sprintf("Not getting liver(%d) danmu", uid))))
+		conn.debug("Not getting liver(%d) danmu", uid)
+		_ = conn.send(fmt.Sprintf(respErrJSON, stopDanmuType, quote(reqID), reqHandleErr, quote(fmt.Sprintf("Not getting liver(%d) danmu", uid))))
 		return
 	}
 	ac := aci.(*acLive)
 	ac.cancel()
-	_ = send(conn, fmt.Sprintf(respNoDataJSON, stopDanmuType, quote(reqID)))
+	_ = conn.send(fmt.Sprintf(respNoDataJSON, stopDanmuType, quote(reqID)))
 }

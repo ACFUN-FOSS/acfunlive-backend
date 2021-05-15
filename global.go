@@ -4,6 +4,7 @@ import (
 	"context"
 	"strconv"
 
+	"github.com/dgrr/fastws"
 	"github.com/orzogc/acfundanmu"
 	"github.com/ugjka/messenger"
 )
@@ -131,8 +132,15 @@ var (
 	server_ch *messenger.Messenger // server间通讯的channel
 )
 
+// WebSocket连接
+type wsConn struct {
+	c          *fastws.Conn
+	remoteAddr string
+}
+
 // 直播相关信息
 type acLive struct {
+	conn   *wsConn
 	ac     *acfundanmu.AcFunLive
 	cancel context.CancelFunc
 }

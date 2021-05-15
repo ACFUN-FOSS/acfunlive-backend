@@ -58,25 +58,36 @@ func debug(format string, v ...interface{}) {
 	}
 }
 
+// 打印调试信息
+func (conn *wsConn) debug(format string, v ...interface{}) {
+	if *isDebug {
+		addr := fmt.Sprintf("[%s] ", conn.remoteAddr)
+		log.Printf(addr+format, v...)
+	}
+}
+
 // 发送WebSocket消息
-func send(conn *fastws.Conn, msg string) error {
-	debug("Send message: %s", msg)
-	_, err := conn.WriteString(msg)
+func (conn *wsConn) send(msg string) error {
+	conn.debug("Send message: %s", msg)
+	_, err := conn.c.WriteString(msg)
 	if err != nil {
-		debug("Failed to send message: %s, error: %v", msg, err)
+		conn.debug("Failed to send message: %s, error: %v", msg, err)
 	}
 	return err
 }
 
 // 处理WebSocket连接
-func wsHandler(conn *fastws.Conn) {
-	defer debug("WebSocket connection from %s close", conn.RemoteAddr().String())
-
-	debug("WebSocket connection open, local address: %s, remote address: %s", conn.LocalAddr().String(), conn.RemoteAddr().String())
+func wsHandler(c *fastws.Conn) {
+	conn := &wsConn{
+		c:          c,
+		remoteAddr: c.RemoteAddr().String(),
+	}
+	defer conn.debug("WebSocket connection close")
+	conn.debug("WebSocket connection open")
 
 	ch, err := server_ch.Sub()
 	if err != nil {
-		debug("Server's main channel has been killed")
+		conn.debug("Server's main channel has been killed")
 		return
 	}
 	defer server_ch.Unsub(ch)
@@ -96,30 +107,30 @@ func wsHandler(conn *fastws.Conn) {
 				if msg.clientID == "" || msg.clientID == clientID {
 					data, err := json.Marshal(msg)
 					if err != nil {
-						debug("Forward message error: cannot marshal to json: %+v", msg)
-						go send(conn, fmt.Sprintf(respErrJSON, forwardDataType, quote(msg.requestID), reqHandleErr, quote(err.Error())))
+						conn.debug("Forward message error: cannot marshal to json: %+v", msg)
+						go conn.send(fmt.Sprintf(respErrJSON, forwardDataType, quote(msg.requestID), reqHandleErr, quote(err.Error())))
 					} else {
-						go send(conn, fmt.Sprintf(respJSON, forwardDataType, quote(msg.requestID), string(data)))
+						go conn.send(fmt.Sprintf(respJSON, forwardDataType, quote(msg.requestID), string(data)))
 					}
 				}
 			}
 		default:
 		}
 
-		_, msg, err = conn.ReadMessage(msg[:0])
+		_, msg, err = c.ReadMessage(msg[:0])
 		if err != nil {
 			if !errors.Is(err, fastws.EOF) {
-				debug("WebSocket error: %v", err)
+				conn.debug("WebSocket error: %v", err)
 			}
 			break
 		}
-		debug("Recieve message: %s", string(msg))
+		conn.debug("Recieve message: %s", string(msg))
 
 		p := pool.Get()
 		v, err := p.ParseBytes(msg)
 		if err != nil {
-			debug("Parsing json error: %v, request data: %s", err, string(msg))
-			go send(conn, fmt.Sprintf(respErrJSON, 0, "", jsonParseErr, quote(fmt.Sprintf("error: %v, request data: %s", err, string(msg)))))
+			conn.debug("Parsing json error: %v, request data: %s", err, string(msg))
+			go conn.send(fmt.Sprintf(respErrJSON, 0, "", jsonParseErr, quote(fmt.Sprintf("error: %v, request data: %s", err, string(msg)))))
 			pool.Put(p)
 			continue
 		}
@@ -127,33 +138,33 @@ func wsHandler(conn *fastws.Conn) {
 		reqType := v.GetInt("type")
 		reqID := string(v.GetStringBytes("requestID"))
 		if reqType != heartbeatType && reqType != loginType && reqType != setClientIDType && reqType != requestForwardDataType && ac == nil {
-			go send(conn, fmt.Sprintf(respErrJSON, reqType, quote(reqID), needLogin, quote("Need login")))
+			go conn.send(fmt.Sprintf(respErrJSON, reqType, quote(reqID), needLogin, quote("Need login")))
 			pool.Put(p)
 			continue
 		}
 
 		switch reqType {
 		case heartbeatType:
-			go send(conn, heartbeatJSON)
+			go conn.send(heartbeatJSON)
 			pool.Put(p)
 		case loginType:
 			if ac == nil {
 				account := string(v.GetStringBytes("data", "account"))
 				password := string(v.GetStringBytes("data", "password"))
 				go func() {
-					resp := login(acMap, account, password, reqID)
+					resp := conn.login(acMap, account, password, reqID)
 					if aci, ok := acMap.Load(0); ok {
 						ac = aci.(*acLive)
 					}
-					_ = send(conn, resp)
+					_ = conn.send(resp)
 				}()
 			} else {
-				go send(conn, fmt.Sprintf(respErrJSON, reqType, quote(reqID), invalidReqType, quote("Forbid login twice")))
+				go conn.send(fmt.Sprintf(respErrJSON, reqType, quote(reqID), invalidReqType, quote("Forbid login twice")))
 			}
 			pool.Put(p)
 		case setClientIDType:
 			clientID = string(v.GetStringBytes("data", "clientID"))
-			go send(conn, fmt.Sprintf(respNoDataJSON, setClientIDType, quote(reqID)))
+			go conn.send(fmt.Sprintf(respNoDataJSON, setClientIDType, quote(reqID)))
 			pool.Put(p)
 		case requestForwardDataType:
 			msg := new(forwardMsg)
@@ -163,37 +174,37 @@ func wsHandler(conn *fastws.Conn) {
 			msg.Message = string(v.GetStringBytes("data", "message"))
 			go func() {
 				server_ch.Broadcast(msg)
-				_ = send(conn, fmt.Sprintf(respNoDataJSON, requestForwardDataType, quote(reqID)))
+				_ = conn.send(fmt.Sprintf(respNoDataJSON, requestForwardDataType, quote(reqID)))
 			}()
 			pool.Put(p)
 		case getDanmuType:
 			uid := v.GetInt64("data", "liverUID")
 			if uid <= 0 {
-				debug("getDanmu: liverUID not exist or less than 1")
-				go send(conn, fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1")))
+				conn.debug("getDanmu: liverUID not exist or less than 1")
+				go conn.send(fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1")))
 			} else {
-				go getDanmu(acMap, conn, uid, reqID)
+				go conn.getDanmu(acMap, uid, reqID)
 			}
 			pool.Put(p)
 		case stopDanmuType:
 			uid := v.GetInt64("data", "liverUID")
 			if uid <= 0 {
-				debug("stopDanmu: liverUID not exist or less than 1")
-				go send(conn, fmt.Sprintf(respErrJSON, stopDanmuType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1")))
+				conn.debug("stopDanmu: liverUID not exist or less than 1")
+				go conn.send(fmt.Sprintf(respErrJSON, stopDanmuType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1")))
 			} else {
-				go stopDanmu(acMap, conn, uid, reqID)
+				go conn.stopDanmu(acMap, uid, reqID)
 			}
 			pool.Put(p)
 		default:
 			if f, ok := cmdDispatch[reqType]; ok {
 				go func() {
 					resp := f(ac, v, reqID)
-					_ = send(conn, resp)
+					_ = conn.send(resp)
 					pool.Put(p)
 				}()
 			} else {
-				debug("Error: unknown request type: %d", reqType)
-				go send(conn, fmt.Sprintf(respErrJSON, reqType, quote(reqID), invalidReqType, quote("Unknown request type")))
+				conn.debug("Error: unknown request type: %d", reqType)
+				go conn.send(fmt.Sprintf(respErrJSON, reqType, quote(reqID), invalidReqType, quote("Unknown request type")))
 				pool.Put(p)
 			}
 		}

@@ -292,6 +292,10 @@ func main() {
 	checkErr(err)
 	<-ch
 
+	//time.Sleep(5 * time.Second)
+	//_, err = conn.WriteString(fmt.Sprintf(getDanmuJSON, *liverUID))
+	//checkErr(err)
+
 	_, err = conn.WriteString(fmt.Sprintf(getWatchingListJSON, quote(liveID)))
 	checkErr(err)
 
@@ -363,8 +367,8 @@ func main() {
 	_, err = conn.WriteString(fmt.Sprintf(requestForwardDataJSON, quote(""), quote("hello all")))
 	checkErr(err)
 
-	_, err = conn.WriteString(fmt.Sprintf(requestForwardDataJSON, quote("client2"), quote("hello client2")))
-	checkErr(err)
+	//_, err = conn.WriteString(fmt.Sprintf(requestForwardDataJSON, quote("client2"), quote("hello client2")))
+	//checkErr(err)
 
 	time.Sleep(10 * time.Second)
 	_, err = conn.WriteString(fmt.Sprintf(stopDanmuJSON, *liverUID))
