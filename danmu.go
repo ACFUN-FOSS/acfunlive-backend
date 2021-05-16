@@ -15,6 +15,9 @@ func (conn *wsConn) getDanmu(acMap *sync.Map, uid int64, reqID string) {
 	if _, ok := acMap.Load(uid); ok {
 		return
 	}
+	ac := new(acLive)
+	acMap.Store(uid, ac)
+	defer acMap.Delete(uid)
 	aci, _ := acMap.Load(0)
 
 	newAC, err := aci.(*acLive).ac.SetLiverUID(uid)
@@ -23,7 +26,6 @@ func (conn *wsConn) getDanmu(acMap *sync.Map, uid int64, reqID string) {
 		_ = conn.send(fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), reqHandleErr, quote(err.Error())))
 		return
 	}
-	ac := new(acLive)
 	ac.conn = conn
 	ac.ac = newAC
 	info := ac.ac.GetStreamInfo()
@@ -304,8 +306,6 @@ func (conn *wsConn) getDanmu(acMap *sync.Map, uid int64, reqID string) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	ac.cancel = cancel
-	acMap.Store(uid, ac)
-	defer acMap.Delete(uid)
 	danmuCh := ac.ac.StartDanmu(ctx, true)
 	conn.debug("Start getting liver(%d) danmu", uid)
 	defer conn.debug("Stop getting liver(%d) danmu", uid)
