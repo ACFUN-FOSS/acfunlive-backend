@@ -1161,6 +1161,7 @@
     "requestID": "abc",
     "result": 1,
     "data": {
+        "hasFansClub": true, // 主播是否有守护团
         "rankList": [
             {
                 "profile": { // 用户信息
