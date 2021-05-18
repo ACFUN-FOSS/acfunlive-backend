@@ -99,9 +99,9 @@ func wsHandler(c *fastws.Conn) {
 	acMap := new(sync.Map)
 	var ac *acLive
 
-	for {
-		select {
-		case msg, ok := <-ch:
+	go func() {
+		for {
+			msg, ok := <-ch
 			if ok {
 				msg := msg.(*forwardMsg)
 				if msg.clientID == "" || msg.clientID == clientID {
@@ -113,10 +113,13 @@ func wsHandler(c *fastws.Conn) {
 						go conn.send(fmt.Sprintf(respJSON, forwardDataType, quote(msg.requestID), string(data)))
 					}
 				}
+			} else {
+				break
 			}
-		default:
 		}
+	}()
 
+	for {
 		_, msg, err = c.ReadMessage(msg[:0])
 		if err != nil {
 			if !errors.Is(err, fastws.EOF) {

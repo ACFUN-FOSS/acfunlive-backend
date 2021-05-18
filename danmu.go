@@ -22,7 +22,7 @@ func (conn *wsConn) getDanmu(acMap *sync.Map, uid int64, reqID string) {
 
 	newAC, err := aci.(*acLive).ac.SetLiverUID(uid)
 	if err != nil {
-		conn.debug("getDanmu(): call ReInit() error: %v", err)
+		conn.debug("getDanmu(): call SetLiverUID() error: %v", err)
 		_ = conn.send(fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), reqHandleErr, quote(err.Error())))
 		return
 	}

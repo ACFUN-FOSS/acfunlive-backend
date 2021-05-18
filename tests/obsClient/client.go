@@ -43,6 +43,7 @@ func main() {
 	conn, err := fastws.Dial("ws://127.0.0.1:15368")
 	checkErr(err)
 	defer log.Println("WebSocket client shutdown")
+	defer conn.Close()
 
 	go func() {
 		for {
@@ -323,8 +324,6 @@ func main() {
 	_, err = conn.WriteString(fmt.Sprintf(stopLiveJSON, quote(liveID)))
 	checkErr(err)
 	time.Sleep(time.Minute)
-
-	_ = conn.Close()
 }
 
 // 检查错误
