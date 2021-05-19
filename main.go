@@ -97,6 +97,7 @@ func wsHandler(c *fastws.Conn) {
 	var clientID string
 	// map(int64, *acLive)
 	acMap := new(sync.Map)
+	var mu sync.RWMutex
 	var ac *acLive
 
 	go func() {
@@ -140,30 +141,31 @@ func wsHandler(c *fastws.Conn) {
 
 		reqType := v.GetInt("type")
 		reqID := string(v.GetStringBytes("requestID"))
-		if reqType != heartbeatType && reqType != loginType && reqType != setClientIDType && reqType != requestForwardDataType && ac == nil {
+		mu.RLock()
+		if ac == nil && reqType != heartbeatType && reqType != loginType && reqType != setClientIDType && reqType != requestForwardDataType {
 			go conn.send(fmt.Sprintf(respErrJSON, reqType, quote(reqID), needLogin, quote("Need login")))
 			pool.Put(p)
+			mu.RUnlock()
 			continue
 		}
+		mu.RUnlock()
 
 		switch reqType {
 		case heartbeatType:
 			go conn.send(heartbeatJSON)
 			pool.Put(p)
 		case loginType:
-			if ac == nil {
-				account := string(v.GetStringBytes("data", "account"))
-				password := string(v.GetStringBytes("data", "password"))
-				go func() {
-					resp := conn.login(acMap, account, password, reqID)
-					if aci, ok := acMap.Load(0); ok {
-						ac = aci.(*acLive)
-					}
-					_ = conn.send(resp)
-				}()
-			} else {
-				go conn.send(fmt.Sprintf(respErrJSON, reqType, quote(reqID), invalidReqType, quote("Forbid login twice")))
-			}
+			account := string(v.GetStringBytes("data", "account"))
+			password := string(v.GetStringBytes("data", "password"))
+			go func() {
+				resp := conn.login(acMap, account, password, reqID)
+				if aci, ok := acMap.Load(0); ok {
+					mu.Lock()
+					ac = aci.(*acLive)
+					mu.Unlock()
+				}
+				_ = conn.send(resp)
+			}()
 			pool.Put(p)
 		case setClientIDType:
 			clientID = string(v.GetStringBytes("data", "clientID"))
@@ -201,7 +203,9 @@ func wsHandler(c *fastws.Conn) {
 		default:
 			if f, ok := cmdDispatch[reqType]; ok {
 				go func() {
+					mu.RLock()
 					resp := f(ac, v, reqID)
+					mu.RUnlock()
 					_ = conn.send(resp)
 					pool.Put(p)
 				}()
