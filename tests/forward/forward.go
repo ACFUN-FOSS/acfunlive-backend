@@ -94,6 +94,7 @@ func main() {
 	checkErr(err)
 
 	msgs := make([]forwardMsg, msgNum)
+	rand.Seed(time.Now().UnixNano())
 	for i := 0; i < msgNum; i++ {
 		charNum := rand.Intn(maxCharNum-minCharNum) + maxCharNum
 		s := randstr.String(charNum)
