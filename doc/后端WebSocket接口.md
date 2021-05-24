@@ -460,8 +460,8 @@
     "result": 1,
     "data": {
         "duration": 7565966, // 直播时长，单位为毫秒
-        "likeCount": 12996, // 点赞总数
-        "watchCount": 926, // 观看过直播的人数总数
+        "likeCount": "12996", // 点赞总数
+        "watchCount": "926", // 观看过直播的人数总数
         "giftCount": 10, // 直播收到的付费礼物数量，登陆主播帐号才能查询到
         "diamondCount": 50000, // 直播收到的付费礼物对应的钻石数量，100钻石=1AC币，登陆主播帐号才能查询到
         "bananaCount": 100 // 直播收到的香蕉数量，登陆主播帐号才能查询到
@@ -1066,7 +1066,7 @@
             "bananaDegree": 0, // 本日投蕉增加的亲密度
             "bananaDegreeLimit": 10 // 本日投蕉增加的亲密度上限
         },
-        "userRank": 31, // 用户的守护徽章亲密度的排名
+        "userRank": "31", // 用户的守护徽章亲密度的排名
         "clubName": "白白的"
     }
 }
@@ -1135,7 +1135,7 @@
                 "bananaDegree": 0,
                 "bananaDegreeLimit": 10
             },
-            "userRank": 79,
+            "userRank": "79",
             "clubName": "偷芯猫"
         }
     }
@@ -1185,7 +1185,7 @@
         "medalCount": 991, // 主播守护团总人数
         "hasMedal": true, // 登陆用户是否有主播的守护徽章
         "userFriendshipDegree": 14234, // 目前登陆用户的守护徽章亲密度
-        "userRank": 79 // 登陆用户的守护徽章亲密度的排名
+        "userRank": "79" // 登陆用户的守护徽章亲密度的排名
     }
 }
 ```
