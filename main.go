@@ -43,7 +43,7 @@ func main() {
 		defer logFile.Close()
 		*isDebug = true
 		log.SetOutput(logFile)
-		syscall.Dup2(int(logFile.Fd()), 2)
+		redirectStderr(logFile)
 	}
 	debug("WebSocket server port is %d", *port)
 
