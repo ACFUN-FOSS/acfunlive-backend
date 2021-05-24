@@ -21,11 +21,29 @@ import (
 
 func main() {
 	port := flag.Uint("port", 0, "WebSocket server port, default 15368")
-	isDebug = flag.Bool("debug", false, "Debug")
+	isDebug = flag.Bool("debug", false, "debug")
+	logFileName := flag.String("logfile", "", "log file location")
 	flag.Parse()
 	if !(*port > 1023 && *port < 65536) {
 		// 默认端口为15368
 		*port = 15368
+	}
+	if *logFileName != "" {
+		if _, err := os.Stat(*logFileName); err == nil {
+			if err := os.Rename(*logFileName, *logFileName+".bak"); err != nil {
+				panic(err)
+			}
+		} else if !os.IsNotExist(err) {
+			panic(err)
+		}
+		logFile, err := os.OpenFile(*logFileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+		if err != nil {
+			panic(err)
+		}
+		defer logFile.Close()
+		*isDebug = true
+		log.SetOutput(logFile)
+		syscall.Dup2(int(logFile.Fd()), 2)
 	}
 	debug("WebSocket server port is %d", *port)
 
@@ -128,7 +146,6 @@ func wsHandler(c *fastws.Conn) {
 			}
 			break
 		}
-		conn.debug("Recieve message: %s", string(msg))
 
 		p := pool.Get()
 		v, err := p.ParseBytes(msg)
@@ -141,6 +158,9 @@ func wsHandler(c *fastws.Conn) {
 
 		reqType := v.GetInt("type")
 		reqID := string(v.GetStringBytes("requestID"))
+		if reqType != loginType {
+			conn.debug("Recieve message: %s", string(msg))
+		}
 		mu.RLock()
 		if ac == nil && reqType != heartbeatType && reqType != loginType && reqType != setClientIDType && reqType != requestForwardDataType {
 			go conn.send(fmt.Sprintf(respErrJSON, reqType, quote(reqID), needLogin, quote("Need login")))
@@ -164,7 +184,8 @@ func wsHandler(c *fastws.Conn) {
 					ac = aci.(*acLive)
 					mu.Unlock()
 				}
-				_ = conn.send(resp)
+				//_ = conn.send(resp)
+				_, _ = c.WriteString(resp)
 			}()
 			pool.Put(p)
 		case setClientIDType:

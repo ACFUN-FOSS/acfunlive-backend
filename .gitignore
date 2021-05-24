@@ -4,6 +4,7 @@ client1
 client2
 cmd/cmd
 *.json
+*.txt
 
 # Binaries for programs and plugins
 *.exe
