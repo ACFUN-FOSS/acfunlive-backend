@@ -1,5 +1,6 @@
 //+build linux
 // https://stackoverflow.com/questions/34772012/capturing-panic-in-golang/34772516
+// https://groups.google.com/g/golang-dev/c/zpeFtN2z5Fc
 
 package main
 

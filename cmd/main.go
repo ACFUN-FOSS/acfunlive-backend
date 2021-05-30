@@ -100,7 +100,6 @@ var noParamFuncContent = []funcContent{
 	{"getAllLiveList", "getAllLiveListType", "ac.ac.GetAllLiveList", []string{}},
 	{"getScheduleList", "getScheduleListType", "ac.ac.GetScheduleList", []string{}},
 	{"getManagerList", "getManagerListType", "ac.ac.GetManagerList", []string{}},
-	{"getAllKickHistory", "getAllKickHistoryType", "ac.ac.GetAllKickHistory", []string{}},
 	{"getLiveTypeList", "getLiveTypeListType", "ac.ac.GetLiveTypeList", []string{}},
 	{"getPushConfig", "getPushConfigType", "ac.ac.GetPushConfig", []string{}},
 	{"getLiveStatus", "getLiveStatusType", "ac.ac.GetLiveStatus", []string{}},
@@ -113,10 +112,11 @@ var noParamNoDataFuncContent = []funcContent{
 
 // 调用的函数只有string参数，有返回
 var stringFuncContent = []funcContent{
-	{"getWatchingList", "getWatchingListType", "ac.ac.GetWatchingListWithLiveID", []string{"liveID"}},
-	{"getSummary", "getSummaryType", "ac.ac.GetSummaryWithLiveID", []string{"liveID"}},
+	{"getWatchingList", "getWatchingListType", "ac.ac.GetWatchingList", []string{"liveID"}},
+	{"getSummary", "getSummaryType", "ac.ac.GetSummary", []string{"liveID"}},
 	{"getLuckList", "getLuckListType", "ac.ac.GetLuckList", []string{"liveID", "redpackID", "redpackBizUnit"}},
 	{"getPlayback", "getPlaybackType", "ac.ac.GetPlayback", []string{"liveID"}},
+	{"getAllKickHistory", "getAllKickHistoryType", "ac.ac.GetAllKickHistory", []string{"liveID"}},
 	{"getTranscodeInfo", "getTranscodeInfoType", "ac.ac.GetTranscodeInfo", []string{"streamName"}},
 	{"stopLive", "stopLiveType", "ac.ac.StopLive", []string{"liveID"}},
 }
@@ -135,8 +135,6 @@ var int64FuncContent = []funcContent{
 var int64NoDataFuncContent = []funcContent{
 	{"addManager", "addManagerType", "ac.ac.AddManager", []string{"managerUID"}},
 	{"deleteManager", "deleteManagerType", "ac.ac.DeleteManager", []string{"managerUID"}},
-	{"managerKick", "managerKickType", "ac.ac.ManagerKick", []string{"kickedUID"}},
-	{"authorKick", "authorKickType", "ac.ac.AuthorKick", []string{"kickedUID"}},
 	{"wearMedal", "wearMedalType", "ac.ac.WearMedal", []string{"liverUID"}},
 }
 

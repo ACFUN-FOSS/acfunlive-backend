@@ -57,22 +57,6 @@ func (ac *acLive) getManagerList(v *fastjson.Value, reqID string) string {
 	return fmt.Sprintf(respJSON, getManagerListType, quote(reqID), string(data))
 }
 
-func (ac *acLive) getAllKickHistory(v *fastjson.Value, reqID string) string {
-	ret, err := ac.ac.GetAllKickHistory()
-	if err != nil {
-		ac.conn.debug("getAllKickHistory() error: %v", err)
-		return fmt.Sprintf(respErrJSON, getAllKickHistoryType, quote(reqID), reqHandleErr, quote(err.Error()))
-	}
-
-	data, err := json.Marshal(ret)
-	if err != nil {
-		ac.conn.debug("getAllKickHistory() error: cannot marshal to json: %+v", ret)
-		return fmt.Sprintf(respErrJSON, getAllKickHistoryType, quote(reqID), reqHandleErr, quote(err.Error()))
-	}
-
-	return fmt.Sprintf(respJSON, getAllKickHistoryType, quote(reqID), string(data))
-}
-
 func (ac *acLive) getLiveTypeList(v *fastjson.Value, reqID string) string {
 	ret, err := ac.ac.GetLiveTypeList()
 	if err != nil {
@@ -138,7 +122,7 @@ func (ac *acLive) getWatchingList(v *fastjson.Value, reqID string) string {
 		return fmt.Sprintf(respErrJSON, getWatchingListType, quote(reqID), invalidReqData, quote("Need liveID"))
 	}
 
-	ret, err := ac.ac.GetWatchingListWithLiveID(liveID)
+	ret, err := ac.ac.GetWatchingList(liveID)
 	if err != nil {
 		ac.conn.debug("getWatchingList() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getWatchingListType, quote(reqID), reqHandleErr, quote(err.Error()))
@@ -160,7 +144,7 @@ func (ac *acLive) getSummary(v *fastjson.Value, reqID string) string {
 		return fmt.Sprintf(respErrJSON, getSummaryType, quote(reqID), invalidReqData, quote("Need liveID"))
 	}
 
-	ret, err := ac.ac.GetSummaryWithLiveID(liveID)
+	ret, err := ac.ac.GetSummary(liveID)
 	if err != nil {
 		ac.conn.debug("getSummary() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getSummaryType, quote(reqID), reqHandleErr, quote(err.Error()))
@@ -229,6 +213,28 @@ func (ac *acLive) getPlayback(v *fastjson.Value, reqID string) string {
 	}
 
 	return fmt.Sprintf(respJSON, getPlaybackType, quote(reqID), string(data))
+}
+
+func (ac *acLive) getAllKickHistory(v *fastjson.Value, reqID string) string {
+	liveID := string(v.GetStringBytes("data", "liveID"))
+	if liveID == "" {
+		ac.conn.debug("getAllKickHistory() error: No liveID")
+		return fmt.Sprintf(respErrJSON, getAllKickHistoryType, quote(reqID), invalidReqData, quote("Need liveID"))
+	}
+
+	ret, err := ac.ac.GetAllKickHistory(liveID)
+	if err != nil {
+		ac.conn.debug("getAllKickHistory() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getAllKickHistoryType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	data, err := json.Marshal(ret)
+	if err != nil {
+		ac.conn.debug("getAllKickHistory() error: cannot marshal to json: %+v", ret)
+		return fmt.Sprintf(respErrJSON, getAllKickHistoryType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getAllKickHistoryType, quote(reqID), string(data))
 }
 
 func (ac *acLive) getTranscodeInfo(v *fastjson.Value, reqID string) string {
@@ -437,38 +443,6 @@ func (ac *acLive) deleteManager(v *fastjson.Value, reqID string) string {
 	}
 
 	return fmt.Sprintf(respNoDataJSON, deleteManagerType, quote(reqID))
-}
-
-func (ac *acLive) managerKick(v *fastjson.Value, reqID string) string {
-	kickedUID := v.GetInt64("data", "kickedUID")
-	if kickedUID <= 0 {
-		ac.conn.debug("managerKick() error: kickedUID not exist or less than 1")
-		return fmt.Sprintf(respErrJSON, managerKickType, quote(reqID), invalidReqData, quote("kickedUID not exist or less than 1"))
-	}
-
-	err := ac.ac.ManagerKick(kickedUID)
-	if err != nil {
-		ac.conn.debug("managerKick() error: %v", err)
-		return fmt.Sprintf(respErrJSON, managerKickType, quote(reqID), reqHandleErr, quote(err.Error()))
-	}
-
-	return fmt.Sprintf(respNoDataJSON, managerKickType, quote(reqID))
-}
-
-func (ac *acLive) authorKick(v *fastjson.Value, reqID string) string {
-	kickedUID := v.GetInt64("data", "kickedUID")
-	if kickedUID <= 0 {
-		ac.conn.debug("authorKick() error: kickedUID not exist or less than 1")
-		return fmt.Sprintf(respErrJSON, authorKickType, quote(reqID), invalidReqData, quote("kickedUID not exist or less than 1"))
-	}
-
-	err := ac.ac.AuthorKick(kickedUID)
-	if err != nil {
-		ac.conn.debug("authorKick() error: %v", err)
-		return fmt.Sprintf(respErrJSON, authorKickType, quote(reqID), reqHandleErr, quote(err.Error()))
-	}
-
-	return fmt.Sprintf(respNoDataJSON, authorKickType, quote(reqID))
 }
 
 func (ac *acLive) wearMedal(v *fastjson.Value, reqID string) string {

@@ -134,6 +134,50 @@ func (ac *acLive) uploadImage(v *fastjson.Value, reqID string) string {
 	return fmt.Sprintf(respJSON, uploadImageType, quote(reqID), fmt.Sprintf(`{"imageURL":%s}`, quote(imageURL)))
 }
 
+func (ac *acLive) managerKick(v *fastjson.Value, reqID string) string {
+	liveID := string(v.GetStringBytes("data", "liveID"))
+	if liveID == "" {
+		ac.conn.debug("managerKick() error: No liveID")
+		return fmt.Sprintf(respErrJSON, managerKickType, quote(reqID), invalidReqData, quote("Need liveID"))
+	}
+
+	kickedUID := v.GetInt64("data", "kickedUID")
+	if kickedUID <= 0 {
+		ac.conn.debug("managerKick() error: kickedUID not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, managerKickType, quote(reqID), invalidReqData, quote("kickedUID not exist or less than 1"))
+	}
+
+	err := ac.ac.ManagerKick(liveID, kickedUID)
+	if err != nil {
+		ac.conn.debug("managerKick() error: %v", err)
+		return fmt.Sprintf(respErrJSON, managerKickType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respNoDataJSON, managerKickType, quote(reqID))
+}
+
+func (ac *acLive) authorKick(v *fastjson.Value, reqID string) string {
+	liveID := string(v.GetStringBytes("data", "liveID"))
+	if liveID == "" {
+		ac.conn.debug("authorKick() error: No liveID")
+		return fmt.Sprintf(respErrJSON, authorKickType, quote(reqID), invalidReqData, quote("Need liveID"))
+	}
+
+	kickedUID := v.GetInt64("data", "kickedUID")
+	if kickedUID <= 0 {
+		ac.conn.debug("authorKick() error: kickedUID not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, authorKickType, quote(reqID), invalidReqData, quote("kickedUID not exist or less than 1"))
+	}
+
+	err := ac.ac.AuthorKick(liveID, kickedUID)
+	if err != nil {
+		ac.conn.debug("authorKick() error: %v", err)
+		return fmt.Sprintf(respErrJSON, authorKickType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respNoDataJSON, authorKickType, quote(reqID))
+}
+
 // 检测是否有直播权限
 func (ac *acLive) checkLiveAuth(v *fastjson.Value, reqID string) string {
 	auth, err := ac.ac.CheckLiveAuth()

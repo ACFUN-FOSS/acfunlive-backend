@@ -17,8 +17,8 @@ const (
 	loginJSON               = `{"type":2,"requestID":"abc","data":{"account":%s,"password":%s}}`
 	getDanmuJSON            = `{"type":100,"requestID":"abc","data":{"liverUID":%d}}`
 	stopDanmuJSON           = `{"type":101,"requestID":"abc","data":{"liverUID":%d}}`
-	getAllKickHistoryJSON   = `{"type":203,"requestID":"abc"}`
-	authorKickJSON          = `{"type":205,"requestID":"abc","data":{"kickedUID":%d}}`
+	getAllKickHistoryJSON   = `{"type":203,"requestID":"abc","data":{"liveID":%s}}`
+	authorKickJSON          = `{"type":205,"requestID":"abc","data":{"liveID":%s,"kickedUID":%d}}`
 	checkLiveAuthJSON       = `{"type":900,"requestID":"abc"}`
 	getLiveTypeListJSON     = `{"type":901,"requestID":"abc"}`
 	getPushConfigJSON       = `{"type":902,"requestID":"abc"}`
@@ -61,6 +61,7 @@ func main() {
 
 	var liveID string
 	var streamName string
+	var userID int64
 	ch := make(chan struct{}, 1)
 	go func() {
 		var pool fastjson.ParserPool
@@ -90,7 +91,8 @@ func main() {
 					pool.Put(p)
 					continue
 				}
-				log.Printf("Login sucess, account uid: %d", v.GetInt64("data", "tokenInfo", "userID"))
+				userID = v.GetInt64("data", "tokenInfo", "userID")
+				log.Printf("Login sucess, account uid: %d", userID)
 				ch <- struct{}{}
 			case 3:
 			case 4:
@@ -281,7 +283,7 @@ func main() {
 	_, err = conn.WriteString(fmt.Sprintf(loginJSON, quote(*account), quote(*password)))
 	checkErr(err)
 	<-ch
-	//_, err = conn.WriteString(fmt.Sprintf(getDanmuJSON, *liverUID))
+	//_, err = conn.WriteString(fmt.Sprintf(getDanmuJSON, userID))
 	//checkErr(err)
 	//<-ch
 
@@ -310,11 +312,13 @@ func main() {
 	_, err = conn.WriteString(getLiveStatusJSON)
 	checkErr(err)
 
-	//_, err = conn.WriteString(fmt.Sprintf(authorKickJSON, 12345))
+	//time.Sleep(10 * time.Second)
+	//_, err = conn.WriteString(fmt.Sprintf(authorKickJSON, quote(liveID), 12345))
 	//checkErr(err)
 
-	_, err = conn.WriteString(getAllKickHistoryJSON)
-	checkErr(err)
+	//time.Sleep(10 * time.Second)
+	//_, err = conn.WriteString(fmt.Sprintf(getAllKickHistoryJSON, quote(liveID)))
+	//checkErr(err)
 
 	time.Sleep(20 * time.Minute)
 	_, err = conn.WriteString(fmt.Sprintf(changeTitleAndCoverJSON, quote(*title2), quote(*cover2), quote(liveID)))

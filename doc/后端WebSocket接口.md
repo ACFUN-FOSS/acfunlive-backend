@@ -543,7 +543,7 @@
 ```json
 {
     "type": 107,
-    "requestID": "abc",
+    "requestID": "abc"
 }
 ```
 
@@ -606,7 +606,7 @@
 ```json
 {
     "type": 108,
-    "requestID": "abc",
+    "requestID": "abc"
 }
 ```
 
@@ -682,7 +682,7 @@
 ```json
 {
     "type": 110,
-    "requestID": "abc",
+    "requestID": "abc"
 }
 ```
 
@@ -828,7 +828,7 @@
 ```json
 {
     "type": 113,
-    "requestID": "abc",
+    "requestID": "abc"
 }
 ```
 
@@ -875,7 +875,7 @@
 ```json
 {
     "type": 200,
-    "requestID": "abc",
+    "requestID": "abc"
 }
 ```
 
@@ -957,10 +957,13 @@
 {
     "type": 203,
     "requestID": "abc",
+    "data": {
+        "liveID": "cgbKNA8R5nY"
+    }
 }
 ```
 
-只能查询主播正在直播的那一场直播的踢人记录，需要[登陆](#登陆)主播的AcFun帐号
+查询liveID指定直播的主播的踢人记录，需要[登陆](#登陆)主播的AcFun帐号
 
 ##### 响应
 ```json
@@ -985,10 +988,13 @@
     "type": 204,
     "requestID": "abc",
     "data": {
+        "liveID": "cgbKNA8R5nY",
         "kickedUID": 12345
     }
 }
 ```
+
+`liveID`：主播正在直播的liveID，需要[登陆](#登陆)帐号有对应直播间的房管权限
 
 `kickedUID`：被踢的用户的uid
 
@@ -1008,10 +1014,13 @@
     "type": 205,
     "requestID": "abc",
     "data": {
+        "liveID": "cgbKNA8R5nY",
         "kickedUID": 12345
     }
 }
 ```
+
+`liveID`：主播正在直播的liveID，需要[登陆](#登陆)主播的AcFun帐号
 
 ##### 响应
 ```json

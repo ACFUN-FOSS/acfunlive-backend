@@ -34,7 +34,7 @@ const (
 	getManagerListJSON     = `{"type":200,"requestID":"abc"}`
 	addManagerJSON         = `{"type":201,"requestID":"abc","data":{"managerUID":%d}}`
 	deleteManagerJSON      = `{"type":202,"requestID":"abc","data":{"managerUID":%d}}`
-	managerKickJSON        = `{"type":204,"requestID":"abc","data":{"kickedUID":%d}}`
+	managerKickJSON        = `{"type":204,"requestID":"abc","data":{"liveID":%s,"kickedUID":%d}}`
 	getMedalDetailJSON     = `{"type":300,"requestID":"abc","data":{"liverUID":%d}}`
 	getMedalListJSON       = `{"type":301,"requestID":"abc","data":{"liverUID":%d}}`
 	getMedalRankListJSON   = `{"type":302,"requestID":"abc","data":{"liverUID":%d}}`
@@ -344,7 +344,7 @@ func main() {
 	_, err = conn.WriteString(fmt.Sprintf(deleteManagerJSON, *liverUID))
 	checkErr(err)
 
-	//_, err = conn.WriteString(fmt.Sprintf(managerKickJSON, *liverUID))
+	//_, err = conn.WriteString(fmt.Sprintf(managerKickJSON, quote(liveID), *liverUID))
 	//checkErr(err)
 
 	_, err = conn.WriteString(fmt.Sprintf(getMedalDetailJSON, *liverUID))
