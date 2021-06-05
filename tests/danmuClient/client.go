@@ -371,6 +371,7 @@ func main() {
 	//_, err = conn.WriteString(fmt.Sprintf(requestForwardDataJSON, quote("client2"), quote("hello client2")))
 	//checkErr(err)
 
+	//<-ch
 	time.Sleep(10 * time.Second)
 	_, err = conn.WriteString(fmt.Sprintf(stopDanmuJSON, *liverUID))
 	checkErr(err)

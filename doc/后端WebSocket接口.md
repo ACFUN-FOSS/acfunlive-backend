@@ -1062,7 +1062,8 @@
             "wearMedal": false, // 用户是否佩戴主播的守护徽章
             "friendshipDegree": 18015, // 目前用户的守护徽章亲密度
             "joinClubTime": 1602752837775, // 用户加入主播守护团的时间，是以毫秒为单位的Unix时间
-            "currentDegreeLimit": 18887 // 用户守护徽章目前等级的亲密度的上限
+            "currentDegreeLimit": 18887, // 用户守护徽章目前等级的亲密度的上限
+            "medalCount": 0 // 没有用户拥有的守护徽章数量
         },
         "medalDegree": {
             "uperID": 12891327,
@@ -1115,7 +1116,8 @@
                 "wearMedal": true,
                 "friendshipDegree": 31391,
                 "joinClubTime": 1600777699862,
-                "currentDegreeLimit": 48887
+                "currentDegreeLimit": 48887,
+                "medalCount": 100 // 用户拥有的守护徽章数量
             }
         ],
         "medalDetail": { // liverUID指定的主播的守护徽章详细信息
@@ -1131,7 +1133,8 @@
                 "wearMedal": false,
                 "friendshipDegree": 14216,
                 "joinClubTime": 1604114733093,
-                "currentDegreeLimit": 18887
+                "currentDegreeLimit": 18887,
+                "medalCount": 100
             },
             "medalDegree": {
                 "uperID": 26675034,
@@ -1229,7 +1232,8 @@
         "wearMedal": true,
         "friendshipDegree": 0, // 没有亲密度
         "joinClubTime": 0, // 没有用户加入守护团的时间
-        "currentDegreeLimit": 0 // 没有目前等级的亲密度上限
+        "currentDegreeLimit": 0, // 没有目前等级的亲密度上限
+        "medalCount": 100 // 用户拥有的守护徽章数量
     }
 }
 ```
