@@ -23,6 +23,7 @@ var cmdDispatch = map[int]func(*acLive, *fastjson.Value, string) string{
 	uploadImageType:         (*acLive).uploadImage,
 	getLiveDataType:         (*acLive).getLiveData,
 	getScheduleListType:     (*acLive).getScheduleList,
+	getGiftListType:         (*acLive).getGiftList,
 	getManagerListType:      (*acLive).getManagerList,
 	addManagerType:          (*acLive).addManager,
 	deleteManagerType:       (*acLive).deleteManager,
@@ -134,6 +135,36 @@ func (ac *acLive) uploadImage(v *fastjson.Value, reqID string) string {
 	return fmt.Sprintf(respJSON, uploadImageType, quote(reqID), fmt.Sprintf(`{"imageURL":%s}`, quote(imageURL)))
 }
 
+// 获取直播间礼物列表
+func (ac *acLive) getGiftList(v *fastjson.Value, reqID string) string {
+	liveID := string(v.GetStringBytes("data", "liveID"))
+	if liveID == "" {
+		ac.conn.debug("getGiftList() error: No liveID")
+		return fmt.Sprintf(respErrJSON, getGiftListType, quote(reqID), invalidReqData, quote("Need liveID"))
+	}
+
+	gift, err := ac.ac.GetGiftList(liveID)
+	if err != nil {
+		ac.conn.debug("getGiftList() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getGiftListType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+	list := make([]acfundanmu.GiftDetail, 0, len(gift))
+	for _, g := range gift {
+		list = append(list, g)
+	}
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].GiftID < list[j].GiftID
+	})
+	data, err := json.Marshal(list)
+	if err != nil {
+		ac.conn.debug("getGiftList() error: cannot marshal to json: %+v", list)
+		return fmt.Sprintf(respErrJSON, getGiftListType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getGiftListType, quote(reqID), string(data))
+}
+
+// 房管踢人
 func (ac *acLive) managerKick(v *fastjson.Value, reqID string) string {
 	liveID := string(v.GetStringBytes("data", "liveID"))
 	if liveID == "" {
@@ -156,6 +187,7 @@ func (ac *acLive) managerKick(v *fastjson.Value, reqID string) string {
 	return fmt.Sprintf(respNoDataJSON, managerKickType, quote(reqID))
 }
 
+// 主播踢人
 func (ac *acLive) authorKick(v *fastjson.Value, reqID string) string {
 	liveID := string(v.GetStringBytes("data", "liveID"))
 	if liveID == "" {

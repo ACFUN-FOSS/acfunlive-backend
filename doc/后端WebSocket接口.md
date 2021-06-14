@@ -26,6 +26,7 @@
   * [上传图片](#上传图片)
   * [直播统计数据](#直播统计数据)
   * [直播预告列表](#直播预告列表)
+  * [直播间礼物列表](#直播间礼物列表)
   * [登陆用户的房管列表](#登陆用户的房管列表)
   * [添加房管](#添加房管)
   * [删除房管](#删除房管)
@@ -865,6 +866,67 @@
             },
             "reserve": false, // 登陆帐号是否预约了该直播
             "reserveNumber": 135 // 已预约用户的数量
+        }
+    ]
+}
+```
+
+#### 直播间礼物列表
+##### 请求
+```json
+{
+    "type": 114,
+    "requestID": "abc",
+    "data": {
+        "liveID": "cgbKNA8R5nY"
+    }
+}
+```
+
+##### 响应
+```json
+{
+    "type": 114,
+    "requestID": "abc",
+    "result": 1,
+    "data": [
+        {
+            "giftID": 16,
+            "giftName": "猴岛",
+            "arLiveName": "",
+            "payWalletType": 1,
+            "price": 2888,
+            "webpPic": "https://static.yximgs.com/bs2/giftCenter/giftCenter-20200316111119oxpFWYGQ.webp",
+            "pngPic": "https://static.yximgs.com/bs2/giftCenter/giftCenter-20200812141000WkBybKGr.png",
+            "smallPngPic": "https://static.yximgs.com/bs2/giftCenter/giftCenter-20200316111145bJSDGWHB.png",
+            "allowBatchSendSizeList": [
+                1,
+                6,
+                10
+            ],
+            "canCombo": true,
+            "canDraw": false,
+            "magicFaceID": 264,
+            "vupArID": 0,
+            "description": "我要让所有人知道，这座猴岛，被我承包了！",
+            "redpackPrice": 288
+        },
+        {
+            "giftID": 36,
+            "giftName": "爱你哟",
+            "arLiveName": "ac102",
+            "payWalletType": 1,
+            "price": 5200,
+            "webpPic": "https://static.yximgs.com/bs2/giftCenter/giftCenter-20200810163045cOrcctqJ.webp",
+            "pngPic": "https://static.yximgs.com/bs2/giftCenter/giftCenter-20200812161659mhqzRjiA.png",
+            "smallPngPic": "https://static.yximgs.com/bs2/giftCenter/giftCenter-20200810163054BlSAUWVG.png",
+            "allowBatchSendSizeList": [],
+            "canCombo": true,
+            "canDraw": false,
+            "magicFaceID": 0,
+            "vupArID": 0,
+            "description": "爱你哟～",
+            "redpackPrice": 0
         }
     ]
 }

@@ -42,6 +42,7 @@ const (
 	uploadImageType
 	getLiveDataType
 	getScheduleListType
+	getGiftListType
 )
 
 const (
