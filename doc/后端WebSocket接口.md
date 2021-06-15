@@ -573,7 +573,8 @@
             "magicFaceID": 0,
             "vupArID": 0,
             "description": "达成蕉易，投蕉鼓励！", // 礼物的描述
-            "redpackPrice": 0 // 礼物红包价格总额，单位为AC币
+            "redpackPrice": 0, // 礼物红包价格总额，单位为AC币
+            "cornerMarkerText": ""
         },
         {
             "giftID": 2,
@@ -596,7 +597,8 @@
             "magicFaceID": 0,
             "vupArID": 0,
             "description": "哎，我跟你讲，这瓜超甜的！",
-            "redpackPrice": 0
+            "redpackPrice": 0,
+            "cornerMarkerText": ""
         }
     ]
 }
@@ -909,7 +911,8 @@
             "magicFaceID": 264,
             "vupArID": 0,
             "description": "我要让所有人知道，这座猴岛，被我承包了！",
-            "redpackPrice": 288
+            "redpackPrice": 288,
+            "cornerMarkerText": ""
         },
         {
             "giftID": 36,
@@ -926,7 +929,8 @@
             "magicFaceID": 0,
             "vupArID": 0,
             "description": "爱你哟～",
-            "redpackPrice": 0
+            "redpackPrice": 0,
+            "cornerMarkerText": ""
         }
     ]
 }
@@ -1743,7 +1747,8 @@
             "magicFaceID": 0,
             "vupArID": 0,
             "description": "为你转身为你爆灯，为你打CALL日夜不分", // 礼物的描述
-            "redpackPrice": 0 // 礼物红包价格总额，单位为AC币
+            "redpackPrice": 0, // 礼物红包价格总额，单位为AC币
+            "cornerMarkerText": ""
         },
         "count": 5, // 礼物单次赠送的数量，礼物总数是Count * Combo
         "combo": 1, // 礼物连击数量，礼物总数是Count * Combo
