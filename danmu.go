@@ -12,10 +12,10 @@ import (
 
 // 获取弹幕
 func (conn *wsConn) getDanmu(acMap *sync.Map, uid int64, reqID string) {
+	ac := new(acLive)
 	if _, ok := acMap.Load(uid); ok {
 		return
 	}
-	ac := new(acLive)
 	acMap.Store(uid, ac)
 	defer acMap.Delete(uid)
 	aci, _ := acMap.Load(0)

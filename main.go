@@ -100,6 +100,7 @@ func wsHandler(c *fastws.Conn) {
 		c:          c,
 		remoteAddr: c.RemoteAddr().String(),
 	}
+	defer c.Close()
 	defer conn.debug("WebSocket connection close")
 	conn.debug("WebSocket connection open")
 
@@ -184,7 +185,6 @@ func wsHandler(c *fastws.Conn) {
 					ac = aci.(*acLive)
 					mu.Unlock()
 				}
-				//_ = conn.send(resp)
 				_, _ = c.WriteString(resp)
 			}()
 			pool.Put(p)
