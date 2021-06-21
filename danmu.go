@@ -11,7 +11,7 @@ import (
 )
 
 // 获取弹幕
-func (conn *wsConn) getDanmu(acMap *sync.Map, uid int64, reqID string) {
+func (conn *wsConn) getDanmu(ctx context.Context, acMap *sync.Map, uid int64, reqID string) {
 	ac := new(acLive)
 	if _, ok := acMap.Load(uid); ok {
 		return
@@ -303,10 +303,10 @@ func (conn *wsConn) getDanmu(acMap *sync.Map, uid int64, reqID string) {
 		}
 	})
 
-	ctx, cancel := context.WithCancel(context.Background())
+	danmuCtx, cancel := context.WithCancel(ctx)
 	defer cancel()
 	ac.cancel = cancel
-	danmuCh := ac.ac.StartDanmu(ctx, true)
+	danmuCh := ac.ac.StartDanmu(danmuCtx, true)
 	conn.debug("Start getting liver(%d) danmu", uid)
 	defer conn.debug("Stop getting liver(%d) danmu", uid)
 	select {
