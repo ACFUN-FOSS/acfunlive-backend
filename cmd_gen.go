@@ -57,6 +57,22 @@ func (ac *acLive) getManagerList(v *fastjson.Value, reqID string) string {
 	return fmt.Sprintf(respJSON, getManagerListType, quote(reqID), string(data))
 }
 
+func (ac *acLive) getMedalList(v *fastjson.Value, reqID string) string {
+	ret, err := ac.ac.GetMedalList()
+	if err != nil {
+		ac.conn.debug("getMedalList() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getMedalListType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	data, err := json.Marshal(ret)
+	if err != nil {
+		ac.conn.debug("getMedalList() error: cannot marshal to json: %+v", ret)
+		return fmt.Sprintf(respErrJSON, getMedalListType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getMedalListType, quote(reqID), string(data))
+}
+
 func (ac *acLive) getLiveTypeList(v *fastjson.Value, reqID string) string {
 	ret, err := ac.ac.GetLiveTypeList()
 	if err != nil {
@@ -345,28 +361,6 @@ func (ac *acLive) getMedalDetail(v *fastjson.Value, reqID string) string {
 	}
 
 	return fmt.Sprintf(respJSON, getMedalDetailType, quote(reqID), string(data))
-}
-
-func (ac *acLive) getMedalList(v *fastjson.Value, reqID string) string {
-	liverUID := v.GetInt64("data", "liverUID")
-	if liverUID <= 0 {
-		ac.conn.debug("getMedalList() error: liverUID not exist or less than 1")
-		return fmt.Sprintf(respErrJSON, getMedalListType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1"))
-	}
-
-	ret, err := ac.ac.GetMedalList(liverUID)
-	if err != nil {
-		ac.conn.debug("getMedalList() error: %v", err)
-		return fmt.Sprintf(respErrJSON, getMedalListType, quote(reqID), reqHandleErr, quote(err.Error()))
-	}
-
-	data, err := json.Marshal(ret)
-	if err != nil {
-		ac.conn.debug("getMedalList() error: cannot marshal to json: %+v", ret)
-		return fmt.Sprintf(respErrJSON, getMedalListType, quote(reqID), reqHandleErr, quote(err.Error()))
-	}
-
-	return fmt.Sprintf(respJSON, getMedalListType, quote(reqID), string(data))
 }
 
 func (ac *acLive) getMedalRankList(v *fastjson.Value, reqID string) string {

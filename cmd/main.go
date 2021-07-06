@@ -100,6 +100,7 @@ var noParamFuncContent = []funcContent{
 	{"getAllLiveList", "getAllLiveListType", "ac.ac.GetAllLiveList", []string{}},
 	{"getScheduleList", "getScheduleListType", "ac.ac.GetScheduleList", []string{}},
 	{"getManagerList", "getManagerListType", "ac.ac.GetManagerList", []string{}},
+	{"getMedalList", "getMedalListType", "ac.ac.GetMedalList", []string{}},
 	{"getLiveTypeList", "getLiveTypeListType", "ac.ac.GetLiveTypeList", []string{}},
 	{"getPushConfig", "getPushConfigType", "ac.ac.GetPushConfig", []string{}},
 	{"getLiveStatus", "getLiveStatusType", "ac.ac.GetLiveStatus", []string{}},
@@ -126,7 +127,6 @@ var int64FuncContent = []funcContent{
 	{"getBillboard", "getBillboardType", "ac.ac.GetBillboard", []string{"liverUID"}},
 	{"getUserLiveInfo", "getUserLiveInfoType", "ac.ac.GetUserLiveInfo", []string{"userID"}},
 	{"getMedalDetail", "getMedalDetailType", "ac.ac.GetMedalDetail", []string{"liverUID"}},
-	{"getMedalList", "getMedalListType", "ac.ac.GetMedalList", []string{"liverUID"}},
 	{"getMedalRankList", "getMedalRankListType", "ac.ac.GetMedalRankList", []string{"liverUID"}},
 	{"getUserMedal", "getUserMedalType", "acfundanmu.GetUserMedal", []string{"userID"}},
 }
