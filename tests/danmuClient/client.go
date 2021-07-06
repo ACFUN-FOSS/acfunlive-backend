@@ -37,7 +37,7 @@ const (
 	deleteManagerJSON      = `{"type":202,"requestID":"abc","data":{"managerUID":%d}}`
 	managerKickJSON        = `{"type":204,"requestID":"abc","data":{"liveID":%s,"kickedUID":%d}}`
 	getMedalDetailJSON     = `{"type":300,"requestID":"abc","data":{"liverUID":%d}}`
-	getMedalListJSON       = `{"type":301,"requestID":"abc","data":{"liverUID":%d}}`
+	getMedalListJSON       = `{"type":301,"requestID":"abc"}`
 	getMedalRankListJSON   = `{"type":302,"requestID":"abc","data":{"liverUID":%d}}`
 	getUserMedalJSON       = `{"type":303,"requestID":"abc","data":{"userID":%d}}`
 	wearMedalJSON          = `{"type":304,"requestID":"abc","data":{"liverUID":%d}}`
@@ -49,7 +49,7 @@ var quote = strconv.Quote
 func main() {
 	account := flag.String("account", "", "AcFun account")
 	password := flag.String("password", "", "AcFun account password")
-	imageFile := flag.String("image", "", "Image file")
+	//imageFile := flag.String("image", "", "Image file")
 	liverUID := flag.Int64("uid", 0, "AcFun liver uid")
 	flag.Parse()
 
@@ -326,14 +326,14 @@ func main() {
 	_, err = conn.WriteString(getAllLiveListJSON)
 	checkErr(err)
 
-	_, err = conn.WriteString(fmt.Sprintf(uploadImageJSON, quote(*imageFile)))
-	checkErr(err)
+	//_, err = conn.WriteString(fmt.Sprintf(uploadImageJSON, quote(*imageFile)))
+	//checkErr(err)
 
 	_, err = conn.WriteString(getLiveDataJSON)
 	checkErr(err)
 
-	_, err = conn.WriteString(getScheduleListJSON)
-	checkErr(err)
+	//_, err = conn.WriteString(getScheduleListJSON)
+	//checkErr(err)
 
 	_, err = conn.WriteString(fmt.Sprintf(getGiftListJSON, quote(liveID)))
 	checkErr(err)
@@ -355,7 +355,7 @@ func main() {
 	_, err = conn.WriteString(fmt.Sprintf(getMedalDetailJSON, *liverUID))
 	checkErr(err)
 
-	_, err = conn.WriteString(fmt.Sprintf(getMedalListJSON, *liverUID))
+	_, err = conn.WriteString(getMedalListJSON)
 	checkErr(err)
 
 	_, err = conn.WriteString(fmt.Sprintf(getMedalRankListJSON, *liverUID))

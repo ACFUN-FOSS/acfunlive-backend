@@ -749,6 +749,8 @@
 
 `imageFile`：图片（可以是gif）的本地路径
 
+该接口目前不可用
+
 ##### 响应
 ```json
 {
@@ -836,6 +838,8 @@
     "requestID": "abc"
 }
 ```
+
+该接口目前不可用
 
 ##### 响应
 ```json
@@ -1144,8 +1148,7 @@
             "bananaDegree": 0, // 本日投蕉增加的亲密度
             "bananaDegreeLimit": 10 // 本日投蕉增加的亲密度上限
         },
-        "userRank": "31", // 用户的守护徽章亲密度的排名
-        "clubName": "白白的"
+        "userRank": "31" // 用户的守护徽章亲密度的排名
     }
 }
 ```
@@ -1155,10 +1158,7 @@
 ```json
 {
     "type": 301,
-    "requestID": "abc",
-    "data": {
-        "liverUID": 26675034
-    }
+    "requestID": "abc"
 }
 ```
 
@@ -1170,55 +1170,23 @@
     "type": 301,
     "requestID": "abc",
     "result": 1,
-    "data": {
-        "medalList": [ // 用户拥有的守护徽章列表
-            {
-                "medalInfo": {
-                    "uperID": 378269,
-                    "userID": 103411,
-                    "clubName": "QQ星",
-                    "level": 12
-                },
-                "uperName": "qyqx",
-                "uperAvatar": "https://tx-free-imgs.acfun.cn/style/image/201907/0ldW0vL9ifWM29JzsAyMlEQxdf1vRgIL.jpg?imageslim",
-                "wearMedal": true,
-                "friendshipDegree": 31391,
-                "joinClubTime": 1600777699862,
-                "currentDegreeLimit": 48887,
-                "medalCount": 100 // 用户拥有的守护徽章数量
-            }
-        ],
-        "medalDetail": { // liverUID指定的主播的守护徽章详细信息
-            "medal": {
-                "medalInfo": {
-                    "uperID": 26675034,
-                    "userID": 103411,
-                    "clubName": "偷芯猫",
-                    "level": 10
-                },
-                "uperName": "艾栗AIri",
-                "uperAvatar": "https://tx-free-imgs.acfun.cn/content/2020_11_22/1606036415911.JPG?imageslim",
-                "wearMedal": false,
-                "friendshipDegree": 14216,
-                "joinClubTime": 1604114733093,
-                "currentDegreeLimit": 18887,
-                "medalCount": 100
+    "data": [ // 用户拥有的守护徽章列表
+        {
+            "medalInfo": {
+                "uperID": 265135,
+                "userID": 103411,
+                "clubName": "处男",
+                "level": 14
             },
-            "medalDegree": {
-                "uperID": 26675034,
-                "giftDegree": 0,
-                "giftDegreeLimit": 2000,
-                "peachDegree": 0,
-                "peachDegreeLimit": 520,
-                "liveWatchDegree": 202,
-                "liveWatchDegreeLimit": 360,
-                "bananaDegree": 0,
-                "bananaDegreeLimit": 10
-            },
-            "userRank": "79",
-            "clubName": "偷芯猫"
+            "uperName": "力力力力宝",
+            "uperAvatar": "https://tx-free-imgs.acfun.cn/Fi1sC-eFeM6AyH7Hp7WZvUOkOULH?imageslim",
+            "wearMedal": true,
+            "friendshipDegree": 94486,
+            "joinClubTime": 1600592466196,
+            "currentDegreeLimit": 128887,
+            "medalCount": 186 // 用户拥有的守护徽章数量
         }
-    }
+    ]
 }
 ```
 
