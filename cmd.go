@@ -50,6 +50,7 @@ var cmdDispatch = map[int]func(*acLive, *fastjson.Value, string) string{
 func (conn *wsConn) login(acMap *sync.Map, account, password, reqID string) string {
 	var newAC *acfundanmu.AcFunLive
 	var err error
+	conn.debug("Client request login")
 	if account == "" || password == "" {
 		newAC, err = acfundanmu.NewAcFunLive()
 		if err != nil {
@@ -64,10 +65,11 @@ func (conn *wsConn) login(acMap *sync.Map, account, password, reqID string) stri
 		}
 		newAC, err = acfundanmu.NewAcFunLive(acfundanmu.SetCookies(cookies))
 		if err != nil {
-			conn.debug("login() error: %+v", err)
+			conn.debug("login() error: %v", err)
 			return fmt.Sprintf(respErrJSON, loginType, quote(reqID), reqHandleErr, quote(err.Error()))
 		}
 	}
+	conn.debug("Client login is successful, uid is %d", newAC.GetUserID())
 
 	ac := new(acLive)
 	ac.conn = conn
@@ -77,7 +79,7 @@ func (conn *wsConn) login(acMap *sync.Map, account, password, reqID string) stri
 	info := ac.ac.GetTokenInfo()
 	data, err := json.Marshal(info)
 	if err != nil {
-		conn.debug("login() error: cannot marshal to json: %+v", info)
+		//conn.debug("login() error: cannot marshal to json: %+v", info)
 		return fmt.Sprintf(respErrJSON, loginType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 

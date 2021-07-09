@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/dgrr/fastws v1.0.4
+	github.com/klauspost/cpuid/v2 v2.0.8 // indirect
 	github.com/orzogc/acfundanmu v0.0.0-20210705165001-a3e934e21512
 	github.com/segmentio/encoding v0.2.19
 	github.com/thanhpk/randstr v1.0.4
