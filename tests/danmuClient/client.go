@@ -271,6 +271,9 @@ func main() {
 				log.Printf("%s", string(msg))
 			case 2103:
 				log.Printf("%s", string(msg))
+			case 2999:
+				log.Printf("%s", string(msg))
+				ch <- struct{}{}
 			case 3000:
 				log.Printf("%s", string(msg))
 			case 3001:

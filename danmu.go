@@ -163,15 +163,17 @@ func (conn *wsConn) getDanmu(ctx context.Context, acMap *sync.Map, uid int64, re
 	})
 
 	ac.ac.OnDanmuStop(func(ac *acfundanmu.AcFunLive, err error) {
-		var msg string
 		if err == nil {
-			msg = `{"liveClosed":true,"reason":""}`
+			e := conn.send(fmt.Sprintf(danmuNoDataJSON, uid, danmuStopType))
+			if e != nil {
+				errCh <- e
+			}
 		} else {
-			msg = fmt.Sprintf(`{"liveClosed":false,"reason":%s}`, quote(err.Error()))
-		}
-		e := conn.send(fmt.Sprintf(danmuJSON, uid, danmuStopType, quote(msg)))
-		if e != nil {
-			errCh <- e
+			msg := fmt.Sprintf(`{"error":%s}`, quote(err.Error()))
+			e := conn.send(fmt.Sprintf(danmuJSON, uid, danmuStopErrType, msg))
+			if e != nil {
+				errCh <- e
+			}
 		}
 	})
 

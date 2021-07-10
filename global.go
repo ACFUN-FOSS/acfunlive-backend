@@ -10,11 +10,12 @@ import (
 )
 
 const (
-	heartbeatJSON  = `{"type":1}`                                        // 心跳包
-	respJSON       = `{"type":%d,"requestID":%s,"result":1,"data":%s}`   // 响应
-	respNoDataJSON = `{"type":%d,"requestID":%s,"result":1}`             // 没有data的响应
-	respErrJSON    = `{"type":%d,"requestID":%s,"result":%d,"error":%s}` // 错误响应
-	danmuJSON      = `{"liverUID":%d,"type":%d,"data":%s}`               // 弹幕和信号数据
+	heartbeatJSON   = `{"type":1}`                                        // 心跳包
+	respJSON        = `{"type":%d,"requestID":%s,"result":1,"data":%s}`   // 响应
+	respNoDataJSON  = `{"type":%d,"requestID":%s,"result":1}`             // 没有data的响应
+	respErrJSON     = `{"type":%d,"requestID":%s,"result":%d,"error":%s}` // 错误响应
+	danmuJSON       = `{"liverUID":%d,"type":%d,"data":%s}`               // 弹幕和信号数据
+	danmuNoDataJSON = `{"liverUID":%d,"type":%d}`                         // 没有数据的弹幕和信号数据
 )
 
 // 基础类型
@@ -94,6 +95,7 @@ const (
 	topUsersType
 	recentCommentType
 	redpackListType
+	danmuStopErrType = 2999
 )
 
 // 连麦类型
