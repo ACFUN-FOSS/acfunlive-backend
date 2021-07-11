@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/dgrr/fastws v1.0.4
-	github.com/orzogc/acfundanmu v0.0.0-20210711071126-a5270ff81694
+	github.com/orzogc/acfundanmu v0.0.0-20210711145147-8f5b0a2c3030
 	github.com/segmentio/encoding v0.2.19
 	github.com/thanhpk/randstr v1.0.4
 	github.com/ugjka/messenger v1.1.3

@@ -49,8 +49,8 @@ github.com/leodido/go-urn v1.2.0/go.mod h1:+8+nEpDfqqsY+g338gtMEUOtuK+4dEMhiQEgx
 github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Kysco4FUpU=
 github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
 github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
-github.com/orzogc/acfundanmu v0.0.0-20210711071126-a5270ff81694 h1:ZRWRJ4OD/tUlkLlQ8UGQT468uyA82AxBgVz+TQrXDGY=
-github.com/orzogc/acfundanmu v0.0.0-20210711071126-a5270ff81694/go.mod h1:5pCjct9ANFKF1y7qAicEIN83jL6VcbjfltpjtfiT4Sw=
+github.com/orzogc/acfundanmu v0.0.0-20210711145147-8f5b0a2c3030 h1:hLIY+Pc+oAj7uCAmaK0OoS8iBZdMADITh0ZYBJ78mqE=
+github.com/orzogc/acfundanmu v0.0.0-20210711145147-8f5b0a2c3030/go.mod h1:5pCjct9ANFKF1y7qAicEIN83jL6VcbjfltpjtfiT4Sw=
 github.com/philhofer/fwd v1.1.1/go.mod h1:gk3iGcWd9+svBvR0sR+KPcfE+RNWozjowpeBVG3ZVNU=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
