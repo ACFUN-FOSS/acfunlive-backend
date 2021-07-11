@@ -126,6 +126,7 @@ var stringFuncContent = []funcContent{
 var int64FuncContent = []funcContent{
 	{"getBillboard", "getBillboardType", "ac.ac.GetBillboard", []string{"liverUID"}},
 	{"getUserLiveInfo", "getUserLiveInfoType", "ac.ac.GetUserLiveInfo", []string{"userID"}},
+	{"getUserInfo", "getUserInfoType", "ac.ac.GetUserInfo", []string{"userID"}},
 	{"getMedalDetail", "getMedalDetailType", "ac.ac.GetMedalDetail", []string{"liverUID"}},
 	{"getMedalRankList", "getMedalRankListType", "ac.ac.GetMedalRankList", []string{"liverUID"}},
 	{"getUserMedal", "getUserMedalType", "acfundanmu.GetUserMedal", []string{"userID"}},

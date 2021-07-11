@@ -341,6 +341,28 @@ func (ac *acLive) getUserLiveInfo(v *fastjson.Value, reqID string) string {
 	return fmt.Sprintf(respJSON, getUserLiveInfoType, quote(reqID), string(data))
 }
 
+func (ac *acLive) getUserInfo(v *fastjson.Value, reqID string) string {
+	userID := v.GetInt64("data", "userID")
+	if userID <= 0 {
+		ac.conn.debug("getUserInfo() error: userID not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, getUserInfoType, quote(reqID), invalidReqData, quote("userID not exist or less than 1"))
+	}
+
+	ret, err := ac.ac.GetUserInfo(userID)
+	if err != nil {
+		ac.conn.debug("getUserInfo() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getUserInfoType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	data, err := json.Marshal(ret)
+	if err != nil {
+		ac.conn.debug("getUserInfo() error: cannot marshal to json: %+v", ret)
+		return fmt.Sprintf(respErrJSON, getUserInfoType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getUserInfoType, quote(reqID), string(data))
+}
+
 func (ac *acLive) getMedalDetail(v *fastjson.Value, reqID string) string {
 	liverUID := v.GetInt64("data", "liverUID")
 	if liverUID <= 0 {

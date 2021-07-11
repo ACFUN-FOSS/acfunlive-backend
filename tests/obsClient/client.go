@@ -125,6 +125,8 @@ func main() {
 			case 111:
 			case 112:
 			case 113:
+			case 114:
+			case 115:
 			case 200:
 			case 201:
 			case 202:

@@ -32,6 +32,7 @@ const (
 	getLiveDataJSON        = `{"type":112,"requestID":"abc","data":{"days":20}}`
 	getScheduleListJSON    = `{"type":113,"requestID":"abc"}`
 	getGiftListJSON        = `{"type":114,"requestID":"abc","data":{"liveID":%s}}`
+	getUserInfoJSON        = `{"type":115,"requestID":"abc","data":{"userID":%d}}`
 	getManagerListJSON     = `{"type":200,"requestID":"abc"}`
 	addManagerJSON         = `{"type":201,"requestID":"abc","data":{"managerUID":%d}}`
 	deleteManagerJSON      = `{"type":202,"requestID":"abc","data":{"managerUID":%d}}`
@@ -136,6 +137,7 @@ func main() {
 			case 112:
 			case 113:
 			case 114:
+			case 115:
 			case 200:
 			case 201:
 			case 202:
@@ -339,6 +341,9 @@ func main() {
 	//checkErr(err)
 
 	_, err = conn.WriteString(fmt.Sprintf(getGiftListJSON, quote(liveID)))
+	checkErr(err)
+
+	_, err = conn.WriteString(fmt.Sprintf(getUserInfoJSON, *liverUID))
 	checkErr(err)
 
 	_, err = conn.WriteString(fmt.Sprintf(addManagerJSON, *liverUID))

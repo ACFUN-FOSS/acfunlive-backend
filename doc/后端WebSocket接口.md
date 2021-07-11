@@ -59,6 +59,7 @@
     * [加入守护团](#加入守护团)
   * [状态信号类型](#状态信号类型)
     * [获取弹幕结束](#获取弹幕结束)
+    * [获取弹幕出错](#获取弹幕出错)
     * [直播间收到香蕉总数](#直播间收到香蕉总数)
     * [在线观众和点赞数量](#在线观众和点赞数量)
     * [在线观众前三名](#在线观众前三名)
@@ -640,6 +641,8 @@
 }
 ```
 
+该接口可能有超时等网络问题
+
 ##### 响应
 ```json
 {
@@ -658,7 +661,8 @@
             "signature": "盐系Vup/红毛狐栗/语音助手/传奇丝袜朋克\n纸板屋：790088315｜微博@艾栗AIri\nLevel up up！", // 用户签名
             "verifiedText": "AVI联盟成员 AcFun签约虚拟偶像 ", // 用户验证信息
             "isJoinUpCollege": true, // 用户是否加入阿普学院
-            "isFollowing": true // 登陆用户是否关注了该用户
+            "isFollowing": true, // 登陆用户是否关注了该用户
+            "isFollowed": false // 该用户是否关注了登陆帐号
         },
         "liveType": { // 直播类型
             "categoryID": 4, // 直播主分类ID
@@ -710,7 +714,8 @@
                 "signature": "不是所有人都是人",
                 "verifiedText": "AcFun游戏区官方认证UP主",
                 "isJoinUpCollege": true,
-                "isFollowing": true
+                "isFollowing": true,
+                "isFollowed": false
             },
             "liveType": { // 直播类型
                 "categoryID": 1,
@@ -861,7 +866,8 @@
                 "signature": "个人势VUP，喜欢玩游戏但很菜，其实是个染了黑毛的金渐层♪录播师傅：莉斯的小年糕 猫猫村：1072715855",
                 "verifiedText": "AVI联盟成员，AcFun签约虚拟偶像",
                 "isJoinUpCollege": true,
-                "isFollowing": true
+                "isFollowing": true,
+                "isFollowed": false
             },
             "title": "暗莉斯春节新衣上线", // 预告标题
             "cover": "https://static.yximgs.com/bs2/adminBlock/treasure-1612767546220-zrEdJpue.JPG", // 预告封面
@@ -939,6 +945,43 @@
             "cornerMarkerText": ""
         }
     ]
+}
+```
+
+#### 指定用户的信息
+##### 请求
+```json
+{
+    "type": 115,
+    "requestID": "abc",
+    "data": {
+        "userID": 26675034
+    }
+}
+```
+
+##### 响应
+```json
+{
+    "type": 115,
+    "requestID": "abc",
+    "result": 1,
+    "data": {
+        "userID": 17912421,
+        "nickname": "茗魂",
+        "avatar": "https://tx-free-imgs.acfun.cn/content/2021_2_1/1.6121163259094958E9.png?imageslim",
+        "avatarFrame": "https://imgs.aixifan.com/5qaMBO23v2-uquqYf-6rMVvq-uI7jMn-7Fr6fi.png",
+        "followingCount": "253",
+        "fansCount": "1.7万",
+        "contributeCount": "163",
+        "signature": "身为阎王之女为了来人间考察民情，附身在了人类菲艾身上~\n录播@茗魂录播机器人\n粉丝群481148878，欢迎来玩~",
+        "verifiedText": "AVI联盟成员，AcFun签约虚拟偶像",
+        "isJoinUpCollege": true,
+        "isFollowing": true,
+        "isFollowed": false,
+        "liveID": "UM8fXJmceqU", // 用户正在直播时不为空
+        "likeCount": 106236 // 最近一次直播的点赞总数
+    }
 }
 ```
 
@@ -1223,7 +1266,8 @@
                     "signature": "不写不写！",
                     "verifiedText": "",
                     "isJoinUpCollege": false,
-                    "isFollowing": false
+                    "isFollowing": false,
+                    "isFollowed": false
                 },
                 "friendshipDegree": 57676,
                 "level": 13

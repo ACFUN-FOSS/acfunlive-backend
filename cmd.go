@@ -24,6 +24,7 @@ var cmdDispatch = map[int]func(*acLive, *fastjson.Value, string) string{
 	getLiveDataType:         (*acLive).getLiveData,
 	getScheduleListType:     (*acLive).getScheduleList,
 	getGiftListType:         (*acLive).getGiftList,
+	getUserInfoType:         (*acLive).getUserInfo,
 	getManagerListType:      (*acLive).getManagerList,
 	addManagerType:          (*acLive).addManager,
 	deleteManagerType:       (*acLive).deleteManager,

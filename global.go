@@ -44,6 +44,7 @@ const (
 	getLiveDataType
 	getScheduleListType
 	getGiftListType
+	getUserInfoType
 )
 
 const (

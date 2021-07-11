@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/dgrr/fastws"
 	"github.com/segmentio/encoding/json"
@@ -51,7 +52,11 @@ func main() {
 	server_ch = messenger.New(1024, false)
 
 	server := &fasthttp.Server{
-		Handler: fastws.Upgrade(wsHandler),
+		Handler:      fastws.Upgrade(wsHandler),
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  10 * time.Second,
+		TCPKeepalive: true,
 	}
 
 	go func() {
@@ -97,6 +102,8 @@ func (conn *wsConn) send(msg string) error {
 
 // 处理WebSocket连接
 func wsHandler(c *fastws.Conn) {
+	c.ReadTimeout = 10 * time.Second
+	c.WriteTimeout = 10 * time.Second
 	conn := &wsConn{
 		c:          c,
 		remoteAddr: c.RemoteAddr().String(),
