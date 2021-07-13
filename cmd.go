@@ -20,9 +20,7 @@ var cmdDispatch = map[int]func(*acLive, *fastjson.Value, string) string{
 	getWalletBalanceType:    (*acLive).getWalletBalance,
 	getUserLiveInfoType:     (*acLive).getUserLiveInfo,
 	getAllLiveListType:      (*acLive).getAllLiveList,
-	uploadImageType:         (*acLive).uploadImage,
 	getLiveDataType:         (*acLive).getLiveData,
-	getScheduleListType:     (*acLive).getScheduleList,
 	getGiftListType:         (*acLive).getGiftList,
 	getUserInfoType:         (*acLive).getUserInfo,
 	getManagerListType:      (*acLive).getManagerList,
@@ -122,6 +120,7 @@ func (ac *acLive) getWalletBalance(v *fastjson.Value, reqID string) string {
 }
 
 // 上传图片
+/*
 func (ac *acLive) uploadImage(v *fastjson.Value, reqID string) string {
 	imageFile := string(v.GetStringBytes("data", "imageFile"))
 	if imageFile == "" {
@@ -137,6 +136,7 @@ func (ac *acLive) uploadImage(v *fastjson.Value, reqID string) string {
 
 	return fmt.Sprintf(respJSON, uploadImageType, quote(reqID), fmt.Sprintf(`{"imageURL":%s}`, quote(imageURL)))
 }
+*/
 
 // 获取直播间礼物列表
 func (ac *acLive) getGiftList(v *fastjson.Value, reqID string) string {

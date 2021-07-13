@@ -98,7 +98,7 @@ type funcContent struct {
 // 调用的函数没有参数，有返回
 var noParamFuncContent = []funcContent{
 	{"getAllLiveList", "getAllLiveListType", "ac.ac.GetAllLiveList", []string{}},
-	{"getScheduleList", "getScheduleListType", "ac.ac.GetScheduleList", []string{}},
+	//{"getScheduleList", "getScheduleListType", "ac.ac.GetScheduleList", []string{}},
 	{"getManagerList", "getManagerListType", "ac.ac.GetManagerList", []string{}},
 	{"getMedalList", "getMedalListType", "ac.ac.GetMedalList", []string{}},
 	{"getLiveTypeList", "getLiveTypeListType", "ac.ac.GetLiveTypeList", []string{}},

@@ -25,22 +25,6 @@ func (ac *acLive) getAllLiveList(v *fastjson.Value, reqID string) string {
 	return fmt.Sprintf(respJSON, getAllLiveListType, quote(reqID), string(data))
 }
 
-func (ac *acLive) getScheduleList(v *fastjson.Value, reqID string) string {
-	ret, err := ac.ac.GetScheduleList()
-	if err != nil {
-		ac.conn.debug("getScheduleList() error: %v", err)
-		return fmt.Sprintf(respErrJSON, getScheduleListType, quote(reqID), reqHandleErr, quote(err.Error()))
-	}
-
-	data, err := json.Marshal(ret)
-	if err != nil {
-		ac.conn.debug("getScheduleList() error: cannot marshal to json: %+v", ret)
-		return fmt.Sprintf(respErrJSON, getScheduleListType, quote(reqID), reqHandleErr, quote(err.Error()))
-	}
-
-	return fmt.Sprintf(respJSON, getScheduleListType, quote(reqID), string(data))
-}
-
 func (ac *acLive) getManagerList(v *fastjson.Value, reqID string) string {
 	ret, err := ac.ac.GetManagerList()
 	if err != nil {

@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/dgrr/fastws"
+	"github.com/leemcloughlin/logfile"
 	"github.com/segmentio/encoding/json"
 	"github.com/ugjka/messenger"
 	"github.com/valyala/fasthttp"
@@ -24,30 +25,39 @@ import (
 func main() {
 	port := flag.Uint("port", 0, "WebSocket server port, default 15368")
 	isDebug = flag.Bool("debug", false, "debug")
-	logFileName := flag.String("logfile", "", "log file location")
 	flag.Parse()
 	if !(*port > 1023 && *port < 65536) {
 		// 默认端口为15368
 		*port = 15368
 	}
-	if *logFileName != "" {
-		if _, err := os.Stat(*logFileName); err == nil {
-			if err := os.Rename(*logFileName, *logFileName+".bak"); err != nil {
-				panic(err)
-			}
-		} else if !os.IsNotExist(err) {
-			panic(err)
+	if logfile.Defaults.FileName != "" {
+		var maxSize int64 = 20 * 1024 * 1024
+		if logfile.Defaults.MaxSize > 0 {
+			maxSize = logfile.Defaults.MaxSize
 		}
-		logFile, err := os.OpenFile(*logFileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+		oldVersions := 2
+		if logfile.Defaults.OldVersions > 0 {
+			oldVersions = logfile.Defaults.OldVersions
+		}
+		logFile, err := logfile.New(
+			&logfile.LogFile{
+				Flags:       logfile.FileOnly,
+				FileName:    logfile.Defaults.FileName,
+				MaxSize:     maxSize,
+				OldVersions: oldVersions,
+			})
 		if err != nil {
-			panic(err)
+			log.Panicf("Failed to create logFile %s: %s\n", logfile.Defaults.FileName, err)
 		}
 		defer logFile.Close()
 		*isDebug = true
 		log.SetOutput(logFile)
-		redirectStderr(logFile)
+		panicFile, err := os.OpenFile(logfile.Defaults.FileName, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+		if err != nil {
+			log.Panicf("Failed to open logFile %s: %s\n", logfile.Defaults.FileName, err)
+		}
+		redirectStderr(panicFile)
 	}
-	debug("WebSocket server port is %d", *port)
 
 	server_ch = messenger.New(1024, false)
 
@@ -61,17 +71,18 @@ func main() {
 
 	go func() {
 		if err := server.ListenAndServe(fmt.Sprintf(":%d", *port)); err != nil {
-			log.Printf("Server error: %v", err)
+			log.Printf("WebSocket server error: %v", err)
 			os.Exit(1)
 		}
 	}()
+	debug("WebSocket server is running, the port is %d", *port)
+	defer debug("WebSocket server is stopping")
 
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, os.Interrupt, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	<-ch
 	signal.Stop(ch)
 	signal.Reset(os.Interrupt, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
-	debug("Server shutdown")
 	server.Shutdown()
 }
 
