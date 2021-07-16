@@ -11,4 +11,5 @@ require (
 	github.com/ugjka/messenger v1.1.3
 	github.com/valyala/fasthttp v1.28.0
 	github.com/valyala/fastjson v1.6.3
+	go.uber.org/atomic v1.9.0 // indirect
 )
