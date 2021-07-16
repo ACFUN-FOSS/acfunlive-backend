@@ -13,16 +13,8 @@ import (
 // 获取弹幕
 func (conn *wsConn) getDanmu(ctx context.Context, acMap *sync.Map, uid int64, reqID string) {
 	ac := new(acLive)
-	if ac, ok := acMap.Load(uid); ok {
-		ac := ac.(*acLive)
-		info := ac.ac.GetStreamInfo()
-		data, err := json.Marshal(info)
-		if err != nil {
-			conn.debug("getDanmu(): cannot marshal to json: %v", err)
-			_ = conn.send(fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), reqHandleErr, quote(err.Error())))
-			return
-		}
-		_ = conn.send(fmt.Sprintf(respJSON, getDanmuType, quote(reqID), fmt.Sprintf(`{"StreamInfo":%s}`, string(data))))
+	if _, ok := acMap.Load(uid); ok {
+		_ = conn.send(fmt.Sprintf(respNoDataJSON, getDanmuType, quote(reqID)))
 		return
 	}
 	acMap.Store(uid, ac)
