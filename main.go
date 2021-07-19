@@ -119,7 +119,12 @@ func wsHandler(c *fastws.Conn) {
 		c:          c,
 		remoteAddr: c.RemoteAddr().String(),
 	}
-	defer c.Close()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go func() {
+		<-ctx.Done()
+		_ = c.Close()
+	}()
 	defer conn.debug("WebSocket connection close")
 	conn.debug("WebSocket connection open")
 
@@ -137,8 +142,6 @@ func wsHandler(c *fastws.Conn) {
 	acMap := new(sync.Map)
 	var mu sync.RWMutex
 	var ac *acLive
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	go func() {
 		for {
@@ -230,7 +233,7 @@ func wsHandler(c *fastws.Conn) {
 				conn.debug("getDanmu: liverUID not exist or less than 1")
 				go conn.send(fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1")))
 			} else {
-				go conn.getDanmu(ctx, acMap, uid, reqID)
+				go conn.getDanmu(ctx, cancel, acMap, uid, reqID)
 			}
 			pool.Put(p)
 		case stopDanmuType:
