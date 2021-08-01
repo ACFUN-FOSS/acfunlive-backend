@@ -52,7 +52,7 @@ func main() {
 		defer logFile.Close()
 		*isDebug = true
 		log.SetOutput(logFile)
-		panicFile, err := os.OpenFile(logfile.Defaults.FileName, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+		panicFile, err := os.OpenFile(logfile.Defaults.FileName+".panic", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 		if err != nil {
 			log.Panicf("Failed to open logFile %s: %s\n", logfile.Defaults.FileName, err)
 		}
