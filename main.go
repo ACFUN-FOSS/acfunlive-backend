@@ -31,7 +31,7 @@ func main() {
 		*port = 15368
 	}
 	if logfile.Defaults.FileName != "" {
-		var maxSize int64 = 50 * 1024 * 1024
+		var maxSize int64 = 20 * 1024 * 1024
 		if logfile.Defaults.MaxSize > 0 {
 			maxSize = logfile.Defaults.MaxSize
 		}
