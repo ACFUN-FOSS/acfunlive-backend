@@ -25,6 +25,7 @@ const (
 	setClientIDType
 	requestForwardDataType
 	forwardDataType
+	setTokenType
 )
 
 // 命令类型

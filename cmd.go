@@ -49,7 +49,7 @@ var cmdDispatch = map[int]func(*acLive, *fastjson.Value, string) string{
 func (conn *wsConn) login(acMap *sync.Map, account, password, reqID string) string {
 	var newAC *acfundanmu.AcFunLive
 	var err error
-	conn.debug("Client request login")
+	conn.debug("Client requests login")
 	if account == "" || password == "" {
 		newAC, err = acfundanmu.NewAcFunLive()
 		if err != nil {
@@ -68,7 +68,7 @@ func (conn *wsConn) login(acMap *sync.Map, account, password, reqID string) stri
 			return fmt.Sprintf(respErrJSON, loginType, quote(reqID), reqHandleErr, quote(err.Error()))
 		}
 	}
-	conn.debug("Client login is successful, uid is %d", newAC.GetUserID())
+	conn.debug("Client's login is successful, uid is %d", newAC.GetUserID())
 
 	ac := new(acLive)
 	ac.conn = conn

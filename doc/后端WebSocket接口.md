@@ -11,6 +11,7 @@
 * [设置客户端ID](#设置客户端id)
 * [请求转发数据](#请求转发数据)
 * [客户端接收的转发数据](#客户端接收的转发数据)
+* [设置AcFun帐号token](#设置acfun帐号token)
 * [命令类型](#命令类型)
   * [获取弹幕](#获取弹幕)
   * [停止获取弹幕](#停止获取弹幕)
@@ -278,6 +279,31 @@
 `clientID`：源客户端的ID
 
 `message`：转发的数据
+
+### 设置AcFun帐号token
+#### 请求
+```json
+{
+    "type": 6,
+    "requestID": "abc",
+    "data": {
+        "userID": 1000000083957782,
+        "securityKey": "1oVtckMbS958PQwD9oYA==",
+        "serviceToken": "ChRhY2Z1bi5hcGkudmlzaXRvci5zdBJwcn4Q5oc4RhQVng1kCvHAwrY4_Atih1mCLjV4Hf5O7HrdQkFHwjxQZNv0pvtU0cZhhsW1BfCPtYLvVc2DomsyqZuPkTp_AGzij4d5bnpHDlnSWAbqFmR4V09QeY_ACmrtq0VSz_eN1RV9Il7XvvUgKxoSyrmOnZEFeoExMdFq6-X8nnzoIiAMQakYBJwiJRPaToN7BdKVd33_gZ5y7Kfm1wm9PcAK7ig",
+        "deviceID": "web_7919352416EF8C",
+        "cookies": []
+    }
+}
+```
+
+#### 响应
+```json
+{
+    "type": 6,
+    "requestID": "abc",
+    "result": 1
+}
+```
 
 ### 命令类型
 #### 获取弹幕

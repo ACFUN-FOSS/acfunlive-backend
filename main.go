@@ -14,6 +14,7 @@ import (
 
 	"github.com/dgrr/fastws"
 	"github.com/leemcloughlin/logfile"
+	"github.com/orzogc/acfundanmu"
 	"github.com/segmentio/encoding/json"
 	"github.com/ugjka/messenger"
 	"github.com/valyala/fasthttp"
@@ -183,12 +184,12 @@ func wsHandler(c *fastws.Conn) {
 
 		reqType := v.GetInt("type")
 		reqID := string(v.GetStringBytes("requestID"))
-		if reqType != loginType {
+		if reqType != loginType && reqType != setTokenType {
 			conn.debug("Recieve message: %s", string(msg))
 		}
 		mu.RLock()
-		if ac == nil && reqType != heartbeatType && reqType != loginType && reqType != setClientIDType && reqType != requestForwardDataType {
-			go conn.send(fmt.Sprintf(respErrJSON, reqType, quote(reqID), needLogin, quote("Need login")))
+		if ac == nil && reqType != heartbeatType && reqType != loginType && reqType != setClientIDType && reqType != requestForwardDataType && reqType != setTokenType {
+			go conn.send(fmt.Sprintf(respErrJSON, reqType, quote(reqID), needLogin, quote("Need login or token")))
 			pool.Put(p)
 			mu.RUnlock()
 			continue
@@ -226,6 +227,30 @@ func wsHandler(c *fastws.Conn) {
 				server_ch.Broadcast(msg)
 				_ = conn.send(fmt.Sprintf(respNoDataJSON, requestForwardDataType, quote(reqID)))
 			}()
+			pool.Put(p)
+		case setTokenType:
+			conn.debug("Client sets token")
+			data := v.GetStringBytes("data")
+			token := new(acfundanmu.TokenInfo)
+			if err := json.Unmarshal(data, token); err != nil {
+				go conn.send(fmt.Sprintf(respErrJSON, reqType, quote(reqID), invalidReqData, quote(fmt.Sprintf("Failed to unmarshal data to TokenInfo: %v", err))))
+				pool.Put(p)
+				continue
+			}
+			newAC, err := acfundanmu.NewAcFunLive(acfundanmu.SetTokenInfo(token))
+			if err != nil {
+				go conn.send(fmt.Sprintf(respErrJSON, reqType, quote(reqID), reqHandleErr, quote(fmt.Sprintf("Failed to set TokenInfo: %v", err))))
+				pool.Put(p)
+				continue
+			}
+			mu.Lock()
+			ac = &acLive{
+				conn: conn,
+				ac:   newAC,
+			}
+			acMap.Store(0, ac)
+			mu.Unlock()
+			go conn.send(fmt.Sprintf(respNoDataJSON, reqType, quote(reqID)))
 			pool.Put(p)
 		case getDanmuType:
 			uid := v.GetInt64("data", "liverUID")
