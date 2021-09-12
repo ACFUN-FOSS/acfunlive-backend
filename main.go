@@ -231,7 +231,7 @@ func wsHandler(c *fastws.Conn) {
 			pool.Put(p)
 		case setTokenType:
 			conn.debug("Client sets token")
-			data = v.Get("data").MarshalTo(data)
+			data = v.Get("data").MarshalTo(data[:0])
 			token := new(acfundanmu.TokenInfo)
 			if err := json.Unmarshal(data, token); err != nil {
 				go conn.send(fmt.Sprintf(respErrJSON, reqType, quote(reqID), invalidReqData, quote(fmt.Sprintf("Failed to unmarshal data to TokenInfo: %v", err))))
