@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"strconv"
+	"time"
 
 	"github.com/dgrr/fastws"
 	"github.com/orzogc/acfundanmu"
@@ -130,6 +131,9 @@ const (
 	reqHandleErr               // 处理请求时出现错误
 	needLogin                  // 需要登陆
 )
+
+const timeOut = 10 * time.Second
+const idleTimeout = 60 * time.Second
 
 var (
 	isDebug   *bool                // 是否调试

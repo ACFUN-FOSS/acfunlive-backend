@@ -10,7 +10,6 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
-	"time"
 
 	"github.com/dgrr/fastws"
 	"github.com/leemcloughlin/logfile"
@@ -64,9 +63,9 @@ func main() {
 
 	server := &fasthttp.Server{
 		Handler:      fastws.Upgrade(wsHandler),
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		IdleTimeout:  10 * time.Second,
+		ReadTimeout:  timeOut,
+		WriteTimeout: timeOut,
+		IdleTimeout:  idleTimeout,
 		TCPKeepalive: true,
 	}
 
@@ -114,8 +113,8 @@ func (conn *wsConn) send(msg string) error {
 
 // 处理WebSocket连接
 func wsHandler(c *fastws.Conn) {
-	c.ReadTimeout = 10 * time.Second
-	c.WriteTimeout = 10 * time.Second
+	c.ReadTimeout = timeOut
+	c.WriteTimeout = timeOut
 	conn := &wsConn{
 		c:          c,
 		remoteAddr: c.RemoteAddr().String(),
