@@ -1038,7 +1038,7 @@
     "requestID": "abc",
     "result": 1,
     "data": {
-        "status": true, // 主播是否允许观众剪辑直播录像
+        "status": true, // 是否允许剪辑直播录像（主播允许且其在直播时才能剪辑）
         "url": "https://onvideo.kuaishou.com/vangogh/editor/8972?source=ac" // 剪辑直播的地址
     }
 }
