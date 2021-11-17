@@ -132,8 +132,9 @@ const (
 	needLogin                  // 需要登陆
 )
 
-const timeOut = 10 * time.Second
+const timeout = 10 * time.Second
 const idleTimeout = 60 * time.Second
+const wsReadTimeout = 15 * time.Second
 
 var (
 	isDebug   *bool                // 是否调试

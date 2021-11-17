@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/dgrr/fastws"
 	"github.com/leemcloughlin/logfile"
@@ -63,8 +64,8 @@ func main() {
 
 	server := &fasthttp.Server{
 		Handler:      fastws.Upgrade(wsHandler),
-		ReadTimeout:  timeOut,
-		WriteTimeout: timeOut,
+		ReadTimeout:  timeout,
+		WriteTimeout: timeout,
 		IdleTimeout:  idleTimeout,
 		TCPKeepalive: true,
 	}
@@ -113,27 +114,23 @@ func (conn *wsConn) send(msg string) error {
 
 // 处理WebSocket连接
 func wsHandler(c *fastws.Conn) {
-	c.ReadTimeout = timeOut
-	c.WriteTimeout = timeOut
+	c.ReadTimeout = wsReadTimeout
+	c.WriteTimeout = timeout
 	conn := &wsConn{
 		c:          c,
 		remoteAddr: c.RemoteAddr().String(),
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	go func() {
-		<-ctx.Done()
-		_ = c.Close()
-	}()
 	defer conn.debug("WebSocket connection close")
 	conn.debug("WebSocket connection open")
 
-	ch, err := server_ch.Sub()
+	forward_ch, err := server_ch.Sub()
 	if err != nil {
 		conn.debug("Server's main channel has been killed")
 		return
 	}
-	defer server_ch.Unsub(ch)
+	defer server_ch.Unsub(forward_ch)
 
 	var pool fastjson.ParserPool
 	var msg []byte
@@ -143,10 +140,11 @@ func wsHandler(c *fastws.Conn) {
 	var mu sync.RWMutex
 	var ac *acLive
 	var data []byte
+	tickerCh := make(chan struct{}, 10)
 
 	go func() {
 		for {
-			msg, ok := <-ch
+			msg, ok := <-forward_ch
 			if ok {
 				msg := msg.(*forwardMsg)
 				if msg.clientID == "" || msg.clientID == clientID {
@@ -164,6 +162,26 @@ func wsHandler(c *fastws.Conn) {
 		}
 	}()
 
+	go func() {
+		ticker := time.NewTicker(timeout)
+		defer ticker.Stop()
+
+	Outer:
+		for {
+			select {
+			case <-tickerCh:
+				ticker.Reset(timeout)
+			case <-ticker.C:
+				conn.debug("WebSocket reading message timeout")
+				_ = conn.c.Close()
+				break Outer
+			case <-ctx.Done():
+				_ = conn.c.Close()
+				break Outer
+			}
+		}
+	}()
+
 	for {
 		_, msg, err = c.ReadMessage(msg[:0])
 		if err != nil {
@@ -172,6 +190,7 @@ func wsHandler(c *fastws.Conn) {
 			}
 			break
 		}
+		tickerCh <- struct{}{}
 
 		p := pool.Get()
 		v, err := p.ParseBytes(msg)
