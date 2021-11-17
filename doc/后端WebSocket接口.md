@@ -29,6 +29,7 @@
   * [直播预告列表](#直播预告列表)
   * [直播间礼物列表](#直播间礼物列表)
   * [指定用户的信息](#指定用户的信息)
+  * [直播剪辑信息](#直播剪辑信息)
   * [登陆用户的房管列表](#登陆用户的房管列表)
   * [添加房管](#添加房管)
   * [删除房管](#删除房管)
@@ -49,6 +50,8 @@
   * [开始直播](#开始直播)
   * [停止直播](#停止直播)
   * [更改直播间标题和封面](#更改直播间标题和封面)
+  * [查询是否允许观众剪辑直播录像](#查询是否允许观众剪辑直播录像)
+  * [设置是否允许观众剪辑直播录像](#设置是否允许观众剪辑直播录像)
 * [弹幕和信号类型](#弹幕和信号类型)
   * [弹幕类型](#弹幕类型)
     * [弹幕](#弹幕)
@@ -59,6 +62,7 @@
     * [礼物](#礼物)
     * [富文本](#富文本)
     * [加入守护团](#加入守护团)
+    * [分享直播间](#分享直播间)
   * [状态信号类型](#状态信号类型)
     * [获取弹幕结束](#获取弹幕结束)
     * [获取弹幕出错](#获取弹幕出错)
@@ -1014,6 +1018,32 @@
 }
 ```
 
+#### 直播剪辑信息
+##### 请求
+```json
+{
+    "type": 116,
+    "requestID": "abc",
+    "data": {
+        "liverUID": 23512715,
+        "liveID": "1UiXanLh"
+    }
+}
+```
+
+##### 响应
+```json
+{
+    "type": 116,
+    "requestID": "abc",
+    "result": 1,
+    "data": {
+        "status": true, // 主播是否允许观众剪辑直播录像
+        "url": "https://onvideo.kuaishou.com/vangogh/editor/8972?source=ac" // 剪辑直播的地址
+    }
+}
+```
+
 #### 登陆用户的房管列表
 ##### 请求
 ```json
@@ -1621,6 +1651,48 @@
 }
 ```
 
+#### 查询是否允许观众剪辑直播录像
+##### 请求
+```json
+{
+    "type": 908,
+    "requestID": "abc"
+}
+```
+
+##### 响应
+```json
+{
+    "type": 908,
+    "requestID": "abc",
+    "result": 1,
+    "data": {
+        "canCut": true
+    }
+}
+```
+
+#### 设置是否允许观众剪辑直播录像
+##### 请求
+```json
+{
+    "type": 909,
+    "requestID": "abc",
+    "data": {
+        "canCut": true
+    }
+}
+```
+
+##### 响应
+```json
+{
+    "type": 909,
+    "requestID": "abc",
+    "result": 1
+}
+```
+
 ### 弹幕和信号类型
 弹幕和信号数据在客户端请求[获取弹幕](#获取弹幕)后由服务端发送给客户端
 
@@ -1921,6 +1993,33 @@
             },
             "managerType": 0 // 没有房管类型
         }
+    }
+}
+```
+
+##### 分享直播间
+```json
+{
+    "liverUID": 378269,
+    "type": 1008,
+    "data": {
+        "danmuInfo": {
+            "sendTime": 1637160244836,
+            "userInfo": {
+                "userID": 103411,
+                "nickname": "Orzogc",
+                "avatar": "https://imgs.aixifan.com/style/image/201907/vVh2gcmMBSa173bVu1bzgJ3cjQlNcPJr.jpg",
+                "medal": {
+                    "uperID": 378269,
+                    "userID": 103411,
+                    "clubName": "QQ星",
+                    "level": 14
+                },
+                "managerType": 0
+            }
+        },
+        "sharePlatform": 4, // 0为未知平台，1为QQ，2为QQ空间，3应该是新浪微博，4为微信，5为微信朋友圈，6为A站动态
+        "sharePlatformIcon": "https://tx-free-imgs2.acfun.cn/udata/pkg/acfun/live-share-platform/common_sharing_pop_ups_wx_3x.png" // 平台图标
     }
 }
 ```

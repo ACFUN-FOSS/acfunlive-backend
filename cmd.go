@@ -23,6 +23,7 @@ var cmdDispatch = map[int]func(*acLive, *fastjson.Value, string) string{
 	getLiveDataType:         (*acLive).getLiveData,
 	getGiftListType:         (*acLive).getGiftList,
 	getUserInfoType:         (*acLive).getUserInfo,
+	getLiveCutInfoType:      (*acLive).getLiveCutInfo,
 	getManagerListType:      (*acLive).getManagerList,
 	addManagerType:          (*acLive).addManager,
 	deleteManagerType:       (*acLive).deleteManager,
@@ -43,6 +44,8 @@ var cmdDispatch = map[int]func(*acLive, *fastjson.Value, string) string{
 	startLiveType:           (*acLive).startLive,
 	stopLiveType:            (*acLive).stopLive,
 	changeTitleAndCoverType: (*acLive).changeTitleAndCover,
+	getLiveCutStatusType:    (*acLive).getLiveCutStatus,
+	setLiveCutStatusType:    (*acLive).setLiveCutStatus,
 }
 
 // 处理登陆命令
@@ -167,6 +170,34 @@ func (ac *acLive) getGiftList(v *fastjson.Value, reqID string) string {
 	return fmt.Sprintf(respJSON, getGiftListType, quote(reqID), string(data))
 }
 
+func (ac *acLive) getLiveCutInfo(v *fastjson.Value, reqID string) string {
+	liverUID := v.GetInt64("data", "liverUID")
+	if liverUID <= 0 {
+		ac.conn.debug("getLiveCutInfo() error: liverUID not exist or less than 1")
+		return fmt.Sprintf(respErrJSON, getLiveCutInfoType, quote(reqID), invalidReqData, quote("liverUID not exist or less than 1"))
+	}
+
+	liveID := string(v.GetStringBytes("data", "liveID"))
+	if liveID == "" {
+		ac.conn.debug("getLiveCutInfo() error: No liveID")
+		return fmt.Sprintf(respErrJSON, getLiveCutInfoType, quote(reqID), invalidReqData, quote("Need liveID"))
+	}
+
+	info, err := acfundanmu.GetLiveCutInfo(liverUID, liveID)
+	if err != nil {
+		ac.conn.debug("getLiveCutInfo() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getLiveCutInfoType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	data, err := json.Marshal(info)
+	if err != nil {
+		ac.conn.debug("getLiveCutInfo() error: cannot marshal to json: %+v", info)
+		return fmt.Sprintf(respErrJSON, getLiveCutInfoType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getLiveCutInfoType, quote(reqID), string(data))
+}
+
 // 房管踢人
 func (ac *acLive) managerKick(v *fastjson.Value, reqID string) string {
 	liveID := string(v.GetStringBytes("data", "liveID"))
@@ -276,4 +307,36 @@ func (ac *acLive) changeTitleAndCover(v *fastjson.Value, reqID string) string {
 	}
 
 	return fmt.Sprintf(respNoDataJSON, changeTitleAndCoverType, quote(reqID))
+}
+
+// 获取主播是否允许观众剪辑直播录像
+func (ac *acLive) getLiveCutStatus(v *fastjson.Value, reqID string) string {
+	status, err := ac.ac.GetLiveCutStatus()
+	if err != nil {
+		ac.conn.debug("getLiveCutStatus() error: %v", err)
+		return fmt.Sprintf(respErrJSON, getLiveCutStatusType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, getLiveCutStatusType, quote(reqID), fmt.Sprintf(`{"canCut":%v}`, status))
+}
+
+// 设置是否允许观众剪辑直播录像
+func (ac *acLive) setLiveCutStatus(v *fastjson.Value, reqID string) string {
+	bv := v.Get("data", "canCut")
+	if bv == nil {
+		ac.conn.debug("setLiveCutStatus() error: No canCut")
+		return fmt.Sprintf(respErrJSON, setLiveCutStatusType, quote(reqID), invalidReqData, quote("Need canCut"))
+	}
+	canCut, err := bv.Bool()
+	if err != nil {
+		ac.conn.debug("setLiveCutStatus() error: %v", err)
+		return fmt.Sprintf(respErrJSON, setLiveCutStatusType, quote(reqID), invalidReqData, quote(err.Error()))
+	}
+	err = ac.ac.SetLiveCutStatus(canCut)
+	if err != nil {
+		ac.conn.debug("setLiveCutStatus() error: %v", err)
+		return fmt.Sprintf(respErrJSON, setLiveCutStatusType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respNoDataJSON, setLiveCutStatusType, quote(reqID))
 }

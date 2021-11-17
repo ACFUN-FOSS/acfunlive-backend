@@ -47,6 +47,7 @@ const (
 	getScheduleListType
 	getGiftListType
 	getUserInfoType
+	getLiveCutInfoType
 )
 
 const (
@@ -76,6 +77,8 @@ const (
 	startLiveType
 	stopLiveType
 	changeTitleAndCoverType
+	getLiveCutStatusType
+	setLiveCutStatusType
 )
 
 // 弹幕类型
@@ -88,6 +91,7 @@ const (
 	giftType
 	richTextType
 	joinClubType
+	shareLiveType
 )
 
 // 状态信号类型

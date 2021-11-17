@@ -33,6 +33,7 @@ const (
 	getScheduleListJSON    = `{"type":113,"requestID":"abc"}`
 	getGiftListJSON        = `{"type":114,"requestID":"abc","data":{"liveID":%s}}`
 	getUserInfoJSON        = `{"type":115,"requestID":"abc","data":{"userID":%d}}`
+	getLiveCutInfoJSON     = `{"type":116,"requestID":"abc","data":{"liverUID":%d,"liveID":%s}}`
 	getManagerListJSON     = `{"type":200,"requestID":"abc"}`
 	addManagerJSON         = `{"type":201,"requestID":"abc","data":{"managerUID":%d}}`
 	deleteManagerJSON      = `{"type":202,"requestID":"abc","data":{"managerUID":%d}}`
@@ -43,6 +44,8 @@ const (
 	getUserMedalJSON       = `{"type":303,"requestID":"abc","data":{"userID":%d}}`
 	wearMedalJSON          = `{"type":304,"requestID":"abc","data":{"liverUID":%d}}`
 	cancelWearMedalJSON    = `{"type":305,"requestID":"abc"}`
+	getLiveCutStatusJSON   = `{"type":908,"requestID":"abc"}`
+	setLiveCutStatusJSON   = `{"type":909,"requestID":"abc","data":{"canCut":%v}}`
 )
 
 var quote = strconv.Quote
@@ -109,6 +112,7 @@ func main() {
 			case 4:
 			case 5:
 				log.Printf("Receive broadcast from %s : %s", string(v.GetStringBytes("data", "clientID")), string(v.GetStringBytes("data", "message")))
+			case 6:
 			case 100:
 				if v.GetInt("result") != 1 {
 					log.Printf("Cannot get danmu, response: %s", string(msg))
@@ -138,6 +142,7 @@ func main() {
 			case 113:
 			case 114:
 			case 115:
+			case 116:
 			case 200:
 			case 201:
 			case 202:
@@ -158,6 +163,8 @@ func main() {
 			case 905:
 			case 906:
 			case 907:
+			case 908:
+			case 909:
 			case 1000:
 				v = v.Get("data")
 				log.Printf("%s %d %s(%d): %s",
@@ -218,6 +225,7 @@ func main() {
 					string(v.GetStringBytes("uperInfo", "nickname")),
 					v.GetInt64("uperInfo", "userID"),
 				)
+			case 1008:
 			case 2000:
 				log.Printf("%s", string(msg))
 				ch <- struct{}{}
@@ -346,6 +354,9 @@ func main() {
 	_, err = conn.WriteString(fmt.Sprintf(getUserInfoJSON, *liverUID))
 	checkErr(err)
 
+	_, err = conn.WriteString(fmt.Sprintf(getLiveCutInfoJSON, *liverUID, quote(liveID)))
+	checkErr(err)
+
 	_, err = conn.WriteString(fmt.Sprintf(addManagerJSON, *liverUID))
 	checkErr(err)
 	time.Sleep(2 * time.Second)
@@ -379,6 +390,13 @@ func main() {
 	checkErr(err)
 
 	_, err = conn.WriteString(fmt.Sprintf(requestForwardDataJSON, quote(""), quote("hello all")))
+	checkErr(err)
+
+	_, err = conn.WriteString(fmt.Sprintf(setLiveCutStatusJSON, true))
+	checkErr(err)
+	time.Sleep(2 * time.Second)
+
+	_, err = conn.WriteString(getLiveCutStatusJSON)
 	checkErr(err)
 
 	//_, err = conn.WriteString(fmt.Sprintf(requestForwardDataJSON, quote("client2"), quote("hello client2")))

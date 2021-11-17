@@ -98,6 +98,7 @@ func main() {
 			case 4:
 			case 5:
 				log.Printf("Receive broadcast from %s : %s", string(v.GetStringBytes("data", "clientID")), string(v.GetStringBytes("data", "message")))
+			case 6:
 			case 100:
 				if v.GetInt("result") != 1 {
 					log.Printf("Cannot get danmu, response: %s", string(msg))
@@ -127,6 +128,7 @@ func main() {
 			case 113:
 			case 114:
 			case 115:
+			case 116:
 			case 200:
 			case 201:
 			case 202:
@@ -153,6 +155,8 @@ func main() {
 				log.Printf("Live ID: %s", liveID)
 			case 906:
 			case 907:
+			case 908:
+			case 909:
 			case 1000:
 				v = v.Get("data")
 				log.Printf("%s %d %s(%d): %s",
@@ -213,6 +217,7 @@ func main() {
 					string(v.GetStringBytes("uperInfo", "nickname")),
 					v.GetInt64("uperInfo", "userID"),
 				)
+			case 1008:
 			case 2000:
 				log.Printf("%s", string(msg))
 				ch <- struct{}{}

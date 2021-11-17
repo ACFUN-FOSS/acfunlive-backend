@@ -163,6 +163,18 @@ func (conn *wsConn) getDanmu(ctx context.Context, cancel context.CancelFunc, acM
 		}
 	})
 
+	ac.ac.OnShareLive(func(ac *acfundanmu.AcFunLive, d *acfundanmu.ShareLive) {
+		data, err := json.Marshal(d)
+		if err != nil {
+			conn.debug("OnShareLive(): cannot marshal to json: %+v", d)
+			return
+		}
+		err = conn.send(fmt.Sprintf(danmuJSON, uid, shareLiveType, string(data)))
+		if err != nil {
+			errCh <- err
+		}
+	})
+
 	ac.ac.OnDanmuStop(func(ac *acfundanmu.AcFunLive, err error) {
 		if err == nil {
 			e := conn.send(fmt.Sprintf(danmuNoDataJSON, uid, danmuStopType))
