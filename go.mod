@@ -5,8 +5,8 @@ go 1.16
 require (
 	github.com/dgrr/fastws v1.0.4
 	github.com/leemcloughlin/logfile v0.0.0-20201123203928-cff1c8a30a10
-	github.com/orzogc/acfundanmu v0.0.0-20211117163847-f32115c7bb34
-	github.com/segmentio/encoding v0.3.1
+	github.com/orzogc/acfundanmu v0.0.0-20211122140554-2b33b42d8ecb
+	github.com/segmentio/encoding v0.3.2
 	github.com/thanhpk/randstr v1.0.4
 	github.com/ugjka/messenger v1.1.3
 	github.com/valyala/fasthttp v1.31.0
