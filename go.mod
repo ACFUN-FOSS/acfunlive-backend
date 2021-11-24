@@ -11,4 +11,5 @@ require (
 	github.com/ugjka/messenger v1.1.3
 	github.com/valyala/fasthttp v1.31.0
 	github.com/valyala/fastjson v1.6.3
+	golang.org/x/sys v0.0.0-20211123173158-ef496fb156ab // indirect
 )
