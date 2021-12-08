@@ -183,7 +183,7 @@ func (ac *acLive) getLiveCutInfo(v *fastjson.Value, reqID string) string {
 		return fmt.Sprintf(respErrJSON, getLiveCutInfoType, quote(reqID), invalidReqData, quote("Need liveID"))
 	}
 
-	info, err := acfundanmu.GetLiveCutInfo(liverUID, liveID)
+	info, err := ac.ac.GetLiveCutInfo(liverUID, liveID)
 	if err != nil {
 		ac.conn.debug("getLiveCutInfo() error: %v", err)
 		return fmt.Sprintf(respErrJSON, getLiveCutInfoType, quote(reqID), reqHandleErr, quote(err.Error()))
