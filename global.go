@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/dgrr/fastws"
 	"github.com/orzogc/acfundanmu"
+	"github.com/orzogc/fastws"
 	"github.com/ugjka/messenger"
 )
 

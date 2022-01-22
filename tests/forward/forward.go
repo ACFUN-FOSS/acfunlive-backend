@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dgrr/fastws"
+	"github.com/orzogc/fastws"
 	"github.com/segmentio/encoding/json"
 	"github.com/thanhpk/randstr"
 	"github.com/valyala/fastjson"

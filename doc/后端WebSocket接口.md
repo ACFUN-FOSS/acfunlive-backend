@@ -1038,7 +1038,7 @@
     "requestID": "abc",
     "result": 1,
     "data": {
-        "status": true, // 是否允许剪辑直播录像（主播允许观众剪辑且其在直播时观众才能剪辑，主播直播时总是能剪辑自己的直播）
+        "status": true, // 是否允许剪辑直播录像（主播允许观众剪辑观众才能剪辑，主播直播时总是能剪辑自己的直播）
         "url": "https://onvideo.kuaishou.com/vangogh/editor/9724?source=ac", // 剪辑直播的地址，直接访问可能出现登陆问题，需要访问跳转地址
         "redirectURL": "https://onvideoapi.kuaishou.com/rest/infra/sts?authToken=ChZhY2Z1bi5taWRncm91bmQuYXBpLEmBHB6vV-m_r9Ui03LZGAC6dZGk8zfyiJ33KVWJmYKFooH-mZ1oFrzk9uE7SAO2cvem2SXh7UE-LLrl6XipyxQTyHghRaij7mnULlz5c_oJCjvVO6SW5FwfT2-MaEuvSHyafvqmlvpZIVTcO0MbnzCIgUQqizvmhPHaoXQDltf6f1xDRl8f9pu7hdgRQXEoBTAB\u0026sid=acfun.midground.api\u0026followUrl=https://onvideo.kuaishou.com/vangogh/editor/9724?source=ac" // 跳转直播剪辑的地址，访问一次后链接里的token就会失效
     }

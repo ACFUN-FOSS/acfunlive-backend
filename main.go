@@ -12,9 +12,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/dgrr/fastws"
 	"github.com/leemcloughlin/logfile"
 	"github.com/orzogc/acfundanmu"
+	"github.com/orzogc/fastws"
 	"github.com/segmentio/encoding/json"
 	"github.com/ugjka/messenger"
 	"github.com/valyala/fasthttp"
