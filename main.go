@@ -289,6 +289,15 @@ func wsHandler(c *fastws.Conn) {
 				go conn.stopDanmu(acMap, uid, reqID)
 			}
 			pool.Put(p)
+		case getLiveCutInfoType:
+			go func() {
+				mu.RLock()
+				resp := ac.getLiveCutInfo(v, reqID)
+				mu.RUnlock()
+				_, _ = c.WriteString(resp)
+				conn.debug("Return the live cut info's response to the client")
+				pool.Put(p)
+			}()
 		default:
 			if f, ok := cmdDispatch[reqType]; ok {
 				go func() {

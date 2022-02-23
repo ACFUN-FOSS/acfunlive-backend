@@ -23,7 +23,6 @@ var cmdDispatch = map[int]func(*acLive, *fastjson.Value, string) string{
 	getLiveDataType:         (*acLive).getLiveData,
 	getGiftListType:         (*acLive).getGiftList,
 	getUserInfoType:         (*acLive).getUserInfo,
-	getLiveCutInfoType:      (*acLive).getLiveCutInfo,
 	getManagerListType:      (*acLive).getManagerList,
 	addManagerType:          (*acLive).addManager,
 	deleteManagerType:       (*acLive).deleteManager,
