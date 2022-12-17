@@ -26,11 +26,19 @@ import (
 func main() {
 	port := flag.Uint("port", 0, "WebSocket server port, default 15368")
 	isDebug = flag.Bool("debug", false, "debug")
+	isTCP = flag.Bool("tcp", false, "Danmu client connects server with TCP")
+	isLogAll = flag.Bool("logall", false, "log all debug message")
 	flag.Parse()
+
 	if !(*port > 1023 && *port < 65536) {
 		// 默认端口为15368
 		*port = 15368
 	}
+
+	if *isLogAll {
+		*isDebug = true
+	}
+
 	if logfile.Defaults.FileName != "" {
 		var maxSize int64 = 20 * 1024 * 1024
 		if logfile.Defaults.MaxSize > 0 {
@@ -87,6 +95,14 @@ func main() {
 	server.Shutdown()
 }
 
+func danmuClient() acfundanmu.DanmuClient {
+	if *isTCP {
+		return &acfundanmu.TCPDanmuClient{}
+	} else {
+		return &acfundanmu.WebSocketDanmuClient{}
+	}
+}
+
 // 打印调试信息
 func debug(format string, v ...interface{}) {
 	if *isDebug {
@@ -102,9 +118,17 @@ func (conn *wsConn) debug(format string, v ...interface{}) {
 	}
 }
 
+// 打印调试信息，isLogAll为true才会打印
+func (conn *wsConn) debugAll(format string, v ...interface{}) {
+	if *isDebug && *isLogAll {
+		addr := fmt.Sprintf("[%s] ", conn.remoteAddr)
+		log.Printf(addr+format, v...)
+	}
+}
+
 // 发送WebSocket消息
 func (conn *wsConn) send(msg string) error {
-	conn.debug("Send message: %s", msg)
+	conn.debugAll("Send message: %s", msg)
 	_, err := conn.c.WriteString(msg)
 	if err != nil {
 		conn.debug("Failed to send message: %s, error: %v", msg, err)
@@ -204,7 +228,7 @@ func wsHandler(c *fastws.Conn) {
 		reqType := v.GetInt("type")
 		reqID := string(v.GetStringBytes("requestID"))
 		if reqType != loginType && reqType != setTokenType {
-			conn.debug("Recieve message: %s", string(msg))
+			conn.debugAll("Recieve message: %s", string(msg))
 		}
 		mu.RLock()
 		if ac == nil && reqType != heartbeatType && reqType != loginType && reqType != setClientIDType && reqType != requestForwardDataType && reqType != setTokenType {
@@ -256,7 +280,7 @@ func wsHandler(c *fastws.Conn) {
 				pool.Put(p)
 				continue
 			}
-			newAC, err := acfundanmu.NewAcFunLive(acfundanmu.SetTokenInfo(token))
+			newAC, err := acfundanmu.NewAcFunLive(acfundanmu.SetTokenInfo(token), acfundanmu.SetDanmuClient(danmuClient()))
 			if err != nil {
 				go conn.send(fmt.Sprintf(respErrJSON, reqType, quote(reqID), reqHandleErr, quote(fmt.Sprintf("Failed to set TokenInfo: %v", err))))
 				pool.Put(p)

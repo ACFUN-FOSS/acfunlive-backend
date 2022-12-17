@@ -53,7 +53,7 @@ func (conn *wsConn) login(acMap *sync.Map, account, password, reqID string) stri
 	var err error
 	conn.debug("Client requests login")
 	if account == "" || password == "" {
-		newAC, err = acfundanmu.NewAcFunLive()
+		newAC, err = acfundanmu.NewAcFunLive(acfundanmu.SetDanmuClient(danmuClient()))
 		if err != nil {
 			conn.debug("login() error: cannot login as anonymous: %v", err)
 			return fmt.Sprintf(respErrJSON, loginType, quote(reqID), reqHandleErr, quote(err.Error()))
@@ -64,7 +64,7 @@ func (conn *wsConn) login(acMap *sync.Map, account, password, reqID string) stri
 			conn.debug("login() error: cannot login as AcFun user: %v", err)
 			return fmt.Sprintf(respErrJSON, loginType, quote(reqID), reqHandleErr, quote(err.Error()))
 		}
-		newAC, err = acfundanmu.NewAcFunLive(acfundanmu.SetCookies(cookies))
+		newAC, err = acfundanmu.NewAcFunLive(acfundanmu.SetCookies(cookies), acfundanmu.SetDanmuClient(danmuClient()))
 		if err != nil {
 			conn.debug("login() error: %v", err)
 			return fmt.Sprintf(respErrJSON, loginType, quote(reqID), reqHandleErr, quote(err.Error()))

@@ -142,6 +142,8 @@ const wsReadTimeout = 15 * time.Second
 
 var (
 	isDebug   *bool                // 是否调试
+	isTCP     *bool                // 弹幕客户端是否使用TCP连接
+	isLogAll  *bool                // 是否记录所有调试信息
 	quote     = strconv.Quote      // 给字符串加上双引号
 	server_ch *messenger.Messenger // server间通讯的channel
 )

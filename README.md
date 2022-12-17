@@ -9,7 +9,11 @@ go get -u github.com/ACFUN-FOSS/acfunlive-backend
 ### 运行参数
 `-port 端口`：设置后端WebSocket端口，默认是15368
 
-`-debug`：打印调试信息
+`-tcp`：使用TCP连接弹幕服务器
+
+`-debug`：打印调试信息，默认不打印后端发送和接收的消息
+
+`-logall`：打印所有调试信息，会打印后端发送和接收的消息
 
 `-logfile 日志文件`：将日志输出到指定文件
 
