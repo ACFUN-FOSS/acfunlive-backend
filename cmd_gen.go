@@ -4,7 +4,6 @@ package main
 import (
 	"fmt"
 
-	"github.com/orzogc/acfundanmu"
 	"github.com/segmentio/encoding/json"
 	"github.com/valyala/fastjson"
 )
@@ -389,28 +388,6 @@ func (ac *acLive) getMedalRankList(v *fastjson.Value, reqID string) string {
 	}
 
 	return fmt.Sprintf(respJSON, getMedalRankListType, quote(reqID), string(data))
-}
-
-func (ac *acLive) getUserMedal(v *fastjson.Value, reqID string) string {
-	userID := v.GetInt64("data", "userID")
-	if userID <= 0 {
-		ac.conn.debug("getUserMedal() error: userID not exist or less than 1")
-		return fmt.Sprintf(respErrJSON, getUserMedalType, quote(reqID), invalidReqData, quote("userID not exist or less than 1"))
-	}
-
-	ret, err := acfundanmu.GetUserMedal(userID)
-	if err != nil {
-		ac.conn.debug("getUserMedal() error: %v", err)
-		return fmt.Sprintf(respErrJSON, getUserMedalType, quote(reqID), reqHandleErr, quote(err.Error()))
-	}
-
-	data, err := json.Marshal(ret)
-	if err != nil {
-		ac.conn.debug("getUserMedal() error: cannot marshal to json: %+v", ret)
-		return fmt.Sprintf(respErrJSON, getUserMedalType, quote(reqID), reqHandleErr, quote(err.Error()))
-	}
-
-	return fmt.Sprintf(respJSON, getUserMedalType, quote(reqID), string(data))
 }
 
 func (ac *acLive) addManager(v *fastjson.Value, reqID string) string {

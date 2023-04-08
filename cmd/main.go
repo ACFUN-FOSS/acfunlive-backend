@@ -13,7 +13,6 @@ package main
 import (
 	"fmt"
 
-	"github.com/orzogc/acfundanmu"
 	"github.com/segmentio/encoding/json"
 	"github.com/valyala/fastjson"
 )
@@ -129,7 +128,6 @@ var int64FuncContent = []funcContent{
 	{"getUserInfo", "getUserInfoType", "ac.ac.GetUserInfo", []string{"userID"}},
 	{"getMedalDetail", "getMedalDetailType", "ac.ac.GetMedalDetail", []string{"liverUID"}},
 	{"getMedalRankList", "getMedalRankListType", "ac.ac.GetMedalRankList", []string{"liverUID"}},
-	{"getUserMedal", "getUserMedalType", "acfundanmu.GetUserMedal", []string{"userID"}},
 }
 
 // 调用的函数只有int64参数，没有返回
