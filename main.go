@@ -10,7 +10,6 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
-	"time"
 
 	"github.com/leemcloughlin/logfile"
 	"github.com/orzogc/acfundanmu"
@@ -138,14 +137,15 @@ func (conn *wsConn) send(msg string) error {
 
 // 处理WebSocket连接
 func wsHandler(c *fastws.Conn) {
-	c.ReadTimeout = wsReadTimeout
-	c.WriteTimeout = timeout
+	c.SetReadTimeout(timeout)
+	c.SetWriteTimeout(timeout)
 	conn := &wsConn{
 		c:          c,
 		remoteAddr: c.RemoteAddr().String(),
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+	defer conn.c.Close()
 	defer conn.debug("WebSocket connection close")
 	conn.debug("WebSocket connection open")
 
@@ -164,7 +164,6 @@ func wsHandler(c *fastws.Conn) {
 	var mu sync.RWMutex
 	var ac *acLive
 	var data []byte
-	tickerCh := make(chan struct{}, 10)
 
 	go func() {
 		for {
@@ -186,26 +185,6 @@ func wsHandler(c *fastws.Conn) {
 		}
 	}()
 
-	go func() {
-		ticker := time.NewTicker(timeout)
-		defer ticker.Stop()
-
-	Outer:
-		for {
-			select {
-			case <-tickerCh:
-				ticker.Reset(timeout)
-			case <-ticker.C:
-				conn.debug("WebSocket reading message timeout")
-				_ = conn.c.Close()
-				break Outer
-			case <-ctx.Done():
-				_ = conn.c.Close()
-				break Outer
-			}
-		}
-	}()
-
 	for {
 		_, msg, err = c.ReadMessage(msg[:0])
 		if err != nil {
@@ -214,7 +193,6 @@ func wsHandler(c *fastws.Conn) {
 			}
 			break
 		}
-		tickerCh <- struct{}{}
 
 		p := pool.Get()
 		v, err := p.ParseBytes(msg)
