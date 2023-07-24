@@ -15,10 +15,10 @@ github.com/klauspost/compress v1.16.7 h1:2mk3MPGNzKyxErAw8YaohYh69+pa4sIQSC0fPGC
 github.com/klauspost/compress v1.16.7/go.mod h1:ntbaceVETuRiXiv4DpjP66DpAtAGkEQskQzEyD//IeE=
 github.com/leemcloughlin/logfile v0.0.0-20201123203928-cff1c8a30a10 h1:u9y/Zac8wI/044pGaAx/rBgSkDWZ3ke3fkO/G9n/L/Q=
 github.com/leemcloughlin/logfile v0.0.0-20201123203928-cff1c8a30a10/go.mod h1:4Zg3pQ6ieAWeBXbuiumGqLozM9slFT54ssmfXa2YfLI=
-github.com/orzogc/acfundanmu v0.0.0-20230723222952-c5c1715be450 h1:8cJhz/1RkcTMSKRW2jTo9PaWfm0lsMm1RNK6IdJ13eI=
-github.com/orzogc/acfundanmu v0.0.0-20230723222952-c5c1715be450/go.mod h1:egrr0MM5asW1GmGBalnJaqDu6nRasKm7+K8jCsJb11s=
-github.com/orzogc/fastws v1.0.5-0.20230723221920-461d6941b97a h1:oBj2mwAw8M2aA2RLdtEX9TG+tVXBsgWCBkBVeJbux5Q=
-github.com/orzogc/fastws v1.0.5-0.20230723221920-461d6941b97a/go.mod h1:rB0Q4rUHJ/aqQl03ryzl4NuGhpHpoisxSuGGCoPhvSo=
+github.com/orzogc/acfundanmu v0.0.0-20230724125410-f51aab562e2e h1:4MNfEKmPmVtEKKTZby1GJEEaRPBnsvSvfzQ+7OTDRt0=
+github.com/orzogc/acfundanmu v0.0.0-20230724125410-f51aab562e2e/go.mod h1:4W0AP2k0Qng/4Tlhj45253nJRwCglluKwGUbFQzMlt0=
+github.com/orzogc/fastws v1.0.5-0.20230724120802-b5b15322ffd7 h1:o1jxhEXbMo/j7Pk6SdGSSiTv4YCJb2Zik+gSwv3ozWQ=
+github.com/orzogc/fastws v1.0.5-0.20230724120802-b5b15322ffd7/go.mod h1:rB0Q4rUHJ/aqQl03ryzl4NuGhpHpoisxSuGGCoPhvSo=
 github.com/philhofer/fwd v1.1.1/go.mod h1:gk3iGcWd9+svBvR0sR+KPcfE+RNWozjowpeBVG3ZVNU=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
