@@ -15,8 +15,8 @@ github.com/klauspost/compress v1.16.7 h1:2mk3MPGNzKyxErAw8YaohYh69+pa4sIQSC0fPGC
 github.com/klauspost/compress v1.16.7/go.mod h1:ntbaceVETuRiXiv4DpjP66DpAtAGkEQskQzEyD//IeE=
 github.com/leemcloughlin/logfile v0.0.0-20201123203928-cff1c8a30a10 h1:u9y/Zac8wI/044pGaAx/rBgSkDWZ3ke3fkO/G9n/L/Q=
 github.com/leemcloughlin/logfile v0.0.0-20201123203928-cff1c8a30a10/go.mod h1:4Zg3pQ6ieAWeBXbuiumGqLozM9slFT54ssmfXa2YfLI=
-github.com/orzogc/acfundanmu v0.0.0-20230728163838-6828e2e6962e h1:DiZNsW04/H1erl4ZTX861RaFyP1tkPbqFOX3Vi7RHAM=
-github.com/orzogc/acfundanmu v0.0.0-20230728163838-6828e2e6962e/go.mod h1:sBr//j95iIa2J0+37/JyuLedQek7iAKd99VO6XvXUXA=
+github.com/orzogc/acfundanmu v0.0.0-20230729131036-7809fe2b168f h1:G2Lx4WJF9GT8LFh8CAWyLfUh24CWa1q4KSrM5Vs4LAg=
+github.com/orzogc/acfundanmu v0.0.0-20230729131036-7809fe2b168f/go.mod h1:sBr//j95iIa2J0+37/JyuLedQek7iAKd99VO6XvXUXA=
 github.com/orzogc/fastws v1.0.5-0.20230728163720-a0bf2bd306ff h1:H5RjlQQGScb1B7iowZY1f2/zzfhYrG5VxF3clTbtUPU=
 github.com/orzogc/fastws v1.0.5-0.20230728163720-a0bf2bd306ff/go.mod h1:rB0Q4rUHJ/aqQl03ryzl4NuGhpHpoisxSuGGCoPhvSo=
 github.com/philhofer/fwd v1.1.1/go.mod h1:gk3iGcWd9+svBvR0sR+KPcfE+RNWozjowpeBVG3ZVNU=

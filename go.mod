@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/leemcloughlin/logfile v0.0.0-20201123203928-cff1c8a30a10
-	github.com/orzogc/acfundanmu v0.0.0-20230728163838-6828e2e6962e
+	github.com/orzogc/acfundanmu v0.0.0-20230729131036-7809fe2b168f
 	github.com/orzogc/fastws v1.0.5-0.20230728163720-a0bf2bd306ff
 	github.com/segmentio/encoding v0.3.6
 	github.com/thanhpk/randstr v1.0.4
