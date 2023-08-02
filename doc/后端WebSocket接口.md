@@ -686,7 +686,7 @@
             "webpPic": "https://static.yximgs.com/bs2/giftCenter/giftCenter-20200316101317UbXssBoH.webp", // 礼物的webp格式图片（动图）
             "pngPic": "https://static.yximgs.com/bs2/giftCenter/giftCenter-20200812141711JRxMyUWH.png", // 礼物的png格式图片（大）
             "smallPngPic": "https://static.yximgs.com/bs2/giftCenter/giftCenter-20200316101519KncIIcdd.png", // 礼物的png格式图片（小）
-            "allowBatchSendSizeList": [ // 网页或APP单次能够赠送的礼物数量列表
+            "allowBatchSendSizeList": [ // 网页或APP单次能够赠送的礼物数量列表，有可能为`null`
                 1,
                 5
             ],
@@ -936,7 +936,7 @@
                 }
             ]
         },
-        "dailyData": [ // 单日直播统计数据
+        "dailyData": [ // 单日直播统计数据，有可能为`null`
             {
                 "date": "20210128", // 直播日期
                 "liveTimes": 1, // 当日直播次数
@@ -1324,7 +1324,7 @@
             "friendshipDegree": 18015, // 目前用户的守护徽章亲密度
             "joinClubTime": 1602752837775, // 用户加入主播守护团的时间，是以毫秒为单位的Unix时间
             "currentDegreeLimit": 18887, // 用户守护徽章目前等级的亲密度的上限
-            "medalCount": 0 // 没有用户拥有的守护徽章数量
+            "medalCount": 0 // 指定用户拥有的守护徽章数量
         },
         "medalDegree": {
             "uperID": 12891327,
@@ -1359,7 +1359,7 @@
     "type": 301,
     "requestID": "abc",
     "result": 1,
-    "data": [ // 用户拥有的守护徽章列表
+    "data": [ // 用户拥有的守护徽章列表，有可能为`null`
         {
             "medalInfo": {
                 "uperID": 265135,
@@ -1399,7 +1399,7 @@
     "result": 1,
     "data": {
         "hasFansClub": true, // 主播是否有守护团
-        "rankList": [
+        "rankList": [ //有可能为`null`
             {
                 "profile": { // 用户信息
                     "userID": 7755,
@@ -1572,7 +1572,7 @@
     "data": {
         "streamName": "kszt_PYrssS_J4w", // 直播源名字
         "streamPullAddress": "https://tx-adaptive.pull.yximgs.com/livecloud/kszt_PYrssS_J4w.flv?txSecret=adfd9fcb80b9d8f6d0071ba88f33ee8b\u0026txTime=603eadd2\u0026stat=XIFGbCNUSzcScMvRvgKb%2FT%2FT2mInuvBYcy5eD%2FRbbmk%3D\u0026oidc=alihb", // 拉流地址，也就是直播源地址
-        "streamPushAddress": [ // 推流地址，目前分为阿里云和腾讯云两种
+        "streamPushAddress": [ // 推流地址，目前分为阿里云和腾讯云两种，有可能为`null`
             "rtmp://aliyun-open-push.voip.yximgs.com/livecloud/kszt_PYrssS_J4w?sign=c0377c25-c6e74ddb3ea81bd98c7279d87a16ae75\u0026ks_fix_ts\u0026ks_ctx=dHRwOlBVTEw7dGZiOjE7dmVyOjYzMTtwZHk6MDt2cXQ6VU5LTk9XTjtpc1Y6ZmFsc2U7YWlkOjEwMzQxMQ%3D%3D",
             "rtmp://txyun-open-push.voip.yximgs.com/livecloud/kszt_PYrssS_J4w?sign=c0377c25-c6e74ddb3ea81bd98c7279d87a16ae75\u0026ks_fix_ts\u0026ks_ctx=dHRwOlBVTEw7dGZiOjE7dmVyOjYzMTtwZHk6MDt2cXQ6VU5LTk9XTjtpc1Y6ZmFsc2U7YWlkOjEwMzQxMQ%3D%3D"
         ],
@@ -1939,7 +1939,7 @@
             "webpPic": "https://static.yximgs.com/bs2/giftCenter/giftCenter-20200326112443kfWQhpaG.webp", // 礼物的webp格式图片（动图）
             "pngPic": "https://static.yximgs.com/bs2/giftCenter/giftCenter-20200812141131ukNHkGeU.png", // 礼物的png格式图片（大）
             "smallPngPic": "https://static.yximgs.com/bs2/giftCenter/giftCenter-20200316110407BdolKFLb.png", // 礼物的png格式图片（小）
-            "allowBatchSendSizeList": [ // 网页或APP单次能够赠送的礼物数量列表
+            "allowBatchSendSizeList": [ // 网页或APP单次能够赠送的礼物数量列表，有可能为`null`
                 1,
                 6,
                 10,
@@ -1963,7 +1963,7 @@
         "drawGiftInfo": { // 礼物涂鸦
             "screenWidth": 1440, // 手机屏幕宽度
             "screenHeight": 2560, // 手机屏幕高度
-            "drawPoint": [ // 涂鸦里各个礼物的位置
+            "drawPoint": [ // 涂鸦里各个礼物的位置，没涂鸦时为`null`
                 {
                     "marginLeft": 393, // 到手机屏幕左边的距离
                     "marginTop": 263, // 到手机屏幕顶部的距离
