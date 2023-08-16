@@ -4,8 +4,8 @@ go 1.20
 
 require (
 	github.com/leemcloughlin/logfile v0.0.0-20201123203928-cff1c8a30a10
-	github.com/orzogc/acfundanmu v0.0.0-20230729131036-7809fe2b168f
-	github.com/orzogc/fastws v1.0.5-0.20230728163720-a0bf2bd306ff
+	github.com/orzogc/acfundanmu v0.0.0-20230816111746-e3c4b648f2eb
+	github.com/orzogc/fastws v1.0.5-0.20230809182400-6c9094d8c52e
 	github.com/segmentio/encoding v0.3.6
 	github.com/thanhpk/randstr v1.0.4
 	github.com/ugjka/messenger v1.1.3
@@ -21,6 +21,6 @@ require (
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	golang.org/x/sys v0.10.0 // indirect
+	golang.org/x/sys v0.11.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 )
