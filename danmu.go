@@ -14,7 +14,7 @@ import (
 func (conn *wsConn) getDanmu(ctx context.Context, cancel context.CancelFunc, acMap *sync.Map, uid int64, reqID string) {
 	ac := new(acLive)
 	if _, ok := acMap.Load(uid); ok {
-		_ = conn.send(fmt.Sprintf(respNoDataJSON, getDanmuType, quote(reqID)))
+		_ = conn.send(fmt.Sprintf(respJSON, getDanmuType, quote(reqID), fmt.Sprintf(`{"liverUID":%d}`, uid)))
 		return
 	}
 	acMap.Store(uid, ac)
@@ -36,7 +36,7 @@ func (conn *wsConn) getDanmu(ctx context.Context, cancel context.CancelFunc, acM
 		_ = conn.send(fmt.Sprintf(respErrJSON, getDanmuType, quote(reqID), reqHandleErr, quote(err.Error())))
 		return
 	}
-	err = conn.send(fmt.Sprintf(respJSON, getDanmuType, quote(reqID), fmt.Sprintf(`{"StreamInfo":%s}`, string(data))))
+	err = conn.send(fmt.Sprintf(respJSON, getDanmuType, quote(reqID), fmt.Sprintf(`{"liverUID":%d,"StreamInfo":%s}`, uid, string(data))))
 	if err != nil {
 		return
 	}
@@ -341,5 +341,5 @@ func (conn *wsConn) stopDanmu(acMap *sync.Map, uid int64, reqID string) {
 	}
 	ac := aci.(*acLive)
 	ac.cancel()
-	_ = conn.send(fmt.Sprintf(respNoDataJSON, stopDanmuType, quote(reqID)))
+	_ = conn.send(fmt.Sprintf(respJSON, stopDanmuType, quote(reqID), fmt.Sprintf(`{"liverUID":%d}`, uid)))
 }
