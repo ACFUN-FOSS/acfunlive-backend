@@ -30,7 +30,7 @@ func main() {
 	flag.Parse()
 
 	if !(*port > 1023 && *port < 65536) {
-		// 默认端口为15368
+		// 默认端口为 15368
 		*port = 15368
 	}
 
@@ -117,7 +117,7 @@ func (conn *wsConn) debug(format string, v ...interface{}) {
 	}
 }
 
-// 打印调试信息，isLogAll为true才会打印
+// 打印调试信息，isLogAll 为 true 才会打印
 func (conn *wsConn) debugAll(format string, v ...interface{}) {
 	if *isDebug && *isLogAll {
 		addr := fmt.Sprintf("[%s] ", conn.remoteAddr)
@@ -125,7 +125,7 @@ func (conn *wsConn) debugAll(format string, v ...interface{}) {
 	}
 }
 
-// 发送WebSocket消息
+// 发送 WebSocket 消息
 func (conn *wsConn) send(msg string) error {
 	conn.debugAll("Send message: %s", msg)
 	_, err := conn.c.WriteString(msg)
@@ -135,7 +135,7 @@ func (conn *wsConn) send(msg string) error {
 	return err
 }
 
-// 处理WebSocket连接
+// 处理 WebSocket 连接
 func wsHandler(c *fastws.Conn) {
 	c.SetReadTimeout(timeout)
 	c.SetWriteTimeout(timeout)
@@ -205,11 +205,11 @@ func wsHandler(c *fastws.Conn) {
 
 		reqType := v.GetInt("type")
 		reqID := string(v.GetStringBytes("requestID"))
-		if reqType != loginType && reqType != setTokenType {
+		if reqType != loginType && reqType != setTokenType && reqType != QRCodeLoginSuccessType {
 			conn.debugAll("Recieve message: %s", string(msg))
 		}
 		mu.RLock()
-		if ac == nil && reqType != heartbeatType && reqType != loginType && reqType != setClientIDType && reqType != requestForwardDataType && reqType != setTokenType {
+		if ac == nil && reqType != heartbeatType && reqType != loginType && reqType != setClientIDType && reqType != requestForwardDataType && reqType != setTokenType && reqType != QRCodeLoginType {
 			go conn.send(fmt.Sprintf(respErrJSON, reqType, quote(reqID), needLogin, quote("Need login or token")))
 			pool.Put(p)
 			mu.RUnlock()
@@ -226,6 +226,17 @@ func wsHandler(c *fastws.Conn) {
 			password := string(v.GetStringBytes("data", "password"))
 			go func() {
 				resp := conn.login(acMap, account, password, reqID)
+				if aci, ok := acMap.Load(0); ok {
+					mu.Lock()
+					ac = aci.(*acLive)
+					mu.Unlock()
+				}
+				_, _ = c.WriteString(resp)
+			}()
+			pool.Put(p)
+		case QRCodeLoginType:
+			go func() {
+				resp := conn.loginWithQRCode(acMap, reqID)
 				if aci, ok := acMap.Load(0); ok {
 					mu.Lock()
 					ac = aci.(*acLive)

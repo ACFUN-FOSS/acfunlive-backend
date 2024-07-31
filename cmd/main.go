@@ -110,7 +110,7 @@ var noParamNoDataFuncContent = []funcContent{
 	{"cancelWearMedal", "cancelWearMedalType", "ac.ac.CancelWearMedal", []string{}},
 }
 
-// 调用的函数只有string参数，有返回
+// 调用的函数只有 string 参数，有返回
 var stringFuncContent = []funcContent{
 	{"getWatchingList", "getWatchingListType", "ac.ac.GetWatchingList", []string{"liveID"}},
 	{"getSummary", "getSummaryType", "ac.ac.GetSummary", []string{"liveID"}},
@@ -121,7 +121,7 @@ var stringFuncContent = []funcContent{
 	{"stopLive", "stopLiveType", "ac.ac.StopLive", []string{"liveID"}},
 }
 
-// 调用的函数只有int64参数，有返回
+// 调用的函数只有 int64 参数，有返回
 var int64FuncContent = []funcContent{
 	{"getBillboard", "getBillboardType", "ac.ac.GetBillboard", []string{"liverUID"}},
 	{"getUserLiveInfo", "getUserLiveInfoType", "ac.ac.GetUserLiveInfo", []string{"userID"}},
@@ -130,14 +130,14 @@ var int64FuncContent = []funcContent{
 	{"getMedalRankList", "getMedalRankListType", "ac.ac.GetMedalRankList", []string{"liverUID"}},
 }
 
-// 调用的函数只有int64参数，没有返回
+// 调用的函数只有 int64 参数，没有返回
 var int64NoDataFuncContent = []funcContent{
 	{"addManager", "addManagerType", "ac.ac.AddManager", []string{"managerUID"}},
 	{"deleteManager", "deleteManagerType", "ac.ac.DeleteManager", []string{"managerUID"}},
 	{"wearMedal", "wearMedalType", "ac.ac.WearMedal", []string{"liverUID"}},
 }
 
-// 调用的函数只有int参数，有返回
+// 调用的函数只有 int 参数，有返回
 var intFuncContent = []funcContent{
 	{"getLiveData", "getLiveDataType", "ac.ac.GetLiveData", []string{"days"}},
 }

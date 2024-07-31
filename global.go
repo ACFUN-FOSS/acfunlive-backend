@@ -13,7 +13,7 @@ import (
 const (
 	heartbeatJSON   = `{"type":1}`                                        // 心跳包
 	respJSON        = `{"type":%d,"requestID":%s,"result":1,"data":%s}`   // 响应
-	respNoDataJSON  = `{"type":%d,"requestID":%s,"result":1}`             // 没有data的响应
+	respNoDataJSON  = `{"type":%d,"requestID":%s,"result":1}`             // 没有 data 的响应
 	respErrJSON     = `{"type":%d,"requestID":%s,"result":%d,"error":%s}` // 错误响应
 	danmuJSON       = `{"liverUID":%d,"type":%d,"data":%s}`               // 弹幕和信号数据
 	danmuNoDataJSON = `{"liverUID":%d,"type":%d}`                         // 没有数据的弹幕和信号数据
@@ -27,6 +27,10 @@ const (
 	requestForwardDataType
 	forwardDataType
 	setTokenType
+	QRCodeLoginType
+	QRCodeScannedType
+	QRCodeLoginCancelType
+	QRCodeLoginSuccessType
 )
 
 // 命令类型
@@ -129,9 +133,9 @@ const (
 
 // 错误码
 const (
-	jsonParseErr   = iota + 10 // 请求的json解析错误
-	invalidReqType             // 无效的请求type
-	invalidReqData             // 无效的请求data
+	jsonParseErr   = iota + 10 // 请求的 json 解析错误
+	invalidReqType             // 无效的请求 type
+	invalidReqData             // 无效的请求 data
 	reqHandleErr               // 处理请求时出现错误
 	needLogin                  // 需要登陆
 )
@@ -141,13 +145,13 @@ const idleTimeout = 60 * time.Second
 
 var (
 	isDebug   *bool                // 是否调试
-	isTCP     *bool                // 弹幕客户端是否使用TCP连接
+	isTCP     *bool                // 弹幕客户端是否使用 TCP 连接
 	isLogAll  *bool                // 是否记录所有调试信息
 	quote     = strconv.Quote      // 给字符串加上双引号
-	server_ch *messenger.Messenger // server间通讯的channel
+	server_ch *messenger.Messenger // server 间通讯的 channel
 )
 
-// WebSocket连接
+// WebSocket 连接
 type wsConn struct {
 	c          *fastws.Conn
 	remoteAddr string

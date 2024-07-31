@@ -80,11 +80,56 @@ func (conn *wsConn) login(acMap *sync.Map, account, password, reqID string) stri
 	info := ac.ac.GetTokenInfo()
 	data, err := json.Marshal(info)
 	if err != nil {
-		//conn.debug("login() error: cannot marshal to json: %+v", info)
+		conn.debug("login() error: cannot marshal to json: %v", err)
 		return fmt.Sprintf(respErrJSON, loginType, quote(reqID), reqHandleErr, quote(err.Error()))
 	}
 
 	return fmt.Sprintf(respJSON, loginType, quote(reqID), fmt.Sprintf(`{"tokenInfo":%s}`, string(data)))
+}
+
+// 处理扫码登陆命令
+func (conn *wsConn) loginWithQRCode(acMap *sync.Map, reqID string) string {
+	conn.debug("Client requests login with QR code")
+
+	cookies, err := acfundanmu.LoginWithQRCode(func(qrCode acfundanmu.QRCode) {
+		data, err := json.Marshal(qrCode)
+		if err != nil {
+			conn.send(fmt.Sprintf(respErrJSON, QRCodeLoginType, quote(reqID), reqHandleErr, quote(err.Error())))
+		} else {
+			conn.send(fmt.Sprintf(respJSON, QRCodeLoginType, quote(reqID), string(data)))
+		}
+	}, func() {
+		conn.send(fmt.Sprintf(respNoDataJSON, QRCodeScannedType, quote(reqID)))
+	})
+	if err != nil {
+		conn.debug("loginWithQRCode() error: %v", err)
+		return fmt.Sprintf(respErrJSON, QRCodeLoginType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+	if cookies == nil {
+		conn.debug("Login with QR code is expired or cancelled by user")
+		return fmt.Sprintf(respNoDataJSON, QRCodeLoginCancelType, quote(reqID))
+	}
+
+	newAC, err := acfundanmu.NewAcFunLive(acfundanmu.SetCookies(cookies), acfundanmu.SetDanmuClient(danmuClient()))
+	if err != nil {
+		conn.debug("loginWithQRCode() error: %v", err)
+		return fmt.Sprintf(respErrJSON, QRCodeLoginType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+	conn.debug("Client's login is successful, uid is %d", newAC.GetUserID())
+
+	ac := new(acLive)
+	ac.conn = conn
+	ac.ac = newAC
+	acMap.Store(0, ac)
+
+	info := ac.ac.GetTokenInfo()
+	data, err := json.Marshal(info)
+	if err != nil {
+		conn.debug("loginWithQRCode() error: cannot marshal to json: %v", err)
+		return fmt.Sprintf(respErrJSON, QRCodeLoginType, quote(reqID), reqHandleErr, quote(err.Error()))
+	}
+
+	return fmt.Sprintf(respJSON, QRCodeLoginSuccessType, quote(reqID), fmt.Sprintf(`{"tokenInfo":%s}`, string(data)))
 }
 
 // 获取全部礼物的列表

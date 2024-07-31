@@ -17,6 +17,7 @@ const (
 	loginJSON              = `{"type":2,"requestID":"abc","data":{"account":%s,"password":%s}}`
 	setClientIDJSON        = `{"type":3,"requestID":"abc","data":{"clientID":%s}}`
 	requestForwardDataJSON = `{"type":4,"requestID":"abc","data":{"clientID":%s,"message":%s}}`
+	QRCodeLoginJSON        = `{"type":7,"requestID":"abc"}`
 	getDanmuJSON           = `{"type":100,"requestID":"abc","data":{"liverUID":%d}}`
 	stopDanmuJSON          = `{"type":101,"requestID":"abc","data":{"liverUID":%d}}`
 	getWatchingListJSON    = `{"type":102,"requestID":"abc","data":{"liveID":%s}}`
@@ -113,6 +114,20 @@ func main() {
 			case 5:
 				log.Printf("Receive broadcast from %s : %s", string(v.GetStringBytes("data", "clientID")), string(v.GetStringBytes("data", "message")))
 			case 6:
+			case 7:
+				if v.GetInt("result") != 1 {
+					log.Println("QR code login failed")
+					pool.Put(p)
+					continue
+				}
+				log.Printf("QR code: %s", string(v.GetStringBytes("data", "imageData")))
+			case 8:
+				log.Println("QR code is scanned")
+			case 9:
+				log.Println("QR code is expired or login is cancelled by user")
+			case 10:
+				log.Printf("QR code login sucess, account uid: %d", v.GetInt64("data", "tokenInfo", "userID"))
+				ch <- struct{}{}
 			case 100:
 				if v.GetInt("result") != 1 {
 					log.Printf("Cannot get danmu, response: %s", string(msg))
@@ -301,8 +316,13 @@ func main() {
 	_, err = conn.WriteString(fmt.Sprintf(setClientIDJSON, quote("client1")))
 	checkErr(err)
 
-	_, err = conn.WriteString(fmt.Sprintf(loginJSON, quote(*account), quote(*password)))
-	checkErr(err)
+	if *account != "" && *password != "" {
+		_, err = conn.WriteString(fmt.Sprintf(loginJSON, quote(*account), quote(*password)))
+		checkErr(err)
+	} else {
+		_, err = conn.WriteString(QRCodeLoginJSON)
+		checkErr(err)
+	}
 	<-ch
 	_, err = conn.WriteString(fmt.Sprintf(getDanmuJSON, *liverUID))
 	checkErr(err)
