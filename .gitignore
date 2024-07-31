@@ -2,6 +2,7 @@ acfunlive-backend
 client
 client1
 client2
+tests/forward/forward
 cmd/cmd
 *.json
 *.log
