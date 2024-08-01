@@ -205,7 +205,7 @@ func wsHandler(c *fastws.Conn) {
 
 		reqType := v.GetInt("type")
 		reqID := string(v.GetStringBytes("requestID"))
-		if reqType != loginType && reqType != setTokenType && reqType != QRCodeLoginSuccessType {
+		if reqType != loginType && reqType != setTokenType {
 			conn.debugAll("Recieve message: %s", string(msg))
 		}
 		mu.RLock()
