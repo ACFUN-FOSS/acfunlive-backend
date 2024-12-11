@@ -1,0 +1,44 @@
+name: Create release on new tag
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    name: Create release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Get tag name
+        run: echo "ACFUNLIVE_BACKEND_TAG=$(echo "${{ github.ref_name }}" | sed 's/^v//')" >> $GITHUB_ENV
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+      - name: Get Go dependencies
+        run: go get
+      - name: Build Linux amd64
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o acbackend-linux-x64
+          tar -czvf acfunlive-backend-${{ env.ACFUNLIVE_BACKEND_TAG }}-linux-amd64.tar.gz acbackend-linux-x64
+      - name: Build Windows amd64
+        run: |
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o acbackend-win-x64.exe
+          tar -czvf acfunlive-backend-${{ env.ACFUNLIVE_BACKEND_TAG }}-windows-amd64.tar.gz acbackend-win-x64.exe
+      - name: Build Darwin amd64
+        run: |
+          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o acbackend-mac-x64
+          tar -czvf acfunlive-backend-${{ env.ACFUNLIVE_BACKEND_TAG }}-darwin-amd64.tar.gz acbackend-mac-x64
+      - name: Build Darwin arm64
+        run: |
+          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o acbackend-mac-arm64
+          tar -czvf acfunlive-backend-${{ env.ACFUNLIVE_BACKEND_TAG }}-darwin-arm64.tar.gz acbackend-mac-arm64
+      - name: Release artifacts
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "*.tar.gz"
